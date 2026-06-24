@@ -1,5 +1,6 @@
 package com.mjc.hotel.user.entity;
 
+import com.mjc.hotel.util.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 @Builder
-public class User {
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
@@ -27,8 +28,6 @@ public class User {
     private String grade;
     private String role;
     private String status;
-    private LocalDateTime created_at;
-    private LocalDateTime updated_at;
-    private String social_login;
-    private String social_login_id;
+    private String socialLogin;
+    private String socialLoginId;
 }
