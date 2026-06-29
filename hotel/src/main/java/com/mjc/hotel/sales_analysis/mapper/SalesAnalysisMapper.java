@@ -1,4 +1,4 @@
-package com.mjc.hotel.sales_analysis.repository;
+package com.mjc.hotel.sales_analysis.mapper;
 
 import com.mjc.hotel.sales_analysis.dto.MonthlyRevenueDto;
 import com.mjc.hotel.sales_analysis.dto.RoomTypeRevenueDto;

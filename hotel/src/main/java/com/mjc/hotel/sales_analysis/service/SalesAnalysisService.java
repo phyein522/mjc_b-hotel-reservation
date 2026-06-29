@@ -6,7 +6,7 @@ import com.mjc.hotel.sales_analysis.dto.SalesDashboardQueryDto;
 import com.mjc.hotel.sales_analysis.dto.SalesDashboardResponse;
 import com.mjc.hotel.sales_analysis.entity.Hotel;
 import com.mjc.hotel.sales_analysis.repository.HotelRepository;
-import com.mjc.hotel.sales_analysis.repository.SalesAnalysisMapper;
+import com.mjc.hotel.sales_analysis.mapper.SalesAnalysisMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -122,29 +122,29 @@ public class SalesAnalysisService {
 
         // 5. Response DTO 조립
         SalesDashboardResponse.DashboardMetrics metrics = SalesDashboardResponse.DashboardMetrics.builder()
-                .totalRevenue(SalesDashboardResponse.MetricValue.builder()
-                        .value(currentRev)
+                .totalRevenue(SalesDashboardResponse.RevenueMetric.builder()
+                        .value(BigDecimal.valueOf(round(currentRev)))
                         .changeRate(round(revenueChangeRate))
                         .isIncreased(revenueChangeRate >= 0)
                         .build())
-                .occupancyRate(SalesDashboardResponse.MetricValue.builder()
+                .occupancyRate(SalesDashboardResponse.RateMetric.builder()
                         .value(round(currentOcc))
                         .changeRate(round(occChangeRate))
                         .isIncreased(occChangeRate >= 0)
                         .build())
-                .todayOccupancyRate(new SalesDashboardResponse.SimpleValue(round(todayOccRate)))
-                .averageDailyRate(new SalesDashboardResponse.SimpleValue(round(adr)))
-                .bookingCount(SalesDashboardResponse.MetricValue.builder()
-                        .value(currentBookings)
+                .todayOccupancyRate(new SalesDashboardResponse.RateSimple(round(todayOccRate)))
+                .averageDailyRate(new SalesDashboardResponse.RevenueSimple(BigDecimal.valueOf(round(adr))))
+                .bookingCount(SalesDashboardResponse.CountMetric.builder()
+                        .value((long) currentBookings)
                         .changeRate(round(bookingChangeRate))
                         .isIncreased(bookingChangeRate >= 0)
                         .build())
-                .returningGuestRate(SalesDashboardResponse.MetricValue.builder()
+                .returningGuestRate(SalesDashboardResponse.RateMetric.builder()
                         .value(round(currentRetRate))
                         .changeRate(round(retChangeRate))
                         .isIncreased(retChangeRate >= 0)
                         .build())
-                .vipReturningGuestRate(new SalesDashboardResponse.SimpleValue(round(vipRetRate)))
+                .vipReturningGuestRate(new SalesDashboardResponse.RateSimple(round(vipRetRate)))
                 .build();
 
         return SalesDashboardResponse.builder()

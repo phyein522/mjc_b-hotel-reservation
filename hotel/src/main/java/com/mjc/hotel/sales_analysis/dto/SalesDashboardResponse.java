@@ -27,30 +27,63 @@ public class SalesDashboardResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class DashboardMetrics {
-        private MetricValue totalRevenue;
-        private MetricValue occupancyRate;
-        private SimpleValue todayOccupancyRate;
-        private SimpleValue averageDailyRate;
-        private MetricValue bookingCount;
-        private MetricValue returningGuestRate;
-        private SimpleValue vipReturningGuestRate;
+        private RevenueMetric totalRevenue;
+        private RateMetric occupancyRate;
+        private RateSimple todayOccupancyRate;
+        private RevenueSimple averageDailyRate;
+        private CountMetric bookingCount;
+        private RateMetric returningGuestRate;
+        private RateSimple vipReturningGuestRate;
     }
 
+    // 금액용 메트릭 (매출 등)
     @Data
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class MetricValue {
+    public static class RevenueMetric {
+        private BigDecimal value;
+        private Double changeRate;
+        private Boolean isIncreased;
+    }
+
+    // 비율용 메트릭 (점유율, 재방문율 등)
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class RateMetric {
         private Double value;
         private Double changeRate;
         private Boolean isIncreased;
     }
 
+    // 카운트용 메트릭 (예약건수 등)
     @Data
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class SimpleValue {
+    public static class CountMetric {
+        private Long value;
+        private Double changeRate;
+        private Boolean isIncreased;
+    }
+
+    // 금액 단순 수치 (평균 객단가 등)
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class RevenueSimple {
+        private BigDecimal value;
+    }
+
+    // 비율 단순 수치 (VIP 재방문율 등)
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class RateSimple {
         private Double value;
     }
 }

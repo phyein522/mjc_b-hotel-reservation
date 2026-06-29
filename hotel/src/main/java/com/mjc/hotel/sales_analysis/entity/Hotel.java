@@ -26,7 +26,6 @@ import java.util.List;
 public class Hotel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "`호텔아이디`")
     private Long id;
 

@@ -31,8 +31,6 @@ public class UserServiceTests {
                     .phone("0102020303" + i)
                     .grade("bronze")
                     .status("")
-                    .created_at(LocalDateTime.now())
-                    .updated_at(LocalDateTime.now())
                     .build();
 
             userRepository.save(u);
