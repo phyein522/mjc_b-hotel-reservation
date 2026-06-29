@@ -2,9 +2,8 @@ package com.mjc.hotel.sales_analysis.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -37,6 +36,7 @@ public class Hotel {
     @Column(name = "이메일", length = 255)
     private String email;
 
+    // 띄어쓰기 있는 컬럼명은 백틱 대신 name으로 정확히 매핑
     @Column(name = "체크인 시간", nullable = false)
     private LocalTime checkInTime;
 
@@ -46,6 +46,7 @@ public class Hotel {
     @Column(name = "별_등급")
     private Short starGrade;
 
+    // 운영중인 호텔만 드롭다운에 표시
     @Column(name = "운영여부", nullable = false)
     private Boolean isActive;
 
@@ -54,7 +55,4 @@ public class Hotel {
 
     @Column(name = "업데이트 시간", nullable = false)
     private LocalDateTime updatedAt;
-
-    @Column(name = "호텔 이미지", length = 260)
-    private String hotelImage;
 }

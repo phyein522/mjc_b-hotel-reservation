@@ -2,7 +2,6 @@ package com.mjc.hotel.sales_analysis.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -17,7 +16,7 @@ public class Booking {
     @Column(name = "booking_id")
     private Long bookingId;
 
-    // 어느 호텔의 예약인지 연결
+    // 어느 호텔의 예약인지 연결 (매출 필터링에 사용)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hotel_id", nullable = false)
     private Hotel hotel;
@@ -61,6 +60,17 @@ public class Booking {
     @Column(name = "guest_count", nullable = false)
     private Integer guestCount;
 
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    // 취소된 예약은 매출에서 제외하기 위해 필요
+    @Column(name = "cancelled_at")
+    private LocalDateTime cancelledAt;
+
+    @Column(name = "point")
+    private Integer point;
+
+    // 체크인/아웃 날짜 (연도 필터링에 사용)
     @Column(name = "check_in_date", nullable = false)
     private LocalDate checkInDate;
 
@@ -72,14 +82,4 @@ public class Booking {
 
     @Column(name = "check_out_time", nullable = false)
     private LocalTime checkOutTime;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    // 취소된 예약은 매출에서 제외
-    @Column(name = "cancelled_at")
-    private LocalDateTime cancelledAt;
-
-    @Column(name = "point")
-    private Integer point;
 }

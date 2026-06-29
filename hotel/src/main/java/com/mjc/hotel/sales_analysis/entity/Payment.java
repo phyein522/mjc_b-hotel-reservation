@@ -2,7 +2,6 @@ package com.mjc.hotel.sales_analysis.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -24,11 +23,11 @@ public class Payment {
     @Column(name = "payment_method", nullable = false, length = 30)
     private String paymentMethod;
 
-    // PAID 상태만 매출로 집계
-    @Column(name = "payment_status", nullable = false, length = 30)
+    // PAID 상태만 매출로 집계 (READY/FAILED/CANCELLED/REFUNDED 제외)
+    @Column(name = "payment_status", nullable = false)
     private String paymentStatus;
 
-    // 실제 결제 금액 (매출 집계에 사용)
+    // 실제 결제 금액 (매출 합산에 사용)
     @Column(name = "amount", nullable = false, precision = 12, scale = 2)
     private BigDecimal amount;
 
