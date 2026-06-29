@@ -40,6 +40,12 @@ public class SalesDashboardResponse {
     @Schema(description = "객실 유형별 보유 개수 및 이번달 매출액 리스트")
     private List<RoomTypeRevenueDto> roomTypeRevenue;
 
+    @Schema(description = "채널별 예약 및 매출 비중 리스트")
+    private List<ChannelShareDto> channelShares;
+
+    @Schema(description = "매출액 기준 상위 5개 예약 및 투숙객 정보 리스트")
+    private List<TopBookingDto> topBookings;
+
     @Schema(description = "대시보드 핵심 KPIs 상세 지표")
     @Data
     @Builder

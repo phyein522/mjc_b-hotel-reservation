@@ -102,4 +102,49 @@
         GROUP BY r.room_type_id, rt.name
     </select>
 
+    <!-- 7. 채널별 예약 및 매출 비중 조회 -->
+    <select id="getChannelShares" resultType="com.mjc.hotel.sales_analysis.dto.ChannelShareDto">
+        SELECT 
+            b.channel_id as channelId,
+            COALESCE(c.채널명, '기타') as channelName,
+            COUNT(b.booking_id) as bookingCount,
+            ROUND(
+                (COUNT(b.booking_id) * 100.0) / 
+                NULLIF(SUM(COUNT(b.booking_id)) OVER(), 0), 
+                2
+            ) as bookingShareRate,
+            SUM(p.amount) as revenue,
+            ROUND(
+                (SUM(p.amount) * 100.0) / 
+                NULLIF(SUM(SUM(p.amount)) OVER(), 0), 
+                2
+            ) as revenueShareRate
+        FROM bookings b
+        JOIN payments p ON b.booking_id = p.booking_id
+        LEFT JOIN channels c ON b.channel_id = c.채널ID
+        WHERE b.hotel_id = #{hotelId}
+          AND p.payment_status = 'PAID'
+          AND p.paid_at BETWEEN #{startDate} AND #{endDate}
+        GROUP BY b.channel_id, c.채널명
+        ORDER BY revenue DESC
+    </select>
+
+    <!-- 8. 매출 상위 1~5위 예약 조회 -->
+    <select id="getTopBookings" resultType="com.mjc.hotel.sales_analysis.dto.TopBookingDto">
+        SELECT 
+            ROW_NUMBER() OVER(ORDER BY p.amount DESC, b.nights DESC) as `rank`,
+            CONCAT(b.guest_last_name, b.guest_first_name) as guestName,
+            CONCAT(r.room_number, '호 (', r.name, ')') as roomName,
+            p.amount as amount,
+            b.nights as nights
+        FROM bookings b
+        JOIN payments p ON b.booking_id = p.booking_id
+        JOIN rooms r ON b.room_id = r.room_id
+        WHERE b.hotel_id = #{hotelId}
+          AND p.payment_status = 'PAID'
+          AND p.paid_at BETWEEN #{startDate} AND #{endDate}
+        ORDER BY p.amount DESC, b.nights DESC
+        LIMIT 5
+    </select>
+
 </mapper>

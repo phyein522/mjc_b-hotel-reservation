@@ -4,6 +4,8 @@ import com.mjc.hotel.sales_analysis.dto.MonthlyRevenueDto;
 import com.mjc.hotel.sales_analysis.dto.RoomTypeRevenueDto;
 import com.mjc.hotel.sales_analysis.dto.SalesDashboardQueryDto;
 import com.mjc.hotel.sales_analysis.dto.SalesDashboardResponse;
+import com.mjc.hotel.sales_analysis.dto.ChannelShareDto;
+import com.mjc.hotel.sales_analysis.dto.TopBookingDto;
 import com.mjc.hotel.sales_analysis.entity.Hotel;
 import com.mjc.hotel.sales_analysis.repository.HotelRepository;
 import com.mjc.hotel.sales_analysis.mapper.SalesAnalysisMapper;
@@ -89,6 +91,12 @@ public class SalesAnalysisService {
         // 객실 유형별 매출 현황
         List<RoomTypeRevenueDto> roomTypeRevenue = salesAnalysisMapper.getRoomTypeRevenue(hotelId, startDate, endDate);
 
+        // 채널별 예약 및 매출 비중 조회 (추가)
+        List<ChannelShareDto> channelShares = salesAnalysisMapper.getChannelShares(hotelId, startDate, endDate);
+
+        // 매출액 기준 상위 5위 예약 목록 조회 (추가)
+        List<TopBookingDto> topBookings = salesAnalysisMapper.getTopBookings(hotelId, startDate, endDate);
+
         // 4. 지표 및 전월비 연산
         // 4.1. 매출 지표
         double currentRev = currentMetrics.getTotalRevenue().doubleValue();
@@ -156,6 +164,8 @@ public class SalesAnalysisService {
                 .metrics(metrics)
                 .monthlyTrend(monthlyTrend)
                 .roomTypeRevenue(roomTypeRevenue)
+                .channelShares(channelShares)
+                .topBookings(topBookings)
                 .build();
     }
 

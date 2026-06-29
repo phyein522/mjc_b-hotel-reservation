@@ -3,6 +3,8 @@ package com.mjc.hotel.sales_analysis.mapper;
 import com.mjc.hotel.sales_analysis.dto.MonthlyRevenueDto;
 import com.mjc.hotel.sales_analysis.dto.RoomTypeRevenueDto;
 import com.mjc.hotel.sales_analysis.dto.SalesDashboardQueryDto;
+import com.mjc.hotel.sales_analysis.dto.ChannelShareDto;
+import com.mjc.hotel.sales_analysis.dto.TopBookingDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -41,6 +43,18 @@ public interface SalesAnalysisMapper {
     );
 
     List<RoomTypeRevenueDto> getRoomTypeRevenue(
+            @Param("hotelId") Long hotelId, 
+            @Param("startDate") LocalDate startDate, 
+            @Param("endDate") LocalDate endDate
+    );
+
+    List<ChannelShareDto> getChannelShares(
+            @Param("hotelId") Long hotelId, 
+            @Param("startDate") LocalDate startDate, 
+            @Param("endDate") LocalDate endDate
+    );
+
+    List<TopBookingDto> getTopBookings(
             @Param("hotelId") Long hotelId, 
             @Param("startDate") LocalDate startDate, 
             @Param("endDate") LocalDate endDate

@@ -2,6 +2,8 @@ package com.mjc.hotel.sales_analysis;
 
 import com.mjc.hotel.sales_analysis.dto.SalesDashboardResponse;
 import com.mjc.hotel.sales_analysis.dto.RoomTypeRevenueDto;
+import com.mjc.hotel.sales_analysis.dto.ChannelShareDto;
+import com.mjc.hotel.sales_analysis.dto.TopBookingDto;
 import com.mjc.hotel.sales_analysis.entity.Booking;
 import com.mjc.hotel.sales_analysis.entity.Hotel;
 import com.mjc.hotel.sales_analysis.entity.Payment;
@@ -25,6 +27,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -65,6 +68,14 @@ public class SalesAnalysisServiceTest {
     public void setUp() {
         // 기존 데이터와 충돌을 원천 차단하기 위해 9999 범위의 유니크 ID 적용
         
+        // 0. 채널 테이블 초기 적재
+        em.createNativeQuery("INSERT INTO channels (채널ID, 채널명, 채널유형, 수수료율, 활성여부) VALUES (1, '야놀자', 'OTA', 10.0, true) " +
+                "ON DUPLICATE KEY UPDATE 채널명='야놀자'").executeUpdate();
+        em.createNativeQuery("INSERT INTO channels (채널ID, 채널명, 채널유형, 수수료율, 활성여부) VALUES (2, '아고다', 'OTA', 12.0, true) " +
+                "ON DUPLICATE KEY UPDATE 채널명='아고다'").executeUpdate();
+        em.createNativeQuery("INSERT INTO channels (채널ID, 채널명, 채널유형, 수수료율, 활성여부) VALUES (3, '직접예약', 'DIRECT', 0.0, true) " +
+                "ON DUPLICATE KEY UPDATE 채널명='직접예약'").executeUpdate();
+
         // 1. 테스트 호텔 등록
         testHotel = Hotel.builder()
                 .id(9999L)
@@ -153,39 +164,39 @@ public class SalesAnalysisServiceTest {
 
         // 4. 예약 및 결제 설정 (2026-06 기준 테스트용)
         
-        // 4.1. 5월 예약 1 (김철수 투숙 -> 6월 재방문 여부 체크용)
+        // 4.1. 5월 예약 1 (김철수 투숙 -> 6월 재방문 여부 체크용 - 야놀자 1L)
         createBookingAndPayment(
                 999901L, normalUser1, testHotel, standardRoom, "BT260501", 1, 
                 LocalDate.of(2026, 5, 10), LocalDate.of(2026, 5, 11),
-                new BigDecimal("100000.00"), LocalDateTime.of(2026, 5, 10, 14, 0)
+                new BigDecimal("100000.00"), LocalDateTime.of(2026, 5, 10, 14, 0), 1L
         );
 
-        // 4.2. 5월 예약 2 (박대표 VIP 투숙 -> 6월 VIP 재방문 여부 체크용)
+        // 4.2. 5월 예약 2 (박대표 VIP 투숙 -> 6월 VIP 재방문 여부 체크용 - 아고다 2L)
         createBookingAndPayment(
                 999902L, vipUser, testHotel, suiteRoom, "BT260502", 2, 
                 LocalDate.of(2026, 5, 20), LocalDate.of(2026, 5, 22),
-                new BigDecimal("600000.00"), LocalDateTime.of(2026, 5, 20, 12, 0)
+                new BigDecimal("600000.00"), LocalDateTime.of(2026, 5, 20, 12, 0), 2L
         );
 
-        // 4.3. 6월 예약 1 (김철수: 일반 재방문 유저 - 디럭스 150,000원 결제)
+        // 4.3. 6월 예약 1 (김철수: 일반 재방문 유저 - 디럭스 150,000원 결제 - 야놀자 1L)
         createBookingAndPayment(
                 999903L, normalUser1, testHotel, deluxeRoom, "BT260601", 1, 
                 LocalDate.of(2026, 6, 5), LocalDate.of(2026, 6, 6),
-                new BigDecimal("150000.00"), LocalDateTime.of(2026, 6, 5, 15, 0)
+                new BigDecimal("150000.00"), LocalDateTime.of(2026, 6, 5, 15, 0), 1L
         );
 
-        // 4.4. 6월 예약 2 (박대표: VIP 재방문 유저 - 스위트 900,000원 결제 - **오늘 29일 투숙 포함**)
+        // 4.4. 6월 예약 2 (박대표: VIP 재방문 유저 - 스위트 900,000원 결제 - 아고다 2L)
         createBookingAndPayment(
                 999904L, vipUser, testHotel, suiteRoom, "BT260602", 3, 
                 LocalDate.of(2026, 6, 28), LocalDate.of(2026, 7, 1),
-                new BigDecimal("900000.00"), LocalDateTime.of(2026, 6, 28, 10, 0)
+                new BigDecimal("900000.00"), LocalDateTime.of(2026, 6, 28, 10, 0), 2L
         );
 
-        // 4.5. 6월 예약 3 (이영희: 일반 신규 예약 - 스탠다드 100,000원 결제 - **오늘 29일 투숙 포함**)
+        // 4.5. 6월 예약 3 (이영희: 일반 신규 예약 - 스탠다드 100,000원 결제 - 직접예약 3L)
         createBookingAndPayment(
                 999905L, normalUser2, testHotel, standardRoom, "BT260603", 1, 
                 LocalDate.of(2026, 6, 29), LocalDate.of(2026, 6, 30),
-                new BigDecimal("100000.00"), LocalDateTime.of(2026, 6, 29, 11, 30)
+                new BigDecimal("100000.00"), LocalDateTime.of(2026, 6, 29, 11, 30), 3L
         );
 
         // JPA 컨텍스트 데이터를 DB에 즉시 플러시하여 MyBatis 쿼리가 조회할 수 있도록 조치
@@ -195,14 +206,14 @@ public class SalesAnalysisServiceTest {
 
     private void createBookingAndPayment(
             Long id, User user, Hotel hotel, Room room, String bookingNo, int nights,
-            LocalDate checkIn, LocalDate checkOut, BigDecimal amount, LocalDateTime paidAt
+            LocalDate checkIn, LocalDate checkOut, BigDecimal amount, LocalDateTime paidAt, Long channelId
     ) {
         Booking booking = Booking.builder()
                 .id(id)
                 .user(user)
                 .hotel(hotel)
                 .room(room)
-                .channelId(1L)
+                .channelId(channelId)
                 .bookingNo(bookingNo)
                 .guestLastName(user.getName().substring(0, 1))
                 .guestFirstName(user.getName().substring(1))
@@ -275,5 +286,33 @@ public class SalesAnalysisServiceTest {
                 .map(RoomTypeRevenueDto::getRevenue)
                 .map(BigDecimal::doubleValue)
                 .orElse(0.0)).isEqualTo(900000.00);
+
+        // 7. 채널별 예약 및 매출 비중 검증 (last.txt 요구사항)
+        List<ChannelShareDto> channelShares = response.getChannelShares();
+        assertThat(channelShares).isNotNull();
+        assertThat(channelShares).hasSize(3);
+
+        // 7.1. 아고다(2L) 비중 체크 (매출: 900,000 / 1,150,000 = 78.26%)
+        ChannelShareDto agodaShare = channelShares.stream()
+                .filter(cs -> cs.getChannelId().equals(2L))
+                .findFirst().orElseThrow();
+        assertThat(agodaShare.getChannelName()).isEqualTo("아고다");
+        assertThat(agodaShare.getBookingCount()).isEqualTo(1L);
+        assertThat(agodaShare.getBookingShareRate()).isEqualTo(33.33); // 1/3
+        assertThat(agodaShare.getRevenue().doubleValue()).isEqualTo(900000.00);
+        assertThat(agodaShare.getRevenueShareRate()).isEqualTo(78.26);
+
+        // 8. 매출 상위 1~5위 예약 목록 검증 (last.txt 요구사항)
+        List<TopBookingDto> topBookings = response.getTopBookings();
+        assertThat(topBookings).isNotNull();
+        assertThat(topBookings).hasSize(3); // 6월 결제 완료 건은 총 3건이므로
+
+        // 8.1. 1위 예약 검증 (박대표, 스위트 룸, 900,000원, 3박)
+        TopBookingDto firstPlace = topBookings.get(0);
+        assertThat(firstPlace.getRank()).isEqualTo(1);
+        assertThat(firstPlace.getGuestName()).isEqualTo("박대표");
+        assertThat(firstPlace.getRoomName()).contains("T103"); // T103호 (스위트 룸)
+        assertThat(firstPlace.getAmount().doubleValue()).isEqualTo(900000.00);
+        assertThat(firstPlace.getNights()).isEqualTo(3);
     }
 }
