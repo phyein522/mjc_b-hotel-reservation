@@ -5,6 +5,7 @@ import com.mjc.hotel.util.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -38,7 +40,7 @@ public class SecurityConfig {
                         auth -> auth
                                  .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**")
                                 .permitAll()
-                                .requestMatchers("/api/sales/**", "/api/occupancy/**" )
+                                .requestMatchers("/api/occupancy/**" )
                                 .permitAll()
                                 .anyRequest().authenticated()
                 );
