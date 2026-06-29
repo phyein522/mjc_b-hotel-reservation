@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Sales Analysis", description = "호텔 매출 분석 및 점유율 대시보드 API")
 @RestController
 @RequestMapping("/api/sales")
-@PreAuthorize("hasAnyRole('HOTEL_MANAGER', 'ADMIN')")
 @RequiredArgsConstructor
 public class SalesAnalysisController {
 
