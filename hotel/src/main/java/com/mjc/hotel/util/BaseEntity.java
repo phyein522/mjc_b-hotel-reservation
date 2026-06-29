@@ -21,7 +21,5 @@ public abstract class BaseEntity {
     @LastModifiedDate
     private LocalDateTime modifiedAt;
 
-    public Role getRole() {
-        return null;
-    }
+
 }

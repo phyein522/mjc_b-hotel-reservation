@@ -28,17 +28,11 @@ public class User extends BaseEntity {
     private String phone;
     private Enum Role;
     private Enum Status;
-    private Timestamp created_at;
-    private Timestamp updated_at;
+    //private Timestamp created_at;
+    //private Timestamp updated_at;
     private String socialLogin;
     private String socialLoginId;
     private Enum membership;
 
-    public LocalDateTime getUpdatedAt() {
-        return null;
-    }
 
-    public Long getUserId() {
-        return 0L;
-    }
 }

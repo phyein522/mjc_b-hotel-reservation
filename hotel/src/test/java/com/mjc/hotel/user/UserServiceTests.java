@@ -36,8 +36,8 @@ public class UserServiceTests {
                     .Status(Role.valueOf("Active"))
                     .socialLoginId("kakao")
                     .socialLogin("")
-                    .created_at(Timestamp.valueOf(LocalDateTime.now()))
-                    .updated_at(Timestamp.valueOf(LocalDateTime.now()))
+                    //.created_at(Timestamp.valueOf(LocalDateTime.now()))
+                    //.updated_at(Timestamp.valueOf(LocalDateTime.now()))
                     .membership(Role.valueOf("gold"))
                     .build();
 
