@@ -1,5 +1,6 @@
 package com.mjc.hotel.util;
 
+import com.mjc.hotel.user.entity.Role;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
@@ -20,4 +21,7 @@ public abstract class BaseEntity {
     @LastModifiedDate
     private LocalDateTime modifiedAt;
 
+    public Role getRole() {
+        return null;
+    }
 }
