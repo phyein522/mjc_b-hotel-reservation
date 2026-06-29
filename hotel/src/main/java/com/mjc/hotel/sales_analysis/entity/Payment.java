@@ -1,33 +1,38 @@
 package com.mjc.hotel.sales_analysis.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Getter
 @Entity
 @Table(name = "payments")
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Builder
 public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "payment_id")
-    private Long paymentId;
+    private Long id;
 
-    // 어떤 예약의 결제인지 연결
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
 
     @Column(name = "payment_method", nullable = false, length = 30)
     private String paymentMethod;
 
-    // PAID 상태만 매출로 집계 (READY/FAILED/CANCELLED/REFUNDED 제외)
+    @Enumerated(EnumType.STRING)
     @Column(name = "payment_status", nullable = false)
-    private String paymentStatus;
+    private PaymentStatus paymentStatus;
 
-    // 실제 결제 금액 (매출 합산에 사용)
     @Column(name = "amount", nullable = false, precision = 12, scale = 2)
     private BigDecimal amount;
 

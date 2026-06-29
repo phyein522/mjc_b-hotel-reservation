@@ -1,34 +1,45 @@
 package com.mjc.hotel.sales_analysis.entity;
 
+import com.mjc.hotel.user.entity.User;
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-@Getter
 @Entity
 @Table(name = "bookings")
+@EntityListeners(AuditingEntityListener.class)
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Builder
+@ToString(exclude = "payment")
 public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "booking_id")
-    private Long bookingId;
+    private Long id;
 
-    // 어느 호텔의 예약인지 연결 (매출 필터링에 사용)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hotel_id", nullable = false)
     private Hotel hotel;
 
-    @Column(name = "user_id")
-    private Long userId;
-
-    @Column(name = "room_id", nullable = false)
-    private Long roomId;
-
-    @Column(name = "room_type_id", nullable = false)
-    private Long roomTypeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id", nullable = false)
+    private Room room;
 
     @Column(name = "channel_id", nullable = false)
     private Long channelId;
@@ -60,17 +71,16 @@ public class Booking {
     @Column(name = "guest_count", nullable = false)
     private Integer guestCount;
 
-    @Column(name = "created_at", nullable = false)
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    // 취소된 예약은 매출에서 제외하기 위해 필요
     @Column(name = "cancelled_at")
     private LocalDateTime cancelledAt;
 
     @Column(name = "point")
     private Integer point;
 
-    // 체크인/아웃 날짜 (연도 필터링에 사용)
     @Column(name = "check_in_date", nullable = false)
     private LocalDate checkInDate;
 
@@ -82,4 +92,7 @@ public class Booking {
 
     @Column(name = "check_out_time", nullable = false)
     private LocalTime checkOutTime;
+
+    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Payment payment;
 }
