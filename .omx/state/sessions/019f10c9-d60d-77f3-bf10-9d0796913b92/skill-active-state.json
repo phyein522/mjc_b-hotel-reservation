@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "active": true,
+  "skill": "deep-interview",
+  "keyword": "$deep-interview",
+  "phase": "planning",
+  "activated_at": "2026-06-29T00:31:50.949Z",
+  "updated_at": "2026-06-29T00:31:50.949Z",
+  "source": "keyword-detector",
+  "session_id": "019f10c9-d60d-77f3-bf10-9d0796913b92",
+  "thread_id": "",
+  "turn_id": "019f10c9-ecac-7fc0-9201-99abcabfdcd9",
+  "active_skills": [
+    {
+      "skill": "deep-interview",
+      "phase": "planning",
+      "active": true,
+      "activated_at": "2026-06-29T00:31:50.949Z",
+      "updated_at": "2026-06-29T00:31:50.949Z",
+      "session_id": "019f10c9-d60d-77f3-bf10-9d0796913b92",
+      "thread_id": "",
+      "turn_id": "019f10c9-ecac-7fc0-9201-99abcabfdcd9"
+    }
+  ],
+  "input_lock": {
+    "active": true,
+    "scope": "deep-interview-auto-approval",
+    "acquired_at": "2026-06-29T00:31:50.949Z",
+    "blocked_inputs": [
+      "yes",
+      "y",
+      "proceed",
+      "continue",
+      "ok",
+      "sure",
+      "go ahead",
+      "next i should"
+    ],
+    "message": "Deep interview is active; auto-approval shortcuts are blocked until the interview finishes."
+  },
+  "initialized_mode": "deep-interview",
+  "initialized_state_path": ".omx/state/sessions/019f10c9-d60d-77f3-bf10-9d0796913b92/deep-interview-state.json"
+}
