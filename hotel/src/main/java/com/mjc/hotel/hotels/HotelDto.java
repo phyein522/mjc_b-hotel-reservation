@@ -13,18 +13,18 @@ import java.time.LocalTime;
 @ToString
 public class HotelDto {
     private Long hotelId;
-    private String hotelName;
-    private String hotelDescription;
-    private String hotelAddress;
-    private String hotelCity;
-    private String hotelZipCode;
-    private String hotelPhone;
-    private String hotelEmail;
-    private LocalTime hotelCheckInTime;
-    private LocalTime hotelCheckOutTime;
-    private Short hotelStarRating;
-    private Boolean hotelIsActive;
+    private String name;
+    private String description;
+    private String address;
+    private String city;
+    private String zipCode;
+    private String phone;
+    private String email;
+    private LocalTime checkIn;
+    private LocalTime checkOut;
+    private Short starRate;
+    private Boolean isActive;
     private String latitude;
-    private String hardness;
-    private String hotelType;
+    private String longitude;
+    private HotelTypeEnum type;
 }

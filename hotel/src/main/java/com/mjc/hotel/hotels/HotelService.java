@@ -33,8 +33,8 @@ public class HotelService {
     public HotelDto insert(HotelDto insertDto) {
         LocalDateTime now = LocalDateTime.now();
 
-        if (insertDto.getHotelIsActive() == null) {
-            insertDto.setHotelIsActive(true);
+        if (insertDto.getIsActive() == null) {
+            insertDto.setIsActive(true);
         }
 
         HotelEntity savedHotel = hotelRepository.save(hotelMapper.toEntity(insertDto));
@@ -49,20 +49,20 @@ public class HotelService {
         HotelEntity hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(() -> new IllegalArgumentException("호텔을 찾을 수 없습니다."));
 
-        hotel.setHotelName(hotelDto.getHotelName());
-        hotel.setHotelDescription(hotelDto.getHotelDescription());
-        hotel.setHotelAddress(hotelDto.getHotelAddress());
-        hotel.setHotelCity(hotelDto.getHotelCity());
-        hotel.setHotelZipCode(hotelDto.getHotelZipCode());
-        hotel.setHotelPhone(hotelDto.getHotelPhone());
-        hotel.setHotelEmail(hotelDto.getHotelEmail());
-        hotel.setHotelCheckInTime(hotelDto.getHotelCheckInTime());
-        hotel.setHotelCheckOutTime(hotelDto.getHotelCheckOutTime());
-        hotel.setHotelStarRating(hotelDto.getHotelStarRating());
-        hotel.setHotelIsActive(hotelDto.getHotelIsActive());
+        hotel.setName(hotelDto.getName());
+        hotel.setDescription(hotelDto.getDescription());
+        hotel.setAddress(hotelDto.getAddress());
+        hotel.setCity(hotelDto.getCity());
+        hotel.setZipCode(hotelDto.getZipCode());
+        hotel.setPhone(hotelDto.getPhone());
+        hotel.setEmail(hotelDto.getEmail());
+        hotel.setCheckIn(hotelDto.getCheckIn());
+        hotel.setCheckOut(hotelDto.getCheckOut());
+        hotel.setStarRate(hotelDto.getStarRate());
+        hotel.setIsActive(hotelDto.getIsActive());
         hotel.setLatitude(hotelDto.getLatitude());
-        hotel.setHardness(hotelDto.getHardness());
-        hotel.setHotelType(hotelDto.getHotelType());
+        hotel.setLongitude(hotelDto.getLongitude());
+        hotel.setType(hotelDto.getType());
 
         return hotelMapper.toDto(hotel);
     }

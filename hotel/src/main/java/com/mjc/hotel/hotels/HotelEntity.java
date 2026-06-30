@@ -3,7 +3,6 @@ package com.mjc.hotel.hotels;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -19,45 +18,46 @@ public class HotelEntity {
     @Column(name = "hotelid")
     private Long hotelId;
 
-    @Column(name = "hotel_name", nullable = false, length = 200)
-    private String hotelName;
+    @Column(nullable = false, length = 200)
+    private String name;
 
-    @Column(name = "hotel_description", columnDefinition = "TEXT")
-    private String hotelDescription;
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
-    @Column(name = "hotel_address", nullable = false, length = 500)
-    private String hotelAddress;
+    @Column(nullable = false, length = 500)
+    private String address;
 
-    @Column(name = "hotel_city", nullable = false, length = 100)
-    private String hotelCity;
+    @Column(nullable = false, length = 100)
+    private String city;
 
-    @Column(name = "hotel_zip_code", nullable = false, length = 30)
-    private String hotelZipCode;
+    @Column(nullable = false, length = 30)
+    private String zipCode;
 
-    @Column(name = "hotel_phone", nullable = false, length = 30)
-    private String hotelPhone;
+    @Column(nullable = false, length = 30)
+    private String phone;
 
-    @Column(name = "hotel_email", nullable = false, length = 255)
-    private String hotelEmail;
+    @Column(nullable = false, length = 255)
+    private String email;
 
-    @Column(name = "hotel_checkintime", nullable = false)
-    private LocalTime hotelCheckInTime;
+    @Column(nullable = false)
+    private LocalTime checkIn;
 
-    @Column(name = "hotel_checkouttime", nullable = false)
-    private LocalTime hotelCheckOutTime;
+    @Column(nullable = false)
+    private LocalTime checkOut;
 
-    @Column(name = "hotel_starrating")
-    private Short hotelStarRating;
+    @Column
+    private Short starRate;
 
-    @Column(name = "hotel_isactive", nullable = false)
-    private Boolean hotelIsActive;
+    @Column(nullable = false)
+    private Boolean isActive;
 
     @Column(nullable = false)
     private String latitude;
 
     @Column(nullable = false)
-    private String hardness;
+    private String longitude;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String hotelType;
+    private HotelTypeEnum type;
 }
