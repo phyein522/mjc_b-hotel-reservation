@@ -59,10 +59,10 @@ CREATE TABLE `trip_type_` (
 
 CREATE TABLE `room_images` (
 	`room_image_id`	BIGINT	NOT NULL,
-	`이미지 주소`	TEXT	NOT NULL,
-	`정렬 순서`	INT	NOT NULL	DEFAULT 0,
-	`미리보기 이미지`	BOOLEAN	NOT NULL	DEFAULT FALSE,
-	`생성 시간`	TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP
+	`image_url`	TEXT	NOT NULL,
+	`sort_order`	INT	NOT NULL	DEFAULT 0,
+	`is_thumbnail`	BOOLEAN	NOT NULL	DEFAULT FALSE,
+	`room_id`	BIGINT	NOT NULL
 );
 
 CREATE TABLE `membership_grade_histories` (
@@ -122,6 +122,18 @@ CREATE TABLE `membership_grades` (
 	`updated_at`	TIMESTAMPTZ	NOT NULL	DEFAULT now()
 );
 
+CREATE TABLE `hotel_info` (
+	`id`	VARCHAR(255)	NOT NULL,
+	`hotel_id`	BIGSERIAL	NOT NULL,
+	`wifi`	BOOLEAN	NULL,
+	`swimpool`	BOOLEAN	NULL,
+	`health`	BOOLEAN	NULL,
+	`spa`	BOOLEAN	NULL,
+	`restaurant`	BOOLEAN	NULL,
+	`balletparking`	BOOLEAN	NULL,
+	`bar`	BOOLEAN	NULL
+);
+
 CREATE TABLE `refunds` (
 	`refund_id`	BIGINT	NOT NULL,
 	`payment_id`	BIGINT	NOT NULL,
@@ -142,11 +154,11 @@ CREATE TABLE `room_blocks` (
 );
 
 CREATE TABLE `transportaion` (
-	`교통 id`	BIGINT	NOT NULL,
-	`호텔아이디`	BIGINT	NOT NULL,
-	`교통수단`	VARCHAR(200)	NULL,
-	`시간`	INT	NULL,
-	`출발지`	VARCHAR(100)	NULL
+	`trans_id`	BIGINT	NOT NULL,
+	`hotel_id`	BIGINT	NOT NULL,
+	`transname`	VARCHAR(200)	NULL,
+	`transtime`	INT	NULL,
+	`transdepart`	VARCHAR(100)	NULL
 );
 
 CREATE TABLE `point_reservation_earnings` (
@@ -180,14 +192,15 @@ CREATE TABLE `season_rates` (
 	`기준요금`	NUMERIC(12, 2)	NOT NULL	COMMENT '기준요금 (평일 기준)',
 	`주말요금`	NUMERIC(12, 2)	NOT NULL	COMMENT '주말요금 (금/토/일 기준)',
 	`상태`	VARCHAR(20)	NOT NULL	COMMENT '상태 - UPCOMING(예정)/ONGOING(진행중)/ENDED(종료)',
-	`등록일시`	TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP	COMMENT '등록일시'
+	`등록일시`	TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP	COMMENT '등록일시',
+	`policy_id`	BIGINT	NOT NULL	COMMENT '정책ID - PK'
 );
 
 CREATE TABLE `rooms` (
 	`room_id`	BIGINT	NOT NULL,
 	`room_number`	VARCHAR(50)	NOT NULL,
 	`floor`	INT	NULL,
-	`status`	VARCHAR(20)	NOT NULL	DEFAULT 'AVAILABLE',
+	`status`	INT	NOT NULL	COMMENT '예약가능/예약불가',
 	`created_at`	TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	`updated_at`	TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	`name`	VARCHAR(100)	NULL,
@@ -197,9 +210,9 @@ CREATE TABLE `rooms` (
 	`max_children`	INT	NULL,
 	`is_active`	BOOLEAN	NULL,
 	`호텔아이디`	BIGSERIAL	NOT NULL,
-	`room_type_id`	VARCHAR(255)	NOT NULL,
-	`room_kind_id`	VARCHAR(255)	NOT NULL,
-	`room_image_id`	BIGSERIAL	NOT NULL
+	`bed_option`	INT	NULL	COMMENT '온돌/더블침대/퀸침대',
+	`view_option`	INT	NULL	COMMENT '한강뷰, 도심뷰 등',
+	`room_type`	INT	NULL	COMMENT '스위트, 디럭스, 스탠다드 등'
 );
 
 CREATE TABLE `qr_code_scan_logs` (
@@ -265,7 +278,9 @@ CREATE TABLE `rate_policies` (
 	`취소 기한(일)`	INT	NOT NULL	DEFAULT 3	COMMENT '취소 가능 기한 (체크인 기준 N일 전)',
 	`취소 수수료율`	NUMERIC(5, 2)	NOT NULL	DEFAULT 0.00	COMMENT '취소 수수료율 (%) - 기한 초과시 적용',
 	`무료 아동 나이`	INT	NOT NULL	DEFAULT 12	COMMENT '무료 아동 나이 기준 (N세 이하 무료)',
-	`created_at`	TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP	COMMENT '등록일시'
+	`created_at`	TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP	COMMENT '등록일시',
+	`room_id`	BIGINT	NOT NULL,
+	`Field`	VARCHAR(255)	NULL
 );
 
 CREATE TABLE `promotiontype` (
@@ -275,23 +290,17 @@ CREATE TABLE `promotiontype` (
 );
 
 CREATE TABLE `key_attraction` (
-	`매력사항 Id`	BIGINT	NOT NULL,
-	`호텔아이디`	BIGINT	NOT NULL,
-	`설명`	TEXT	NULL
-);
-
-CREATE TABLE `room_opt` (
-	`room_option_id`	BIGINT	NOT NULL,
-	`name`	VARCHAR(20)	NULL	COMMENT '온돌/더블침대/퀸침대/최대3인/도심전망/스파1회'
+	`attraction_id`	BIGINT	NOT NULL,
+	`hotel_id`	BIGINT	NOT NULL,
+	`attraction_con`	TEXT	NULL
 );
 
 CREATE TABLE `hotel_images` (
 	`hotel_image_id`	BIGINT	NOT NULL,
 	`hotel_id`	BIGINT	NOT NULL,
-	`이미지주소`	TEXT	NOT NULL,
-	`정렬 순서`	INT	NOT NULL	DEFAULT 0,
-	`미리보기 이미지`	BOOLEAN	NOT NULL	DEFAULT FALSE,
-	`생성 시간`	TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP
+	`image_url`	TEXT	NOT NULL,
+	`sort_order`	INT	NOT NULL	DEFAULT 0,
+	`is_thumbnail`	BOOLEAN	NOT NULL	DEFAULT FALSE
 );
 
 CREATE TABLE `rating_categories` (
@@ -299,42 +308,29 @@ CREATE TABLE `rating_categories` (
 	`평점이름`	VARCHAR(100)	NULL
 );
 
-CREATE TABLE `room_options` (
-	`amenity_id`	BIGINT	NOT NULL,
-	`room_id`	BIGINT	NOT NULL,
-	`room_option_id`	BIGINT	NOT NULL
-);
-
 CREATE TABLE `hotels` (
-	`호텔아이디`	BIGSERIAL	NOT NULL,
-	`이름`	VARCHAR(200)	NOT NULL,
-	`설명`	TEXT	NULL,
-	`주소`	VARCHAR(500)	NOT NULL,
-	`도시`	VARCHAR(100)	NOT NULL,
-	`우편번호`	VARCHAR(30)	NULL,
-	`전화번호`	VARCHAR(30)	NULL,
-	`이메일`	VARCHAR(255)	NULL,
-	`체크인 시간`	TIME	NOT NULL	DEFAULT '15:00',
-	`체크아웃 시간`	TIME	NOT NULL	DEFAULT '11:00',
-	`별_등급`	SMALLINT	NULL,
-	`운영여부`	BOOLEAN	NOT NULL	DEFAULT TRUE,
-	`생성 시간`	TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
-	`업데이트 시간`	TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
-	`위도`	VARCHAR(30)	NULL,
-	`경도`	VARCHAR(30)	NULL,
-	`호텔 유형`	VARCHAR(20)	NULL
-);
-
-CREATE TABLE `room_kind` (
-	`room_kind_id`	BIGINT	NOT NULL,
-	`name`	VARCHAR(20)	NULL	COMMENT '강남뷰/무료취소/조식포함/파노라마뷰/전용라운지/전용라운지/조식+석식'
+	`hotel_id`	BIGSERIAL	NOT NULL,
+	`name`	VARCHAR(200)	NOT NULL,
+	`description`	TEXT	NULL,
+	`address`	VARCHAR(500)	NOT NULL,
+	`city`	VARCHAR(100)	NOT NULL,
+	`zipCode`	VARCHAR(30)	NULL,
+	`phone`	VARCHAR(30)	NULL,
+	`email`	VARCHAR(255)	NULL,
+	`checkIn`	TIME	NOT NULL	DEFAULT '15:00',
+	`checkOut`	TIME	NOT NULL	DEFAULT '11:00',
+	`starRate`	SMALLINT	NULL,
+	`isActive`	BOOLEAN	NOT NULL	DEFAULT TRUE,
+	`latitude`	VARCHAR(30)	NULL,
+	`hardness`	VARCHAR(30)	NULL,
+	`type`	INT	NULL
 );
 
 CREATE TABLE `promotion` (
 	`promotion_id`	BIGINT	NOT NULL,
 	`room_id`	BIGINT	NOT NULL,
-	`promotion_name`	VARCHAR(100)	NOT NULL	COMMENT '프로모션명',
-	`promotion_desc`	TEXT	NULL	COMMENT '프로모션 설명',
+	`name`	VARCHAR(100)	NOT NULL	COMMENT '프로모션명',
+	`desc`	TEXT	NULL	COMMENT '프로모션 설명',
 	`discount_type`	ENUM('RATE', 'AMOUNT')	NOT NULL	COMMENT '할인 유형(RATE: %, AMOUNT: 금액)',
 	`discount_value`	DECIMAL(10, 2)	NOT NULL	COMMENT '할인값',
 	`start_date`	DATETIME	NOT NULL	COMMENT '시작일',
@@ -414,12 +410,7 @@ CREATE TABLE `users` (
 	`updated_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	`social_login`	VARCHAR(10)	NULL,
 	`social_login_id`	VARCHAR(30)	NULL,
-	`Membership`	VARCHAR(10)	NULL
-);
-
-CREATE TABLE `room_type` (
-	`room_type_id`	BIGINT	NOT NULL,
-	`name`	VARCHAR(20)	NULL	COMMENT '스탠다드/디럭스/스위트'
+	`Membership`	Enum('bronze','silver','gold','platinum')	NULL
 );
 
 CREATE TABLE `reviews_photo` (
@@ -481,6 +472,10 @@ ALTER TABLE `membership_grades` ADD CONSTRAINT `PK_MEMBERSHIP_GRADES` PRIMARY KE
 	`id`
 );
 
+ALTER TABLE `hotel_info` ADD CONSTRAINT `PK_HOTEL_INFO` PRIMARY KEY (
+	`id`
+);
+
 ALTER TABLE `refunds` ADD CONSTRAINT `PK_REFUNDS` PRIMARY KEY (
 	`refund_id`
 );
@@ -490,7 +485,7 @@ ALTER TABLE `room_blocks` ADD CONSTRAINT `PK_ROOM_BLOCKS` PRIMARY KEY (
 );
 
 ALTER TABLE `transportaion` ADD CONSTRAINT `PK_TRANSPORTAION` PRIMARY KEY (
-	`교통 id`
+	`trans_id`
 );
 
 ALTER TABLE `point_reservation_earnings` ADD CONSTRAINT `PK_POINT_RESERVATION_EARNINGS` PRIMARY KEY (
@@ -539,11 +534,7 @@ ALTER TABLE `promotiontype` ADD CONSTRAINT `PK_PROMOTIONTYPE` PRIMARY KEY (
 );
 
 ALTER TABLE `key_attraction` ADD CONSTRAINT `PK_KEY_ATTRACTION` PRIMARY KEY (
-	`매력사항 Id`
-);
-
-ALTER TABLE `room_opt` ADD CONSTRAINT `PK_ROOM_OPT` PRIMARY KEY (
-	`room_option_id`
+	`attraction_id`
 );
 
 ALTER TABLE `hotel_images` ADD CONSTRAINT `PK_HOTEL_IMAGES` PRIMARY KEY (
@@ -554,16 +545,8 @@ ALTER TABLE `rating_categories` ADD CONSTRAINT `PK_RATING_CATEGORIES` PRIMARY KE
 	`카테고리id`
 );
 
-ALTER TABLE `room_options` ADD CONSTRAINT `PK_ROOM_OPTIONS` PRIMARY KEY (
-	`amenity_id`
-);
-
 ALTER TABLE `hotels` ADD CONSTRAINT `PK_HOTELS` PRIMARY KEY (
-	`호텔아이디`
-);
-
-ALTER TABLE `room_kind` ADD CONSTRAINT `PK_ROOM_KIND` PRIMARY KEY (
-	`room_kind_id`
+	`hotel_id`
 );
 
 ALTER TABLE `promotion` ADD CONSTRAINT `PK_PROMOTION` PRIMARY KEY (
@@ -598,10 +581,6 @@ ALTER TABLE `users` ADD CONSTRAINT `PK_USERS` PRIMARY KEY (
 	`user_id`
 );
 
-ALTER TABLE `room_type` ADD CONSTRAINT `PK_ROOM_TYPE` PRIMARY KEY (
-	`room_type_id`
-);
-
 ALTER TABLE `reviews_photo` ADD CONSTRAINT `PK_REVIEWS_PHOTO` PRIMARY KEY (
 	`id`
 );
@@ -617,6 +596,6 @@ ALTER TABLE `wishlists` ADD CONSTRAINT `FK_hotels_TO_wishlists_1` FOREIGN KEY (
 	`hotel_id`
 )
 REFERENCES `hotels` (
-	`호텔아이디`
+	`hotel_id`
 );
 
