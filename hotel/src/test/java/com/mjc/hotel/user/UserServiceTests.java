@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
 
-import java.time.LocalDateTime;
-
 @SpringBootTest
 public class UserServiceTests {
 
@@ -29,10 +27,6 @@ public class UserServiceTests {
                     .password("1234")
                     .name("test" + i)
                     .phone("0102020303" + i)
-                    .grade("bronze")
-                    .status("")
-                    .created_at(LocalDateTime.now())
-                    .updated_at(LocalDateTime.now())
                     .build();
 
             userRepository.save(u);
