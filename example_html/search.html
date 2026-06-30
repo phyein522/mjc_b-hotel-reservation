@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>검색결과</title>
+	<link rel="stylesheet" href="bootstrap.css" />
+	<link rel="stylesheet" href="search_style.css" />
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-lg bg-light" data-bs-theme="light">
+		<div class="container-fluid">
+			<div class="d-flex align-items-center">
+				<div>
+					<img src="" alt="img" />
+				</div>
+				<div>
+					<a class="navbar-brand" href="#">StayNow</a>
+					<p class="text-muted"><small>최고의 호텔을 최저가로</small></p>
+				</div>
+			</div>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02"
+				aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarColor02">
+				<ul class="navbar-nav me-auto">
+					<li class="nav-item">
+						<a class="nav-link active" href="#">숙소</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">항공</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">패키지</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">액티비티</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">렌터카</a>
+					</li>
+				</ul>
+				<div class="d-flex justify-content-between">
+					<button type="button" class="btn btn-secondary">
+						<div class="d-flex justify-content-between">
+							<img src="" alt="img" />
+							<p>고객센터</p>
+						</div>
+					</button>
+					<button type="button" class="btn btn-secondary">
+						<div class="d-flex justify-content-between">
+							<img src="" alt="img" />
+							<p>위시리스트</p>
+						</div>
+					</button>
+					<button type="button" class="btn btn-dark">
+						<div class="d-flex justify-content-between">
+							<img src="" alt="김" />
+							<p>김민준님</p>
+						</div>
+					</button>
+				</div>
+			</div>
+		</div>
+	</nav>
+	<main>
+		<section>
+			<div class="card m-3">
+				<div class="card-body">
+					<form>
+						<fieldset class="d-flex justify-content-between align-items-center mb-3">
+							<div class="input-group d-flex align-items-center">
+								<div class="d-flex justify-content-between align-items-center">
+									<img src="" alt="img" />
+									<div>
+										<label for="exampleSelect1" class="form-label">
+											<small class="text-muted">여행지 또는 호텔명</small>
+										</label>
+										<select class="form-select" id="exampleSelect1">
+											<option>서울특별시</option>
+											<option>제주도</option>
+											<option>부산</option>
+											<option>강릉</option>
+										</select>
+									</div>
+								</div>
+								<div class="d-flex justify-content-between align-items-center">
+									<img src="" alt="img" />
+									<div>
+										<label for="checkinDate" class="form-label">
+											<small class="text-muted">체크인</small>
+										</label>
+										<input type="date" id="checkinDate" class="form-control" />
+									</div>
+								</div>
+								<div>
+									<label for="readOnlyInput" class="form-label">
+										<small class="text-muted">박</small>
+									</label>
+									<input class="form-control" id="readOnlyInput" type="text" value="1" readonly>
+								</div>
+								<div class="d-flex justify-content-between align-items-center">
+									<img src="" alt="img" />
+									<div>
+										<label for="checkoutDate" class="form-label">
+											<small class="text-muted">체크아웃</small>
+										</label>
+										<input type="date" id="checkoutDate" class="form-control" />
+									</div>
+								</div>
+								<div class="d-flex justify-content-between align-items-center">
+									<img src="" alt="img" />
+									<div>
+										<label for="exampleSelect2" class="form-label">
+											<small class="text-muted">인원</small>
+										</label>
+										<select class="form-select" id="exampleSelect2">
+											<option>1</option>
+											<option>2</option>
+											<option>3</option>
+											<option>4</option>
+										</select>
+									</div>
+								</div>
+								<div class="d-flex justify-content-between align-items-center">
+									<img src="" alt="img" />
+									<div>
+										<label for="exampleSelect3" class="form-label">
+											<small class="text-muted">객실</small>
+										</label>
+										<select class="form-select" id="exampleSelect3">
+											<option>1</option>
+											<option>2</option>
+											<option>3</option>
+											<option>4</option>
+										</select>
+									</div>
+								</div>
+								<button class="btn btn-primary" type="button" id="button-addon2">
+									<div class="d-flex justify-content-between align-items-center">
+										<img src="" alt="img" />
+										<p>검색</p>
+									</div>
+								</button>
+							</div>
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</section>
+		<section class="aside-section">
+			<aside class="m-3">
+				<div class="card">
+					<div class="card-body">
+						<ul class="list-group list-group-flush">
+							<li class="list-group-item">
+								<h6 class="card-title">서울 호텔 검색 결과</h6>
+								<div class="d-flex justify-content-between">
+									<span class="badge rounded-pill bg-primary">247개</span>
+									<small class="card-subtitle text-muted">숙소 발견</small>
+								</div>
+							</li>
+							<li class="list-group-item">
+								<h6 class="card-title">가격 범위</h6>
+								<div class="progress">
+									<div class="progress-bar" role="progressbar" style="width: 55%;" aria-valuenow="55"
+										aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+								<div class="d-flex justify-content-between">
+									<small class="text-muted">&#8361;50,000</small>
+									<small class="text-muted">&#8361;800,000+</small>
+								</div>
+								<div class="input-group d-flex justify-content-between align-items-center">
+									<small class="text-muted">&#8361;</small>
+									<input type="text" class="form-control" id="minPrice" />
+									<small class="text-muted">&nbsp;~&nbsp;</small>
+									<small class="text-muted">&#8361;</small>
+									<input type="text" class="form-control" id="maxPrice" />
+								</div>
+							</li>
+							<li class="list-group-item">
+								<h6 class="card-title">호텔 등급</h6>
+								<div class="btn-group-vertical w-100" role="group"
+									aria-label="Basic checkbox toggle button group">
+									<input type="checkbox" class="btn-check" id="btncheck1" checked autocomplete="off">
+									<label
+										class="btn btn-outline-primary d-flex justify-content-between align-items-center"
+										for="btncheck1">
+										<p class="card-subtitle">&#9734;&#9734;&#9734;&#9734;&#9734;&nbsp;5성급</p>
+										<small class="text-muted">68</small>
+									</label>
+									<input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off" checked>
+									<label
+										class="btn btn-outline-primary d-flex justify-content-between align-items-center"
+										for="btncheck2">
+										<p class="card-subtitle">&#9734;&#9734;&#9734;&#9734;&nbsp;4성급</p>
+										<small class="text-muted">112</small>
+									</label>
+									<input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off">
+									<label
+										class="btn btn-outline-primary d-flex justify-content-between align-items-center"
+										for="btncheck3">
+										<p class="card-subtitle">&#9734;&#9734;&#9734;&nbsp;3성급</p>
+										<small class="text-muted">67</small>
+									</label>
+								</div>
+							</li>
+							<li class="list-group-item">
+								<h6 class="card-title">편의 시설</h6>
+								<!-- <div class="btn-group-vertical w-100" role="group"
+									aria-label="Basic checkbox toggle button group">
+									<input type="checkbox" class="btn-check" id="btncheck7" checked autocomplete="off">
+									<label
+										class="btn btn-outline-primary d-flex justify-content-between align-items-center"
+										for="btncheck7">
+										<p class="card-subtitle">호텔</p>
+										<small class="text-muted">184</small>
+									</label>
+									<input type="checkbox" class="btn-check" id="btncheck8" autocomplete="off" checked>
+									<label
+										class="btn btn-outline-primary d-flex justify-content-between align-items-center"
+										for="btncheck8">
+										<p class="card-subtitle">리조트</p>
+										<small class="text-muted">43</small>
+									</label>
+									<input type="checkbox" class="btn-check" id="btncheck9" autocomplete="off">
+									<label
+										class="btn btn-outline-primary d-flex justify-content-between align-items-center"
+										for="btncheck9">
+										<p class="card-subtitle">팬션/민박</p>
+										<small class="text-muted">20</small>
+									</label>
+									<input type="checkbox" class="btn-check" id="btncheck10" autocomplete="off">
+									<label
+										class="btn btn-outline-primary d-flex justify-content-between align-items-center"
+										for="btncheck10">
+										<p class="card-subtitle">팬션/민박</p>
+										<small class="text-muted">20</small>
+									</label>
+								</div> -->
+							</li>
+							<li class="list-group-item">
+								<h6 class="card-title">숙소 유형</h6>
+								<div class="btn-group-vertical w-100" role="group"
+									aria-label="Basic checkbox toggle button group">
+									<input type="checkbox" class="btn-check" id="btncheck4" checked autocomplete="off">
+									<label
+										class="btn btn-outline-primary d-flex justify-content-between align-items-center"
+										for="btncheck4">
+										<p class="card-subtitle">호텔</p>
+										<small class="text-muted">184</small>
+									</label>
+									<input type="checkbox" class="btn-check" id="btncheck5" autocomplete="off" checked>
+									<label
+										class="btn btn-outline-primary d-flex justify-content-between align-items-center"
+										for="btncheck5">
+										<p class="card-subtitle">리조트</p>
+										<small class="text-muted">43</small>
+									</label>
+									<input type="checkbox" class="btn-check" id="btncheck6" autocomplete="off">
+									<label
+										class="btn btn-outline-primary d-flex justify-content-between align-items-center"
+										for="btncheck6">
+										<p class="card-subtitle">팬션/민박</p>
+										<small class="text-muted">20</small>
+									</label>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</aside>
+			<section>
+				<div class="card m-3">
+					<div class="card-body d-flex justify-content-between">
+						<img src="" alt="그랜드 서울 호텔" />
+						<ul class="list-group list-group-flush w-100">
+							<li class="list-group-item">
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<small class="text-muted">&#9734;&#9734;&#9734;&#9734;&#9734;5성급</small>
+										<h6 class="card-title">그랜드 서울 호텔</h6>
+									</div>
+									<button class="btn btn-outline-danger">&#x2661;</button>
+								</div>
+								<small class="text-muted">
+									<img src="" alt="img" />
+									서울 강남구 삼성동 * 강남역 도보 5분
+								</small>
+								<div class="d-flex">
+									<span class="badge rounded-pill bg-primary">조식포함</span>
+									<span class="badge rounded-pill bg-success">무료취소</span>
+									<span class="badge rounded-pill bg-warning">주차가능</span>
+								</div>
+								<div class="d-flex align-items-center">
+									<span class="badge rounded-pill bg-primary">9.4</span>
+									<div>
+										<p>매우 좋음</p>
+										<small class="text-muted">리뷰 2,847개</small>
+									</div>
+								</div>
+							</li>
+							<li class="list-group-item d-flex justify-content-between align-items-center">
+								<div>
+									<div class="d-flex">
+										<small class="text-muted">&#8361;320,000</small>
+										<span class="badge rounded-pill bg-danger">-25%</span>
+									</div>
+									<h6 class="card-subtitle">&#8361;240,000</h6>
+									<small class="text-muted">1박 기준 * 세금 포함</small>
+								</div>
+								<button type="button" class="btn btn-primary">예약하기</button>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</section>
+		</section>
+	</main>
+</body>
+
+</html>

@@ -1,0 +1,8 @@
+p {
+	margin-bottom: 0;
+}
+
+.section-aside {
+	display: grid;
+	grid-template-columns: 3fr 1fr;
+}

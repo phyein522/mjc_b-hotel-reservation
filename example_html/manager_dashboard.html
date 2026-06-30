@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>관리자 대시보드</title>
+	<link rel="stylesheet" href="bootstrap.css" />
+	<link rel="stylesheet" href="manager_dashboard_style.css" />
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
+		<div class="container-fluid">
+			<div class="d-flex align-items-center">
+				<div>
+					<img src="" alt="img" />
+				</div>
+				<div>
+					<a class="navbar-brand" href="#">Navbar</a>
+					<p>관리자 시스템</p>
+				</div>
+			</div>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02"
+				aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarColor02">
+				<ul class="navbar-nav me-auto">
+					<li class="nav-item">
+						<a class="nav-link active" href="#">대시보드</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">예약 관리</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">고객 관리</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">객실 관리</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">매출 분석</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">리뷰 관리</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">설정</a>
+					</li>
+				</ul>
+				<div class="d-flex dropdown">
+					<button class="btn nav-link dropdown-toggle btn-profile" data-bs-toggle="dropdown" role="button"
+						aria-haspopup="true" aria-expanded="false">
+						<div class="navbar-logo">
+							<div>
+								<img src="" alt="img" />
+							</div>
+							<div>
+								<a class="navbar-brand">Navbar</a>
+								<p>관리자 시스템</p>
+							</div>
+						</div>
+					</button>
+					<div class="dropdown-menu" style="right: 0; top: 100%;"> <!-- show -->
+						<a class="dropdown-item" href="#">Action</a>
+						<a class="dropdown-item" href="#">Another action</a>
+						<a class="dropdown-item" href="#">Something else here</a>
+						<div class="dropdown-divider"></div>
+						<a class="dropdown-item" href="#">Separated link</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</nav>
+	<main>
+		<aside class="m-1">
+			<div class="list-group">
+				<div class="list-group-item">
+					<button class="btn btn-secondary dropdown dropdown-toggle">
+						<div class="btn-choice-hotel">
+							<img src="" alt="img" />
+							<p>호텔명</p>
+						</div>
+						<div class="dropdown-menu" style="left: 0; top: 100%;">
+							<a class="dropdown-item" href="#">Action</a>
+							<a class="dropdown-item" href="#">Another action</a>
+							<a class="dropdown-item" href="#">Something else here</a>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item" href="#">Separated link</a>
+						</div>
+					</button>
+				</div>
+				<div class="list-group-item">
+					<p>메인</p>
+					<div class="list-group">
+						<a href="#" class="list-group-item list-group-item-action active">
+							<div class="d-flex w-100 justify-content-between">
+								<img src="" alt="img" />
+								<p class="mb-1">대시보드</p>
+								<span class="badgerounded-pill"></span>
+							</div>
+						</a>
+						<a href="#" class="list-group-item list-group-item-action">
+							<div class="d-flex w-100 justify-content-between">
+								<img src="" alt="img" />
+								<p class="mb-1">예약 관리</p>
+								<span class="badge bg-primary rounded-pill">12</span>
+							</div>
+						</a>
+						<a href="#" class="list-group-item list-group-item-action">
+							<div class="d-flex w-100 justify-content-between">
+								<img src="" alt="img" />
+								<p class="mb-1">체크인 현황</p>
+								<span class="badge bg-danger rounded-pill">3</span>
+							</div>
+						</a>
+						<a href="#" class="list-group-item list-group-item-action">
+							<div class="d-flex w-100 justify-content-between">
+								<img src="" alt="img" />
+								<p class="mb-1">고객 관리</p>
+								<span class="badgerounded-pill"></span>
+							</div>
+						</a>
+					</div>
+				</div>
+				<div class="list-group-item">
+					<p>객실*요금</p>
+					<div class="list-group">
+						<a href="#" class="list-group-item list-group-item-action">
+							<div class="d-flex w-100 justify-content-between">
+								<img src="" alt="img" />
+								<p class="mb-1">객실 관리</p>
+								<span class="badge rounded-pill"></span>
+							</div>
+						</a>
+						<a href="#" class="list-group-item list-group-item-action">
+							<div class="d-flex w-100 justify-content-between">
+								<img src="" alt="img" />
+								<p class="mb-1">요금 설정</p>
+								<span class="badge rounded-pill"></span>
+							</div>
+						</a>
+						<a href="#" class="list-group-item list-group-item-action">
+							<div class="d-flex w-100 justify-content-between">
+								<img src="" alt="img" />
+								<p class="mb-1">프로모션</p>
+								<span class="badge rounded-pill"></span>
+							</div>
+						</a>
+					</div>
+				</div>
+				<div class="list-group-item">
+					<p>분석*리포트</p>
+					<div class="list-group">
+						<a href="#" class="list-group-item list-group-item-action">
+							<div class="d-flex w-100 justify-content-between">
+								<img src="" alt="img" />
+								<p class="mb-1">매출 분석</p>
+								<span class="badge rounded-pill"></span>
+							</div>
+						</a>
+						<a href="#" class="list-group-item list-group-item-action">
+							<div class="d-flex w-100 justify-content-between">
+								<img src="" alt="img" />
+								<p class="mb-1">리뷰 관리</p>
+								<span class="badge bg-warning rounded-pill">8</span>
+							</div>
+						</a>
+						<a href="#" class="list-group-item list-group-item-action">
+							<div class="d-flex w-100 justify-content-between">
+								<img src="" alt="img" />
+								<p class="mb-1">정산 리포트</p>
+								<span class="badge rounded-pill"></span>
+							</div>
+						</a>
+					</div>
+				</div>
+				<div class="list-group-item">
+					<div class="list-group">
+						<a href="#" class="list-group-item list-group-item-action">
+							<div class="d-flex w-100 justify-content-between">
+								<img src="" alt="img" />
+								<p class="mb-1">시스템 설정</p>
+								<span class="badge rounded-pill"></span>
+							</div>
+						</a>
+					</div>
+				</div>
+			</div>
+		</aside>
+		<div class="m-3">
+			<section class="d-flex w-100 justify-content-between mb-3">
+				<div>
+					<div class="d-flex w-100 justify-content-between align-items-center">
+						<h3>대시보드</h3>
+						<span class="badge rounded-pill bg-success">* 실시간 업데이트 중</span>
+					</div>
+					<p class="text-secondary">0000년 00월 00일 (월) * 오전 00:00</p>
+				</div>
+				<div class="d-flex justify-content-between">
+					<button class="btn btn-secondary dropdown dropdown-toggle">
+						<div class="btn-choice-hotel">
+							<img src="" alt="img" />
+							<p>이번 달 (7월)</p>
+						</div>
+						<div class="dropdown-menu" style="left: 0; top: 100%;">
+							<a class="dropdown-item" href="#">Action</a>
+							<a class="dropdown-item" href="#">Another action</a>
+							<a class="dropdown-item" href="#">Something else here</a>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item" href="#">Separated link</a>
+						</div>
+					</button>
+					<button class="btn btn-secondary">
+						<div class="btn-choice-hotel">
+							<img src="" alt="img" />
+							<p>리포트 다운로드</p>
+						</div>
+					</button>
+					<button class="btn btn-secondary">
+						<div class="btn-choice-hotel">
+							<img src="" alt="img" />
+							<p>예약 등록</p>
+						</div>
+					</button>
+				</div>
+			</section>
+			<section class="d-flex w-100 justify-content-between mb-3">
+				<div class="card">
+					<div class="card-body">
+						<div class="d-flex justify-content-between">
+							<img src="" alt="img" />
+							<span class="badge bg-success rounded-pill">+12.4%</span>
+						</div>
+						<p class="card-subtitle text-muted">오늘 예약</p>
+						<h4 class="card-title">47건</h4>
+						<div class="progress">
+							<div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25"
+								aria-valuemin="0" aria-valuemax="100"></div>
+						</div>
+						<div class="d-flex justify-content-between">
+							<small class="card-text text-muted">어제 대비</small>
+							<small class="card-text">41건 -> 47건</small>
+						</div>
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-body">
+						<div class="d-flex justify-content-between">
+							<img src="" alt="img" />
+							<span class="badge bg-warning rounded-pill">오늘</span>
+						</div>
+						<p class="card-subtitle text-muted">체크인 예정</p>
+						<h4 class="card-title">18팀</h4>
+						<div class="progress">
+							<div class="progress-bar bg-warning" role="progressbar" style="width: 75%;"
+								aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+						</div>
+						<div class="d-flex justify-content-between">
+							<small class="card-text text-muted">체크아웃 예정</small>
+							<small class="card-text">12팀</small>
+						</div>
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-body">
+						<div class="d-flex justify-content-between">
+							<img src="" alt="img" />
+							<span class="badge bg-success rounded-pill">+3.2%</span>
+						</div>
+						<p class="card-subtitle text-muted">객실 점유율</p>
+						<h4 class="card-title">84.2%</h4>
+						<div class="progress">
+							<div class="progress-bar bg-success" role="progressbar" style="width: 25%;"
+								aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+						</div>
+						<div class="d-flex justify-content-between">
+							<small class="card-text text-muted">전체 120실 중</small>
+							<small class="card-text">101실 이용중</small>
+						</div>
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-body">
+						<div class="d-flex justify-content-between">
+							<img src="" alt="img" />
+							<span class="badge bg-success rounded-pill">+18.7%</span>
+						</div>
+						<p class="card-subtitle text-muted">이번 달 매출</p>
+						<h4 class="card-title">&#8361;284M</h4>
+						<div class="progress">
+							<div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25"
+								aria-valuemin="0" aria-valuemax="100"></div>
+						</div>
+						<div class="d-flex justify-content-between">
+							<small class="card-text text-muted">지난달 대비</small>
+							<small class="card-text">&#8361;239M -> &#8361;284M</small>
+						</div>
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-body">
+						<div class="d-flex justify-content-between">
+							<img src="" alt="img" />
+							<span class="badge bg-success rounded-pill">+0.2%</span>
+						</div>
+						<p class="card-subtitle text-muted">평균 평점</p>
+						<h4 class="card-title">9.4점</h4>
+						<div class="progress">
+							<div class="progress-bar bg-info" role="progressbar" style="width: 50%;" aria-valuenow="50"
+								aria-valuemin="0" aria-valuemax="100"></div>
+						</div>
+						<div class="d-flex justify-content-between">
+							<small class="card-text text-muted">신규 리뷰</small>
+							<small class="card-text">이번 달 127건</small>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section class="d-flex w-100 justify-content-between mb-3">
+				<div class="card">
+					<div class="card-body">
+						<div class="d-flex justify-content-between w-100 mb-3">
+							<div>
+								<h6 class="card-title">최근 예약 현황</h6>
+								<small class="card-subtitle text-muted">오늘 기준 최신 12건</small>
+							</div>
+							<button class="btn btn-primary">
+								<p>전체 보기 &rarr;</p>
+							</button>
+						</div>
+						<table class="table">
+							<thead>
+								<tr class="table-active">
+									<th scope="col">예약번호</th>
+									<th scope="col">고객명</th>
+									<th scope="col">객실</th>
+									<th scope="col">체크인</th>
+									<th scope="col">체크아웃</th>
+									<th scope="col">금액</th>
+									<th scope="col">상태</th>
+									<th scope="col">액션</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th scope="row">SN-0714-8842</th>
+									<td>
+										<div class="d-flex justify-content-between">
+											<img src="" alt="김" />
+											<p>김민준</p>
+										</div>
+									</td>
+									<td class="text-muted">디럭스 더블 (도심뷰)</td>
+									<td class="text-muted">07.14</td>
+									<td class="text-muted">07.16</td>
+									<td><strong>&#8361;240,000</strong></td>
+									<td><span class="badge rounded-pill bg-success">예약확정</span></td>
+									<td class="d-flex justify-content-between">
+										<button type="button" class="btn btn-primary">
+											<img src="" alt="img" />
+										</button>
+										<button type="button" class="btn btn-danger">
+											<img src="" alt="X" />
+										</button>
+									</td>
+								</tr>
+								<tr class="table-active">
+									<th scope="row">SN-0714-8841</th>
+									<td>
+										<div class="d-flex justify-content-between">
+											<img src="" alt="박" />
+											<p>박서연</p>
+										</div>
+									</td>
+									<td class="text-muted">프리미엄 스위트 (파노라마)</td>
+									<td class="text-muted">07.14</td>
+									<td class="text-muted">07.17</td>
+									<td><strong>&#8361;1,800,000</strong></td>
+									<td><span class="badge rounded-pill bg-warning">체크인 중</span></td>
+									<td class="d-flex justify-content-between">
+										<button type="button" class="btn btn-primary">
+											<img src="" alt="img" />
+										</button>
+										<button type="button" class="btn btn-danger">
+											<img src="" alt="X" />
+										</button>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">SN-0714-8840</th>
+									<td>
+										<div class="d-flex justify-content-between">
+											<img src="" alt="이" />
+											<p>이지현</p>
+										</div>
+									</td>
+									<td class="text-muted">스탠다드 트윈 (정원뷰)</td>
+									<td class="text-muted">07.15</td>
+									<td class="text-muted">07.16</td>
+									<td><strong>&#8361;185,000</strong></td>
+									<td><span class="badge rounded-pill bg-success">예약확정</span></td>
+									<td class="d-flex justify-content-between">
+										<button type="button" class="btn btn-primary">
+											<img src="" alt="img" />
+										</button>
+										<button type="button" class="btn btn-danger">
+											<img src="" alt="X" />
+										</button>
+									</td>
+								</tr>
+								<tr class="table-active">
+									<th scope="row">SN-0714-8839</th>
+									<td>
+										<div class="d-flex justify-content-between">
+											<img src="" alt="최" />
+											<p>최준혁</p>
+										</div>
+									</td>
+									<td class="text-muted">디럭스 킹 (한강뷰)</td>
+									<td class="text-muted">07.13</td>
+									<td class="text-muted">07.14</td>
+									<td><strong>&#8361;320,000</strong></td>
+									<td><span class="badge rounded-pill bg-primary">체크아웃</span></td>
+									<td class="d-flex justify-content-between">
+										<button type="button" class="btn btn-primary">
+											<img src="" alt="img" />
+										</button>
+										<button type="button" class="btn btn-danger">
+											<img src="" alt="X" />
+										</button>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">SN-0714-8838</th>
+									<td>
+										<div class="d-flex justify-content-between">
+											<img src="" alt="정" />
+											<p>정하은</p>
+										</div>
+									</td>
+									<td class="text-muted">비즈니스 더블</td>
+									<td class="text-muted">07.14</td>
+									<td class="text-muted">07.15</td>
+									<td><strong>&#8361;165,000</strong></td>
+									<td><span class="badge rounded-pill bg-danger">취소요청</span></td>
+									<td class="d-flex justify-content-between">
+										<button type="button" class="btn btn-primary">
+											<img src="" alt="img" />
+										</button>
+										<button type="button" class="btn btn-success">
+											<img src="" alt="img" />
+										</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<section>
+					<div class="card">
+						<div class="card-body">
+							<h6 class="card-title">오늘 일정</h6>
+							<small class="card-subtitle mb-3 text-muted">체크인*체크아웃</small>
+							<ul class="list-group">
+								<li class="list-group-item">
+									<div class=" d-flex justify-content-between align-items-center">
+										<p>김민준 * 101호</p>
+										<span class="badge bg-primary rounded-pill">체크인</span>
+									</div>
+									<small class="text-muted">오후 3:00 예정 * 디럭스 더블</small>
+								</li>
+								<li class="list-group-item">
+									<div class=" d-flex justify-content-between align-items-center">
+										<p>박서연 * 502호</p>
+										<span class="badge bg-warning rounded-pill">체크인중</span>
+									</div>
+									<small class="text-muted">오후 2:30 * 프리미엄 스위트</small>
+								</li>
+								<li class="list-group-item">
+									<div class=" d-flex justify-content-between align-items-center">
+										<p>최중혁 * 308호</p>
+										<span class="badge bg-primary rounded-pill">체크아웃</span>
+									</div>
+									<small class="text-muted">오전 11:00 * 디럭스 킹</small>
+								</li>
+								<li class="list-group-item">
+									<div class=" d-flex justify-content-between align-items-center">
+										<p>이지현 * 215호</p>
+										<span class="badge bg-success rounded-pill">예약확정</span>
+									</div>
+									<small class="text-muted">오전 3:00 예정 * 스탠다드 트윈</small>
+								</li>
+								<li class="list-group-item">
+									<div class=" d-flex justify-content-between align-items-center">
+										<p>정하은 * 402호</p>
+										<span class="badge bg-danger rounded-pill">취소요청</span>
+									</div>
+									<small class="text-muted">처리 필요 * 비즈니스 더블</small>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="card">
+						<div class="card-body">
+							<div class="d-flex justify-content-between mb-3">
+								<h4 class="card-title">처리 필요 항목</h4>
+								<span class="badge rounded-pill bg-danger">5건</span>
+							</div>
+							<ul class="list-group">
+								<li
+									class="list-group-item list-group-item-danger d-flex justify-content-between align-items-center">
+									<img src="" alt="img" />
+									<p>취소 요청</p>
+									<small class="text-muted">정하은 고객 * SN-0714-8838</small>
+									<button type="button" class="btn btn-danger">처리하기</button>
+								</li>
+								<li
+									class="list-group-item list-group-item-warning d-flex justify-content-between align-items-center">
+									<img src="" alt="img" />
+									<p>미답변 리뷰 8건</p>
+									<small class="text-muted">최근 7일 이내 리뷰</small>
+									<button type="button" class="btn btn-warning">답변하기</button>
+								</li>
+								<li
+									class="list-group-item list-group-item-primary d-flex justify-content-between align-items-center">
+									<img src="" alt="img" />
+									<p>고객 문의 3건</p>
+									<small class="text-muted">미확인 문의 메시지</small>
+									<button type="button" class="btn btn-primary">확인하기</button>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+			</section>
+			<section class="d-flex w-100 justify-content-between mb-3">
+				<div class="card w-100">
+					<div class="card-body">
+						<div class="d-flex justify-content-between mb-3">
+							<div>
+								<h6 class="card-title">객실 현황 맵</h6>
+								<small class="card-subtitle text-muted">실시간 객실 상태</small>
+							</div>
+							<div class="d-flex justify-content-between">
+								사용중 예약완료 체크아웃대기 공실 청소중
+							</div>
+						</div>
+						<ul class="list-group mb-3">
+							<li class="list-group-item d-flex justify-content-between align-items-center">
+								<div class="card">
+									<div class="card-body">
+										<h6 class="card-title">5F</h6>
+										<small class="card-subtitle text-muted">6실</small>
+									</div>
+								</div>
+								<div class="card bg-primary">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">501</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">사용중</p>
+										<small class="card-text">김민준</small>
+									</div>
+								</div>
+								<div class="card bg-success">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">502</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">예약완료</p>
+										<small class="card-text">이서연</small>
+									</div>
+								</div>
+								<div class="card bg-light">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">503</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">공실</p>
+										<small class="card-text">-</small>
+									</div>
+								</div>
+								<div class="card bg-light">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">504</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">공실</p>
+										<small class="card-text">-</small>
+									</div>
+								</div>
+								<div class="card bg-warning">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">505</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">체크아웃대기</p>
+										<small class="card-text">박지우</small>
+									</div>
+								</div>
+								<div class="card bg-danger">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">506</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">청소중</p>
+										<small class="card-text">담당: 홍길순</small>
+									</div>
+								</div>
+							</li>
+							<li class="list-group-item d-flex justify-content-between align-items-center">
+								<div class="card">
+									<div class="card-body">
+										<h6 class="card-title">4F</h6>
+										<small class="card-subtitle text-muted">8실</small>
+									</div>
+								</div>
+								<div class="card bg-primary">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">401</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">사용중</p>
+										<small class="card-text">최현우</small>
+									</div>
+								</div>
+								<div class="card bg-primary">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">402</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">사용중</p>
+										<small class="card-text">정수아</small>
+									</div>
+								</div>
+								<div class="card bg-success">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">403</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">예약완료</p>
+										<small class="card-text">한지민</small>
+									</div>
+								</div>
+								<div class="card bg-warning">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">404</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">체크아웃대기</p>
+										<small class="card-text">오태양</small>
+									</div>
+								</div>
+								<div class="card bg-light">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">405</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">공실</p>
+										<small class="card-text">-</small>
+									</div>
+								</div>
+								<div class="card bg-danger">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">406</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">청소중</p>
+										<small class="card-text">담당: 박청소</small>
+									</div>
+								</div>
+								<div class="card bg-success">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">407</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">예약완료</p>
+										<small class="card-text">윤하늘</small>
+									</div>
+								</div>
+								<div class="card bg-primary">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">408</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">사용중</p>
+										<small class="card-text">임도현</small>
+									</div>
+								</div>
+							</li>
+							<li class="list-group-item d-flex justify-content-between align-items-center">
+								<div class="card">
+									<div class="card-body">
+										<h6 class="card-title">3F</h6>
+										<small class="card-subtitle text-muted">8실</small>
+									</div>
+								</div>
+								<div class="card bg-light">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">301</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">공실</p>
+										<small class="card-text">-</small>
+									</div>
+								</div>
+								<div class="card bg-warning">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">302</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">체크아웃대기</p>
+										<small class="card-text">신예은</small>
+									</div>
+								</div>
+								<div class="card bg-primary">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">303</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">사용중</p>
+										<small class="card-text">강다은</small>
+									</div>
+								</div>
+								<div class="card bg-primary">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">304</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">사용중</p>
+										<small class="card-text">조민서</small>
+									</div>
+								</div>
+								<div class="card bg-danger">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">305</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">청소중</p>
+										<small class="card-text">담당: 이청소</small>
+									</div>
+								</div>
+								<div class="card bg-success">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">306</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">예약완료</p>
+										<small class="card-text">문지호</small>
+									</div>
+								</div>
+								<div class="card bg-light">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">307</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">공실</p>
+										<small class="card-text">-</small>
+									</div>
+								</div>
+								<div class="card bg-success">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">308</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">예약완료</p>
+										<small class="card-text">배소연</small>
+									</div>
+								</div>
+							</li>
+							<li class="list-group-item d-flex justify-content-between align-items-center">
+								<div class="card">
+									<div class="card-body">
+										<h6 class="card-title">2F</h6>
+										<small class="card-subtitle text-muted">7실</small>
+									</div>
+								</div>
+								<div class="card bg-primary">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">201</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">사용중</p>
+										<small class="card-text">류승민</small>
+									</div>
+								</div>
+								<div class="card bg-warning">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">202</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">체크아웃대기</p>
+										<small class="card-text">진미래</small>
+									</div>
+								</div>
+								<div class="card bg-success">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">203</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">예약완료</p>
+										<small class="card-text">고은별</small>
+									</div>
+								</div>
+								<div class="card bg-danger">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">204</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">청소중</p>
+										<small class="card-text">담당: 김청소</small>
+									</div>
+								</div>
+								<div class="card bg-primary">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">205</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">사용중</p>
+										<small class="card-text">남궁민</small>
+									</div>
+								</div>
+								<div class="card bg-light">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">206</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">공실</p>
+										<small class="card-text">-</small>
+									</div>
+								</div>
+								<div class="card bg-success">
+									<div class="card-body">
+										<div class="d-flex justify-content-between">
+											<h6 class="card-title">207</h6>
+											<img src="" alt="o" />
+										</div>
+										<p class="card-subtitle mb-2 text-muted">예약완료</p>
+										<small class="card-text">황소희</small>
+									</div>
+								</div>
+							</li>
+						</ul>
+						<ul class="list-group">
+							<li class="list-group-item d-flex justify-content-between align-items-center">
+								<div class="d-flex justify-content-between">
+									<div class="d-flex justify-content-between">
+										<p>사용중</p>
+										<strong>8실</strong>
+									</div>
+									<p>&nbsp;</p>
+									<div class="d-flex justify-content-between">
+										<p>예약완료</p>
+										<strong>7실</strong>
+									</div>
+									<p>&nbsp;</p>
+									<div class="d-flex justify-content-between">
+										<p>체크아웃대기</p>
+										<strong>4실</strong>
+									</div>
+									<p>&nbsp;</p>
+									<div class="d-flex justify-content-between">
+										<p>공실</p>
+										<strong>6실</strong>
+									</div>
+									<p>&nbsp;</p>
+									<div class="d-flex justify-content-between">
+										<p>청소중</p>
+										<strong>4실</strong>
+									</div>
+								</div>
+								<div class="d-flex justify-content-between">
+									<div class="d-flex justify-content-between">
+										<p>전체</p>
+										<strong>29실</strong>
+									</div>
+									<p>&nbsp;|&nbsp;</p>
+									<div class="d-flex justify-content-between">
+										<p>점유율</p>
+										<span class="badge rounded-pill bg-primary">65.5%</span>
+									</div>
+								</div>
+							</li>
+					</div>
+				</div>
+			</section>
+		</div>
+	</main>
+</body>
+
+</html>
+
+<script src="jquery.min.js"></script>
+<script>
+	$(".dropdown").click((e) => {
+		e.preventDefault(false);
+		$(".dropdown-menu").toggleClass("show");
+	})
+</script>

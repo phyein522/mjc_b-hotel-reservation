@@ -1,0 +1,43 @@
+.btn-profile {
+	padding: 10px;
+	display: flex;
+	justify-self: center;
+	align-items: center;
+}
+p {
+	margin-bottom: 0;
+}
+
+.navbar {
+	padding-top: 0;
+	padding-bottom: 0;
+}
+.container-fluid {
+	padding-right: 0;
+}
+
+main {
+	display: grid;
+	grid-template-columns: 1fr 4fr;
+}
+
+.btn-choice-hotel {
+	display: inline-grid;
+	grid-template-columns: 1fr 3fr;
+}
+
+.badge {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.aside-menu {
+	display: grid;
+	grid-template-columns: 1fr 3fr;
+	gap: 8px;
+}
+
+span {
+	display: inline-block;
+}
