@@ -4,8 +4,6 @@ import com.mjc.hotel.hotels.HotelEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "hotel_images")
 @Getter
@@ -16,11 +14,11 @@ import java.time.LocalDateTime;
 public class HotelImageEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "hotel_image_id")
-    private Long hotelImageId;
+    @Column(name = "image_id")
+    private Long imageId;
 
     @Column(name = "image_url", nullable = false, columnDefinition = "TEXT")
-    private String imageUrl;
+    private String url;
 
     @Column(name = "sort_order")
     private Integer sortOrder;
@@ -28,13 +26,10 @@ public class HotelImageEntity {
     @Column(name = "is_thumbnail")
     private Boolean isThumbnail;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
     @Transient
     private Long hotelId;
 
-    @JoinColumn(name = "hotel_id", nullable = true)
+    @JoinColumn(name = "hotel_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private HotelEntity hotel;
 

@@ -10,9 +10,9 @@ import lombok.*;
 @Builder
 public class HotelTransDto {
     private Long transId;
-    private String transName;
-    private int transTime;
-    private String transDepart;
+    private String name;
+    private int time;
+    private String depart;
 
     private Long hotelId;
     private HotelDto hotel;

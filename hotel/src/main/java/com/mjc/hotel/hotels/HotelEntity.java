@@ -15,7 +15,7 @@ import java.time.LocalTime;
 public class HotelEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "hotelid")
+    @Column(name = "hotel_id")
     private Long hotelId;
 
     @Column(nullable = false, length = 200)

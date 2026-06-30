@@ -4,8 +4,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -22,30 +20,25 @@ public class HotelImageService {
                 .map(hotelImageMapper::toDto)
                 .toList();
     }
-    public HotelImageDto findById(Long hotelImageId) {
-        HotelImageEntity hotelImage = hotelImageRepository.findById(hotelImageId).orElseThrow( () -> new IllegalArgumentException("호텔 이미지를 찾을 수 없습니다."));
+    public HotelImageDto findById(Long imageId) {
+        HotelImageEntity hotelImage = hotelImageRepository.findById(imageId).orElseThrow( () -> new IllegalArgumentException("호텔 이미지를 찾을 수 없습니다."));
         return hotelImageMapper.toDto(hotelImage);
     }
 
     public HotelImageDto insert(HotelImageDto insertDto) {
-        LocalDateTime now = LocalDateTime.now();
 
-        if(insertDto.getCreatedAt() == null) {
-            insertDto.setCreatedAt(now);
-        }
         HotelImageEntity savedHotelImage =
                 hotelImageRepository.save(hotelImageMapper.toEntity(insertDto));
 
         return hotelImageMapper.toDto(savedHotelImage);
     }
 
-    public HotelImageDto update(Long hotelImageId, HotelImageDto hotelImageDto) {
+    public HotelImageDto update(Long imageId, HotelImageDto hotelImageDto) {
 
-        HotelImageEntity hotelImage = hotelImageRepository.findById(hotelImageId)
+        HotelImageEntity hotelImage = hotelImageRepository.findById(imageId)
                 .orElseThrow(() -> new IllegalArgumentException("호텔 이미지를 찾을 수 없습니다."));
 
-        hotelImage.setHotelId(hotelImageDto.getHotelId());
-        hotelImage.setImageUrl(hotelImageDto.getImageUrl());
+        hotelImage.setUrl(hotelImageDto.getUrl());
         hotelImage.setSortOrder(hotelImageDto.getSortOrder());
         hotelImage.setIsThumbnail(hotelImageDto.getIsThumbnail());
 

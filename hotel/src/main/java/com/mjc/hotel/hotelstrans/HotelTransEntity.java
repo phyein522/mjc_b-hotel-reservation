@@ -17,18 +17,18 @@ public class HotelTransEntity {
     private Long transId;
 
     @Column(name = "trans_name")
-    private String transName;
+    private String name;
 
     @Column(name = "trans_time")
-    private Integer transTime;
+    private Integer time;
 
     @Column(name = "trans_depart")
-    private String transDepart;
+    private String depart;
 
     @Transient
     private Long hotelId;
 
-    @JoinColumn(name = "hotel_id", nullable = true)
+    @JoinColumn(name = "hotel_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private HotelEntity hotel;
 }

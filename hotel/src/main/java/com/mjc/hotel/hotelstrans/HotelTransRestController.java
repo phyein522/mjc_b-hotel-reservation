@@ -1,8 +1,7 @@
 package com.mjc.hotel.hotelstrans;
 
-import com.mjc.hotel.hotelsimage.HotelImageDto;
-import com.mjc.hotel.hotelsimage.HotelImageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,17 +13,30 @@ public class HotelTransRestController {
     private final HotelTransService hotelTransService;
 
     @GetMapping
-    public List<HotelImageDto> getHotelImages() {
+    public List<HotelTransDto> getTrans() {
         return hotelTransService.findAll();
     }
-    @GetMapping("/{hotelImageId}")
-    public HotelImageDto getHotelImageById(@PathVariable Long hotelImageId) {
-        return hotelTransService.findById(hotelImageId);
+    @GetMapping("/{transId}")
+    public HotelTransDto getTransById(@PathVariable Long transId) {
+        return hotelTransService.findById(transId);
     }
 
     @PostMapping
-    public HotelImageDto insertHotelImage(@RequestBody HotelImageDto hotelImageDto) {
-        return hotelTransService.insert(hotelImageDto);
+    public HotelTransDto insertTrans(@RequestBody HotelTransDto hotelTransDto) {
+        return hotelTransService.insert(hotelTransDto);
+    }
+    @PutMapping("/{transId}")
+    public HotelTransDto updateTrans(@PathVariable Long transId,
+                                          @RequestBody HotelTransDto hotelTransDto) {
+
+        return hotelTransService.update(transId, hotelTransDto);
+    }
+    @DeleteMapping("/{transId}")
+    public ResponseEntity<Void> deleteTrans(@PathVariable Long transId) {
+
+        hotelTransService.deleteById(transId);
+
+        return ResponseEntity.noContent().build();
     }
 
 }

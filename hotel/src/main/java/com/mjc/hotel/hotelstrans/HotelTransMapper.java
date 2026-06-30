@@ -19,9 +19,9 @@ public class HotelTransMapper {
 
         HotelTransDto dto = HotelTransDto.builder()
                 .transId(entity.getTransId())
-                .transName(entity.getTransName())
-                .transTime(entity.getTransTime())
-                .transDepart(entity.getTransDepart())
+                .name(entity.getName())
+                .time(entity.getTime())
+                .depart(entity.getDepart())
                 .build();
 
         if (entity.getHotel() != null) {
@@ -40,9 +40,9 @@ public class HotelTransMapper {
 
         HotelTransEntity entity = HotelTransEntity.builder()
                 .transId(dto.getTransId())
-                .transName(dto.getTransName())
-                .transTime(dto.getTransTime())
-                .transDepart(dto.getTransDepart())
+                .name(dto.getName())
+                .time(dto.getTime())
+                .depart(dto.getDepart())
                 .build();
 
         if (dto.getHotelId() != null) {

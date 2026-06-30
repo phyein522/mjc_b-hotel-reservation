@@ -18,11 +18,10 @@ public class HotelImageMapper {
         }
 
         HotelImageDto dto = HotelImageDto.builder()
-                .hotelImageId(entity.getHotelImageId())
-                .imageUrl(entity.getImageUrl())
+                .imageId(entity.getImageId())
+                .url(entity.getUrl())
                 .sortOrder(entity.getSortOrder())
                 .isThumbnail(entity.getIsThumbnail())
-                .createdAt(entity.getCreatedAt())
                 .build();
 
         if (entity.getHotel() != null) {
@@ -40,11 +39,10 @@ public class HotelImageMapper {
         }
 
         HotelImageEntity entity = HotelImageEntity.builder()
-                .hotelImageId(dto.getHotelImageId())
-                .imageUrl(dto.getImageUrl())
+                .imageId(dto.getImageId())
+                .url(dto.getUrl())
                 .sortOrder(dto.getSortOrder())
                 .isThumbnail(dto.getIsThumbnail())
-                .createdAt(dto.getCreatedAt())
                 .build();
 
         if (dto.getHotelId() != null) {
