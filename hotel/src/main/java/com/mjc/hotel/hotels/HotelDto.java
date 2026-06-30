@@ -24,6 +24,7 @@ public class HotelDto {
     private LocalTime hotelCheckOutTime;
     private Short hotelStarRating;
     private Boolean hotelIsActive;
-    private LocalDateTime hotelCreatedAt;
-    private LocalDateTime hotelUpdatedAt;
+    private String latitude;
+    private String hardness;
+    private String hotelType;
 }

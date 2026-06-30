@@ -23,8 +23,9 @@ public class HotelMapper {
                 .hotelCheckOutTime(entity.getHotelCheckOutTime())
                 .hotelStarRating(entity.getHotelStarRating())
                 .hotelIsActive(entity.getHotelIsActive())
-                .hotelCreatedAt(entity.getHotelCreatedAt())
-                .hotelUpdatedAt(entity.getHotelUpdatedAt())
+                .latitude(entity.getLatitude())
+                .hardness(entity.getHardness())
+                .hotelType(entity.getHotelType())
                 .build();
     }
 
@@ -46,8 +47,9 @@ public class HotelMapper {
                 .hotelCheckOutTime(dto.getHotelCheckOutTime())
                 .hotelStarRating(dto.getHotelStarRating())
                 .hotelIsActive(dto.getHotelIsActive())
-                .hotelCreatedAt(dto.getHotelCreatedAt())
-                .hotelUpdatedAt(dto.getHotelUpdatedAt())
+                .latitude(dto.getLatitude())
+                .hardness(dto.getHardness())
+                .hotelType(dto.getHotelType())
                 .build();
     }
 }

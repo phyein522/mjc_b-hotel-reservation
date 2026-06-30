@@ -16,7 +16,7 @@ import java.time.LocalTime;
 public class HotelEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "hotel_id")
+    @Column(name = "hotelid")
     private Long hotelId;
 
     @Column(name = "hotel_name", nullable = false, length = 200)
@@ -52,9 +52,12 @@ public class HotelEntity {
     @Column(name = "hotel_isactive", nullable = false)
     private Boolean hotelIsActive;
 
-    @Column(name = "hotel_createdat")
-    private LocalDateTime hotelCreatedAt;
-    
-    @Column(name = "hotel_updatedat")
-    private LocalDateTime hotelUpdatedAt;
+    @Column(nullable = false)
+    private String latitude;
+
+    @Column(nullable = false)
+    private String hardness;
+
+    @Column(nullable = false)
+    private String hotelType;
 }

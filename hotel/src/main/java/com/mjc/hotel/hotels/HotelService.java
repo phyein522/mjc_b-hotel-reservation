@@ -37,12 +37,6 @@ public class HotelService {
             insertDto.setHotelIsActive(true);
         }
 
-        if (insertDto.getHotelCreatedAt() == null) {
-            insertDto.setHotelCreatedAt(now);
-        }
-
-        insertDto.setHotelUpdatedAt(now);
-
         HotelEntity savedHotel = hotelRepository.save(hotelMapper.toEntity(insertDto));
 
         return hotelMapper.toDto(savedHotel);
@@ -66,8 +60,9 @@ public class HotelService {
         hotel.setHotelCheckOutTime(hotelDto.getHotelCheckOutTime());
         hotel.setHotelStarRating(hotelDto.getHotelStarRating());
         hotel.setHotelIsActive(hotelDto.getHotelIsActive());
-        hotel.setHotelUpdatedAt(LocalDateTime.now());
-
+        hotel.setLatitude(hotelDto.getLatitude());
+        hotel.setHardness(hotelDto.getHardness());
+        hotel.setHotelType(hotelDto.getHotelType());
 
         return hotelMapper.toDto(hotel);
     }

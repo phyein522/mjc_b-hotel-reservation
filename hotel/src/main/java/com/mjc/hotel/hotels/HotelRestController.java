@@ -28,8 +28,7 @@ public class HotelRestController {
     }
 
     @PutMapping("/{hotelId}")
-    public HotelDto updateHotel(@PathVariable Long hotelId,
-                                @RequestBody HotelDto hotelDto) {
+    public HotelDto updateHotel(@PathVariable Long hotelId, @RequestBody HotelDto hotelDto) {
         return hotelService.update(hotelId, hotelDto);
     }
 
