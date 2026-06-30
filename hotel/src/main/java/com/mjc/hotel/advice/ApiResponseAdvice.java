@@ -1,6 +1,7 @@
 package com.mjc.hotel.advice;
 
-import com.mjc.hotel.util.ApiResponse;
+import com.mjc.hotel.common.ApiResponse;
+import com.mjc.hotel.common.ResponseCode;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -19,14 +20,11 @@ public class ApiResponseAdvice implements ResponseBodyAdvice<Object> {
         // 모두 true 처리
 //		return !returnType.getContainingClass()
 //						.equals(AuthController.class);
-
         String className = returnType.getContainingClass().getName();
-
         // Swagger 제외
         if (className.contains("springdoc")) {
             return false;
         }
-
         if (ResponseEntity.class.isAssignableFrom(returnType.getParameterType())) {
             return false;
         }
@@ -38,9 +36,8 @@ public class ApiResponseAdvice implements ResponseBodyAdvice<Object> {
         if (body instanceof ApiResponse<?>) {
             return body;
         }
-
         return new ApiResponse<>(
-                true, "success", body
+                ResponseCode.SUCCESS, "success", body
         );
     }
 }
