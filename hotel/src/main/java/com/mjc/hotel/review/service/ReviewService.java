@@ -9,6 +9,7 @@ import com.mjc.hotel.review.entity.Review;
 import com.mjc.hotel.review.entity.ReviewPhoto;
 import com.mjc.hotel.review.entity.ReviewRating;
 import com.mjc.hotel.review.entity.ReviewTag;
+import com.mjc.hotel.review.exception.ReviewNotFoundException;
 import com.mjc.hotel.review.repository.ReviewPhotoRepository;
 import com.mjc.hotel.review.repository.ReviewRatingRepository;
 import com.mjc.hotel.review.repository.ReviewRepository;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -74,7 +74,7 @@ public class ReviewService {
     @Transactional
     public void deleteReview(Long reviewId) {
         if (!reviewRepository.existsById(reviewId)) {
-            throw new NoSuchElementException("Review not found. reviewId=" + reviewId);
+            throw new ReviewNotFoundException(reviewId);
         }
 
         deleteDetails(reviewId);
@@ -83,7 +83,7 @@ public class ReviewService {
 
     private Review findReview(Long reviewId) {
         return reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new NoSuchElementException("Review not found. reviewId=" + reviewId));
+                .orElseThrow(() -> new ReviewNotFoundException(reviewId));
     }
 
     private ReviewResponse toResponse(Long reviewId, Review review) {
