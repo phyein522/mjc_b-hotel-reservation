@@ -5,34 +5,44 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 @Entity
+@Table(name = "user")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@EqualsAndHashCode(callSuper = false)
 @Builder
 public class User extends BaseEntity {
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_Id")
+    private Long userId;
 
-    private long user_ID;
+    @Column(nullable = false, unique = true, length = 255)
     private String email;
+
+    @Column(nullable = false, length = 255)
     private String password;
+
+    @Column(length = 100)
     private String name;
+
+    @Column(length = 30)
     private String phone;
-    private Enum Role;
-    private Enum Status;
-    //private Timestamp created_at;
-    //private Timestamp updated_at;
-    private String socialLogin;
-    private String socialLoginId;
-    private Enum membership;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Role role;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Status status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10)
+    private Membership membership;
 }
