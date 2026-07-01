@@ -59,6 +59,5 @@ public class RoomEntity extends BaseEntity implements IRoom {
 	@Column(name = "room_bed_option", nullable = false)
 	private RoomBedOption roomBedOption;
 
-	@Column(name = "hotel_id", nullable = false)
 	private Long hotelId;
 }
