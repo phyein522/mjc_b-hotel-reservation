@@ -1,13 +1,14 @@
 {
   "info": {
-    "_postman_id": "f4bfb0b1-63e9-4d4d-b825-e3a8619dcc93",
+    "_postman_id": "09b97a82-15e8-44e7-aa6f-e1f535875e33",
     "name": "Hotel",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "53674091"
+    "_exporter_id": "16448427",
+    "_collection_link": "https://go.postman.co/collection/16448427-09b97a82-15e8-44e7-aa6f-e1f535875e33?source=collection_link"
   },
   "item": [
     {
-      "name": "Room",
+      "name": "Rooms",
       "item": [
         {
           "name": "room insert",
@@ -16,7 +17,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"name\": \"구름\"\r\n, \"number\": \"201\"\r\n, \"floor\": 2\r\n, \"size\": 14\r\n, \"basePrice\": 99000\r\n, \"maxAdult\": 3\r\n, \"maxChild\": 2\r\n, \"isActive\": true\r\n, \"roomType\": \"Standard\"\r\n, \"roomStatus\": \"EnableReservation\"\r\n, \"roomBedOption\": \"DoubleBed\"\r\n, \"roomViewOption\": \"MountainView\"\r\n, \"hotelId\": 1\r\n}",
+              "raw": "{\r\n  \"name\": \"구름4\"\r\n, \"number\": \"204\"\r\n, \"floor\": 2\r\n, \"size\": 14\r\n, \"basePrice\": 99000\r\n, \"maxAdult\": 3\r\n, \"maxChild\": 2\r\n, \"isActive\": true\r\n, \"roomType\": \"Standard\"\r\n, \"roomStatus\": \"EnableReservation\"\r\n, \"roomBedOption\": \"DoubleBed\"\r\n, \"roomViewOption\": \"MountainView\"\r\n, \"hotelId\": 1\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -40,6 +41,52 @@
           "response": []
         },
         {
+          "name": "room insertWithImages",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "files",
+                  "type": "file",
+                  "uuid": "b3dc2d4d-a130-41f1-8684-98e78d20b469",
+                  "src": "/C:/Users/gong-813-001/Downloads/호텔방2.jpg"
+                },
+                {
+                  "key": "files",
+                  "type": "file",
+                  "uuid": "c22e03a1-a244-4f5e-a84d-91bc8b6a0efb",
+                  "src": "/C:/Users/gong-813-001/Downloads/호텔방3.jpg"
+                },
+                {
+                  "key": "requestDto",
+                  "value": "{\n  \"name\": \"구름\"\n, \"number\": \"101\"\n, \"floor\": 1\n, \"size\": 14\n, \"basePrice\": 99000\n, \"maxAdult\": 3\n, \"maxChild\": 2\n, \"isActive\": true\n, \"roomType\": \"Standard\"\n, \"roomStatus\": \"EnableReservation\"\n, \"roomBedOption\": \"DoubleBed\"\n, \"roomViewOption\": \"MountainView\"\n, \"hotelId\": 1\n}",
+                  "type": "text",
+                  "uuid": "023cad8b-6b12-4bf1-bf88-2d1e4f769dc2",
+                  "contentType": "application/json"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/v1/room/image",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "v1",
+                "room",
+                "image"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "room findById",
           "request": {
             "method": "GET",
@@ -55,6 +102,29 @@
                 "api",
                 "v1",
                 "room",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "room findByIdWithImages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/v1/room/images/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "v1",
+                "room",
+                "images",
                 "1"
               ]
             }
@@ -116,13 +186,179 @@
       ]
     },
     {
+      "name": "RoomImages",
+      "item": [
+        {
+          "name": "roomimage insert",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "87ceaf46-7d07-405f-9ad6-b94dc74326ea",
+                  "src": "/C:/Users/gong-813-001/Downloads/호텔방1.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/v1/roomimage/room/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "v1",
+                "roomimage",
+                "room",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "roomimage update",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "566f10bc-cc6f-409b-b507-c1895896a104",
+                  "src": "/C:/Users/gong-813-001/Downloads/호텔방4.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/v1/roomimage/image/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "v1",
+                "roomimage",
+                "image",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "roomimage findbyid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/v1/roomimage/6",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "v1",
+                "roomimage",
+                "6"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "roomimage downloadImagebyid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/v1/roomimage/download/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "v1",
+                "roomimage",
+                "download",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "roomimage resourceImagebyid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/v1/roomimage/image/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "v1",
+                "roomimage",
+                "image",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "roomimage deletebyid",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/v1/roomimage/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "v1",
+                "roomimage",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "hotels",
       "item": [
         {
           "name": "Hotel findAll",
           "request": {
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": ""
+            }
           },
           "response": []
         },
@@ -130,7 +366,10 @@
           "name": "Hotel findbyid",
           "request": {
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": ""
+            }
           },
           "response": []
         },
@@ -138,7 +377,10 @@
           "name": "Hotel insert",
           "request": {
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": ""
+            }
           },
           "response": []
         },
@@ -146,7 +388,10 @@
           "name": "Hotel Update",
           "request": {
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": ""
+            }
           },
           "response": []
         },
@@ -154,7 +399,10 @@
           "name": "Hotel deletebyid",
           "request": {
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": ""
+            }
           },
           "response": []
         }
@@ -169,14 +417,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:33000//api/hotelimages/1",
+              "raw": "http://localhost:33000/api/hotelimages/1",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "33000",
               "path": [
-                "",
                 "api",
                 "hotelimages",
                 "1"
@@ -189,7 +436,10 @@
           "name": "Image findbyid",
           "request": {
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": ""
+            }
           },
           "response": []
         },
@@ -197,7 +447,10 @@
           "name": "Image insert",
           "request": {
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": ""
+            }
           },
           "response": []
         },
@@ -205,7 +458,10 @@
           "name": "Image Update",
           "request": {
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": ""
+            }
           },
           "response": []
         },
@@ -213,7 +469,10 @@
           "name": "Image deletebyid",
           "request": {
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": ""
+            }
           },
           "response": []
         }
@@ -228,14 +487,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:33000//api/hotelimages/1",
+              "raw": "http://localhost:33000/api/hotelimages/1",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "33000",
               "path": [
-                "",
                 "api",
                 "hotelimages",
                 "1"
@@ -248,7 +506,10 @@
           "name": "transfindbyid",
           "request": {
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": ""
+            }
           },
           "response": []
         },
@@ -256,7 +517,10 @@
           "name": "transinsert",
           "request": {
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": ""
+            }
           },
           "response": []
         },
@@ -264,7 +528,10 @@
           "name": "transUpdate",
           "request": {
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": ""
+            }
           },
           "response": []
         },
@@ -272,7 +539,10 @@
           "name": "deletebyid",
           "request": {
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": ""
+            }
           },
           "response": []
         }
