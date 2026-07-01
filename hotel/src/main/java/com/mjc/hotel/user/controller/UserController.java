@@ -1,7 +1,6 @@
 package com.mjc.hotel.user.controller;
 
 import com.mjc.hotel.user.entity.User;
-import com.mjc.hotel.user.mapper.UserMapper;
 import com.mjc.hotel.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,14 +13,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-
-    private final UserMapper userMapper;
     private final UserRepository userRepository;
 
     @GetMapping("/mapperUsers")
     public List<User> getUsers() {
-        return userMapper.getUsers();
+        return userRepository.findAll();
     }
+
     @GetMapping("/repositoryUsers")
     public List<User> getSUser2() {
         return userRepository.findAll();
