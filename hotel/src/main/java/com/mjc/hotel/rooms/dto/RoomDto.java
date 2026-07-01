@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @ToString
 @Builder
-public class RoomDto implements IRoom {
+public class RoomDto extends BaseDto implements IRoom {
 	private Long roomId;
 	private String name;
 	private String number;

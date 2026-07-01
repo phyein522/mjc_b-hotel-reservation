@@ -1,5 +1,6 @@
 package com.mjc.hotel.rooms.dto;
 
+import com.mjc.hotel.common.dto.BaseEntity;
 import com.mjc.hotel.rooms.enums.RoomBedOption;
 import com.mjc.hotel.rooms.enums.RoomStatus;
 import com.mjc.hotel.rooms.enums.RoomType;
@@ -16,7 +17,7 @@ import java.math.BigDecimal;
 @ToString
 @Builder
 @Entity(name = "room")
-public class RoomEntity implements IRoom {
+public class RoomEntity extends BaseEntity implements IRoom {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long roomId;
