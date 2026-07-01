@@ -1,19 +1,23 @@
 package com.mjc.hotel.common;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
+import java.util.Objects;
 import java.util.Random;
 
 @Slf4j
+@Getter
 @Component
 public class FileUtil {
 	@Value("${hotel.save-folder}")
@@ -84,6 +88,17 @@ public class FileUtil {
 		return fileName.substring(lastIndex + 1).toLowerCase();
 	}
 
+	public void deleteFile(String path, String fileName) {
+		String fullPath = this.uploadPath + "/" + path;
+		Path filePath = Paths.get(fullPath + "/" + fileName);
+		try {
+			Files.delete(filePath);
+		} catch (IOException e) {
+			log.error(e.getMessage());
+			throw new RuntimeException(e);
+		}
+	}
+
 	public boolean deleteFile(String fileName) {
 		if ( !this.checkDirectory(fileName) ) {
 			return false;
@@ -106,8 +121,8 @@ public class FileUtil {
 	 * @return 저장된 바이트수
 	 * @throws IOException
 	 */
-	public boolean copyFile(MultipartFile src, String path, String destFileName) throws IOException {
-		if ( src == null || path == null || destFileName == null ) {
+	public boolean copyFile(MultipartFile src, String path, String destFileName) throws RuntimeException {
+		if ( src == null || path == null || destFileName == null || src.isEmpty() || destFileName.isEmpty() ) {
 			return false;
 		}
 		try {
@@ -124,8 +139,26 @@ public class FileUtil {
 			}
 		}  catch (IOException e) {
 			log.error(e.toString());
-			throw e;
+			throw new RuntimeException(e);
 		}
 		return true;
+	}
+
+	public Resource loadFileAsResource(String path, String fileName) throws IOException {
+		String fullPath = this.uploadPath + "/" + path;
+		Path filePath = Paths.get(fullPath + "/" + fileName);
+		Resource resource = new UrlResource(filePath.toUri());
+		if (!resource.exists() || !resource.isReadable()) {
+			String msg = String.format("can't read file %s", filePath.toString());
+			log.error(msg);
+			throw new IOException(msg);
+		}
+		return resource;
+	}
+
+	public byte[] loadFileAsBytes(String path, String fileName) throws IOException {
+		String fullPath = this.uploadPath + "/" + path;
+		Path filePath = Paths.get(fullPath + "/" + fileName);
+		return Files.readAllBytes(filePath);
 	}
 }

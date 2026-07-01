@@ -3,7 +3,7 @@ package com.mjc.hotel.rooms.controller;
 import com.mjc.hotel.common.ApiResponse;
 import com.mjc.hotel.common.ResponseCode;
 import com.mjc.hotel.rooms.dto.RoomDto;
-import com.mjc.hotel.rooms.dto.RoomInsertResponseDto;
+import com.mjc.hotel.rooms.dto.RoomResponseWithImagesDto;
 import com.mjc.hotel.rooms.service.RoomService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +34,10 @@ public class RoomRestController {
 		);
 	}
 
-	@PostMapping("/withimgs")
-	public ResponseEntity<ApiResponse<RoomInsertResponseDto>> insert(@RequestPart RoomDto requestDto
-			, @RequestPart List<MultipartFile> files) throws IOException {
-		RoomInsertResponseDto resultDto = this.roomService.insert(requestDto, files);
+	@PostMapping("/image")
+	public ResponseEntity<ApiResponse<RoomResponseWithImagesDto>> insertWithImages(@RequestPart(name = "requestDto", required = true) RoomDto requestDto
+			, @RequestPart(name = "files", required = false) List<MultipartFile> files) throws IOException {
+		RoomResponseWithImagesDto resultDto = this.roomService.insertWithImages(requestDto, files);
 		return ResponseEntity.status(HttpStatus.CREATED).body(
 				ApiResponse.make(ResponseCode.INSERT_OK, "ok", resultDto)
 		);
@@ -54,6 +54,14 @@ public class RoomRestController {
 	@GetMapping("/{roomId}")
 	public ResponseEntity<ApiResponse<RoomDto>> findById(@PathVariable Long roomId) {
 		RoomDto resultDto = this.roomService.findById(roomId);
+		return ResponseEntity.status(HttpStatus.OK).body(
+				ApiResponse.make(ResponseCode.SELECT_OK, "ok", resultDto)
+		);
+	}
+
+	@GetMapping("/images/{roomId}")
+	public ResponseEntity<ApiResponse<RoomResponseWithImagesDto>> findByIdWithImages(@PathVariable Long roomId, @PageableDefault(size=10, page=0, sort="roomImageId", direction= Sort.Direction.DESC) Pageable pageable) {
+		RoomResponseWithImagesDto resultDto = this.roomService.findByIdWithImages(roomId, pageable);
 		return ResponseEntity.status(HttpStatus.OK).body(
 				ApiResponse.make(ResponseCode.SELECT_OK, "ok", resultDto)
 		);

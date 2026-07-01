@@ -2,6 +2,8 @@ package com.mjc.hotel.common;
 
 public enum ResponseCode {
 	SUCCESS(10000)
+	, BAD_REQUEST(20001)
+	, PAYLOAD_TOO_LARGE(20002)
 	, INSERT_OK(21000)
 	, UPDATE_OK(22000)
 	, DELETE_OK(23000)
