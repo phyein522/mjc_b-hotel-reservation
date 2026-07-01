@@ -97,3 +97,40 @@
 .agree-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 42px; border-bottom: 1px solid #e5eaf2; color: #344054; font-size: 14px; }
 .payment-summary-total { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-top: 12px; padding-top: 14px; border-top: 2px solid #101828; }
 .payment-summary-total strong { font-size: 24px; }
+
+/* user coupon screens */
+.coupon-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.coupon-card { position: relative; display: grid; gap: 12px; padding: 18px; border: 1px solid #d8e5ff; border-radius: 14px; background: linear-gradient(135deg, #ffffff, #eff6ff); overflow: hidden; }
+.coupon-card:after { content: ""; position: absolute; right: -22px; top: 50%; width: 44px; height: 44px; border-radius: 50%; background: #f6f8fb; transform: translateY(-50%); border: 1px solid #d8e5ff; }
+.coupon-card.disabled { border-color: #e5eaf2; background: #f8fafc; color: #98a2b3; }
+.coupon-card h2 { font-size: 20px; }
+.coupon-value { font-size: 28px; font-weight: 900; color: #2563eb; }
+.coupon-meta { color: #667085; font-size: 13px; line-height: 1.5; }
+.coupon-select { display: grid; gap: 10px; margin-top: 14px; }
+.coupon-option { min-height: 62px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 1px solid #e5eaf2; border-radius: 10px; padding: 0 14px; background: #fff; }
+.coupon-option.selected { border-color: #2563eb; background: #eff6ff; }
+.discount-row strong { color: #2563eb; }
+@media (max-width: 800px) { .coupon-grid { grid-template-columns: 1fr; } }
+
+/* auth screens */
+.auth-shell { min-height: calc(100vh - 72px); display: grid; place-items: center; padding: 40px 0 70px; }
+.auth-card { width: min(460px, 100%); }
+.auth-card .panel { padding: 28px; }
+.auth-title { text-align: center; margin-bottom: 22px; }
+.auth-title h1 { font-size: 32px; }
+.auth-title p { margin: 8px 0 0; color: #667085; font-size: 14px; line-height: 1.5; }
+.auth-links { display: flex; justify-content: center; gap: 8px; margin-top: 16px; color: #667085; font-size: 14px; }
+.auth-links a { color: #2563eb; font-weight: 900; }
+.social-login { display: grid; gap: 8px; margin-top: 14px; }
+.divider { display: flex; align-items: center; gap: 10px; color: #98a2b3; font-size: 12px; font-weight: 900; margin: 18px 0; }
+.divider:before, .divider:after { content: ""; height: 1px; background: #e5eaf2; flex: 1; }
+
+/* booking schedule controls */
+.booking-control-panel { margin-bottom: 16px; }
+.guest-stepper-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+.guest-stepper { min-height: 72px; border: 1px solid #e5eaf2; border-radius: 10px; background: #fff; padding: 12px; display: grid; gap: 8px; }
+.guest-stepper .stepper-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.stepper-controls { display: flex; align-items: center; gap: 8px; }
+.stepper-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px solid #d0d5dd; background: #fff; font-weight: 900; color: #344054; }
+.stepper-value { min-width: 20px; text-align: center; font-weight: 900; }
+@media (max-width: 720px) { .guest-stepper-grid { grid-template-columns: 1fr; } }
