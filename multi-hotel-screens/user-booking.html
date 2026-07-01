@@ -1,10 +1,20 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>StayNow 사용자 - 예약페이지</title><link rel="stylesheet" href="styles.css"></head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>StayNow 사용자 - 예약페이지</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="feature-additions.css">
+</head>
 <body>
-  <header class="top"><div class="wrap top-inner"><a class="logo" href="user-home.html"><span class="mark">S</span>StayNow</a><nav class="nav"><a href="user-detail.html">호텔상세</a><a class="active" href="user-booking.html">예약페이지</a><a href="user-history.html">예약내역</a></nav></div></header>
+  <header class="top"><div class="wrap top-inner"><a class="logo" href="user-home.html"><span class="mark">S</span>StayNow</a><nav class="nav"><a href="user-detail.html">호텔상세</a><a class="active" href="user-booking.html">예약페이지</a><a href="user-payment.html">결제</a><a href="user-history.html">예약내역</a></nav></div></header>
   <main class="wrap main">
-    <div class="section-head"><div><h1>예약페이지</h1><p class="sub">예약자 정보와 결제 금액을 확인합니다.</p></div></div>
-    <div class="grid-2"><section class="card panel"><h2>예약자 정보</h2><div class="grid-2" style="margin-top:16px"><div class="field"><label>이름</label><input value="이서연"></div><div class="field"><label>연락처</label><input value="010-1234-5678"></div></div><div class="field" style="margin-top:14px"><label>이메일</label><input value="seoyeon@example.com"></div><div class="field" style="margin-top:14px"><label>요청사항</label><input value="고층 객실 선호"></div></section><aside class="card panel"><h2>결제 요약</h2><div class="row"><span>예약 호텔</span><strong>그랜드 서울 호텔</strong></div><div class="row"><span>예약 객실</span><strong>디럭스 더블</strong></div><div class="row"><span>일정</span><strong>07.14 ~ 07.16 · 2박</strong></div><div class="row"><span>총 결제금액</span><strong>396,000원</strong></div><a class="btn primary" href="user-complete.html" style="width:100%;margin-top:14px">예약 완료하기</a></aside></div>
+    <div class="section-head"><div><h1>예약페이지</h1><p class="sub">예약자 정보와 객실 정보를 확인한 뒤 결제 화면으로 이동합니다.</p></div></div>
+    <div class="grid-2">
+      <section class="card panel"><h2>예약자 정보</h2><div class="grid-2" style="margin-top:16px"><div class="field"><label>이름</label><input value="이서연"></div><div class="field"><label>연락처</label><input value="010-1234-5678"></div></div><div class="field" style="margin-top:14px"><label>이메일</label><input value="seoyeon@example.com"></div><div class="field" style="margin-top:14px"><label>요청사항</label><input value="고층 객실 선호"></div></section>
+      <aside class="card panel"><h2>예약 요약</h2><div class="row"><span>예약 호텔</span><strong>그랜드 서울 호텔</strong></div><div class="row"><span>예약 객실</span><strong>디럭스 더블</strong></div><div class="row"><span>일정</span><strong>07.14 ~ 07.16 · 2박</strong></div><div class="row"><span>인원</span><strong>성인 2명</strong></div><div class="row"><span>결제 예정금액</span><strong>396,000원</strong></div><a class="btn primary" href="user-payment.html" style="width:100%;margin-top:14px">결제 화면으로 이동</a></aside>
+    </div>
   </main>
-</body></html>
+</body>
+</html>

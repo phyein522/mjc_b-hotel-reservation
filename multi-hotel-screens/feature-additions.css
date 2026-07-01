@@ -73,3 +73,27 @@
 .admin-hotel-switcher.selectable { padding: 0 8px 0 10px; }
 .admin-hotel-switcher select { flex: 1; min-width: 0; border: 0; background: transparent; color: #172033; font: inherit; font-weight: 800; outline: none; cursor: pointer; }
 .admin-hotel-switcher select option { color: #172033; }
+
+/* room edit/delete management */
+.action-cell { display: flex; gap: 6px; flex-wrap: wrap; }
+.btn.small { min-height: 30px; padding: 0 10px; font-size: 12px; border-radius: 7px; }
+.btn.danger { background: #fff1f0; color: #c93535; border-color: #ffd5d1; }
+.room-management-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(320px, .8fr); gap: 14px; margin-top: 14px; align-items: start; }
+.room-edit-panel .panel-title-row { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+.room-delete-box { border: 1px solid #ffd5d1; background: #fff8f7; border-radius: 8px; padding: 14px; margin-top: 14px; }
+.room-delete-box h3 { margin: 0 0 8px; color: #c93535; font-size: 15px; }
+.room-delete-box p { margin: 0 0 12px; color: #6c7888; font-size: 13px; }
+@media (max-width: 1100px) { .room-management-grid { grid-template-columns: 1fr; } }
+
+/* user payment screen */
+.pay-methods { display: grid; gap: 10px; margin-top: 14px; }
+.pay-method { min-height: 58px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 1px solid #e5eaf2; border-radius: 10px; padding: 0 14px; background: #fff; }
+.pay-method.selected { border-color: #2563eb; background: #eff6ff; }
+.pay-method strong { font-size: 14px; }
+.pay-method span { color: #667085; font-size: 13px; }
+.pay-radio { width: 18px; height: 18px; border-radius: 50%; border: 5px solid #2563eb; background: #fff; }
+.pay-radio.empty { border: 2px solid #cbd5e1; }
+.agree-list { display: grid; gap: 10px; margin-top: 14px; }
+.agree-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 42px; border-bottom: 1px solid #e5eaf2; color: #344054; font-size: 14px; }
+.payment-summary-total { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-top: 12px; padding-top: 14px; border-top: 2px solid #101828; }
+.payment-summary-total strong { font-size: 24px; }
