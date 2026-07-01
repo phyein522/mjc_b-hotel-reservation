@@ -1,8 +1,0 @@
-p {
-	margin-bottom: 0;
-}
-
-.aside-section {
-	display: grid;
-	grid-template-columns: 1fr 4fr;
-}

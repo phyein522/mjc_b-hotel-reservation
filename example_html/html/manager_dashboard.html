@@ -5,8 +5,58 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>관리자 대시보드</title>
-	<link rel="stylesheet" href="bootstrap.css" />
-	<link rel="stylesheet" href="manager_dashboard_style.css" />
+	<link rel="stylesheet" href="../css/bootstrap.css" />
+	<style>
+		.btn-profile {
+			padding: 10px;
+			display: flex;
+			justify-self: center;
+			align-items: center;
+		}
+
+		p {
+			margin-bottom: 0;
+		}
+
+		.navbar {
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+
+		.container-fluid {
+			padding-right: 0;
+		}
+
+		main {
+			display: grid;
+			grid-template-columns: 1fr 5fr;
+		}
+
+		.btn-dropdown {
+			display: inline-flex;
+		}
+
+		.badge {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.aside-menu {
+			display: grid;
+			grid-template-columns: 1fr 3fr;
+			gap: 8px;
+		}
+
+		span {
+			display: inline-block;
+		}
+
+		.section-aside {
+			display: grid;
+			grid-template-columns: 3fr 1fr;
+		}
+	</style>
 </head>
 
 <body>
@@ -17,8 +67,8 @@
 					<img src="" alt="img" />
 				</div>
 				<div>
-					<a class="navbar-brand" href="#">Navbar</a>
-					<p>관리자 시스템</p>
+					<a class="navbar-brand" href="#">StayNow</a>
+					<p class="text-muted"><small>최고의 호텔을 최저가로</small></p>
 				</div>
 			</div>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02"
@@ -49,20 +99,20 @@
 						<a class="nav-link" href="#">설정</a>
 					</li>
 				</ul>
-				<div class="d-flex dropdown">
+				<div class="d-flex dropdown" id="userDropdown">
 					<button class="btn nav-link dropdown-toggle btn-profile" data-bs-toggle="dropdown" role="button"
 						aria-haspopup="true" aria-expanded="false">
-						<div class="navbar-logo">
+						<div class="d-flex align-items-center">
 							<div>
-								<img src="" alt="img" />
+								<img src="" alt="프로필_이미지" class="me-3" />
 							</div>
 							<div>
-								<a class="navbar-brand">Navbar</a>
-								<p>관리자 시스템</p>
+								<a class="navbar-brand"><span class="user-name">김</span>관리자</a>
+								<p class="text-muted"><small><span class="role">Super Admin</span></small></p>
 							</div>
 						</div>
 					</button>
-					<div class="dropdown-menu" style="right: 0; top: 100%;"> <!-- show -->
+					<div class="dropdown-menu" style="right: 0; top: 100%;" id="userDropdownMenu"> <!-- show -->
 						<a class="dropdown-item" href="#">Action</a>
 						<a class="dropdown-item" href="#">Another action</a>
 						<a class="dropdown-item" href="#">Something else here</a>
@@ -76,18 +126,14 @@
 	<main>
 		<aside class="m-1">
 			<div class="list-group">
-				<div class="list-group-item">
-					<button class="btn btn-secondary dropdown dropdown-toggle">
-						<div class="btn-choice-hotel">
-							<img src="" alt="img" />
-							<p>호텔명</p>
+				<div class="list-group-item d-flex align-items-center justify-content-center">
+					<button class="btn btn-secondary dropdown dropdown-toggle" id="hotelDropdown">
+						<div class="btn-dropdown">
+							<input type="number" class="form-control d-none" id="hotelId" value="1" />
+							<p class="hotel-name">호텔명</p>
 						</div>
-						<div class="dropdown-menu" style="left: 0; top: 100%;">
-							<a class="dropdown-item" href="#">Action</a>
-							<a class="dropdown-item" href="#">Another action</a>
-							<a class="dropdown-item" href="#">Something else here</a>
-							<div class="dropdown-divider"></div>
-							<a class="dropdown-item" href="#">Separated link</a>
+						<div class="dropdown-menu" style="left: 0; top: 100%;" id="hotelDropdownMenu">
+							<a class="dropdown-item" href="#"><span class="d-none hotel-id">hotelId</span>호텔명</a>
 						</div>
 					</button>
 				</div>
@@ -95,95 +141,51 @@
 					<p>메인</p>
 					<div class="list-group">
 						<a href="#" class="list-group-item list-group-item-action active">
-							<div class="d-flex w-100 justify-content-between">
-								<img src="" alt="img" />
-								<p class="mb-1">대시보드</p>
-								<span class="badgerounded-pill"></span>
-							</div>
+							<p class="mb-1">대시보드</p>
 						</a>
 						<a href="#" class="list-group-item list-group-item-action">
-							<div class="d-flex w-100 justify-content-between">
-								<img src="" alt="img" />
-								<p class="mb-1">예약 관리</p>
-								<span class="badge bg-primary rounded-pill">12</span>
-							</div>
+							<p class="mb-1">예약 관리</p>
 						</a>
 						<a href="#" class="list-group-item list-group-item-action">
-							<div class="d-flex w-100 justify-content-between">
-								<img src="" alt="img" />
-								<p class="mb-1">체크인 현황</p>
-								<span class="badge bg-danger rounded-pill">3</span>
-							</div>
+							<p class="mb-1">체크인 현황</p>
 						</a>
 						<a href="#" class="list-group-item list-group-item-action">
-							<div class="d-flex w-100 justify-content-between">
-								<img src="" alt="img" />
-								<p class="mb-1">고객 관리</p>
-								<span class="badgerounded-pill"></span>
-							</div>
+							<p class="mb-1">고객 관리</p>
 						</a>
 					</div>
 				</div>
 				<div class="list-group-item">
-					<p>객실*요금</p>
+					<p>객실&middot;요금</p>
 					<div class="list-group">
-						<a href="#" class="list-group-item list-group-item-action">
-							<div class="d-flex w-100 justify-content-between">
-								<img src="" alt="img" />
-								<p class="mb-1">객실 관리</p>
-								<span class="badge rounded-pill"></span>
-							</div>
+						<a href="./manager_room.html" class="list-group-item list-group-item-action">
+							<p class="mb-1">객실 관리</p>
 						</a>
 						<a href="#" class="list-group-item list-group-item-action">
-							<div class="d-flex w-100 justify-content-between">
-								<img src="" alt="img" />
-								<p class="mb-1">요금 설정</p>
-								<span class="badge rounded-pill"></span>
-							</div>
+							<p class="mb-1">요금 설정</p>
 						</a>
 						<a href="#" class="list-group-item list-group-item-action">
-							<div class="d-flex w-100 justify-content-between">
-								<img src="" alt="img" />
-								<p class="mb-1">프로모션</p>
-								<span class="badge rounded-pill"></span>
-							</div>
+							<p class="mb-1">프로모션</p>
 						</a>
 					</div>
 				</div>
 				<div class="list-group-item">
-					<p>분석*리포트</p>
+					<p>분석&middot;리포트</p>
 					<div class="list-group">
 						<a href="#" class="list-group-item list-group-item-action">
-							<div class="d-flex w-100 justify-content-between">
-								<img src="" alt="img" />
-								<p class="mb-1">매출 분석</p>
-								<span class="badge rounded-pill"></span>
-							</div>
+							<p class="mb-1">매출 분석</p>
 						</a>
 						<a href="#" class="list-group-item list-group-item-action">
-							<div class="d-flex w-100 justify-content-between">
-								<img src="" alt="img" />
-								<p class="mb-1">리뷰 관리</p>
-								<span class="badge bg-warning rounded-pill">8</span>
-							</div>
+							<p class="mb-1">리뷰 관리</p>
 						</a>
 						<a href="#" class="list-group-item list-group-item-action">
-							<div class="d-flex w-100 justify-content-between">
-								<img src="" alt="img" />
-								<p class="mb-1">정산 리포트</p>
-								<span class="badge rounded-pill"></span>
-							</div>
+							<p class="mb-1">정산 리포트</p>
 						</a>
 					</div>
 				</div>
 				<div class="list-group-item">
 					<div class="list-group">
 						<a href="#" class="list-group-item list-group-item-action">
-							<div class="d-flex w-100 justify-content-between">
-								<img src="" alt="img" />
-								<p class="mb-1">시스템 설정</p>
-								<span class="badge rounded-pill"></span>
-							</div>
+							<p class="mb-1">시스템 설정</p>
 						</a>
 					</div>
 				</div>
@@ -193,132 +195,108 @@
 			<section class="d-flex w-100 justify-content-between mb-3">
 				<div>
 					<div class="d-flex w-100 justify-content-between align-items-center">
-						<h3>대시보드</h3>
-						<span class="badge rounded-pill bg-success">* 실시간 업데이트 중</span>
+						<h3 class="me-3">대시보드</h3>
+						<span class="badge rounded-pill bg-success">&middot; 실시간 업데이트 중</span>
 					</div>
-					<p class="text-secondary">0000년 00월 00일 (월) * 오전 00:00</p>
+					<p class="text-secondary"><span class="date-now">0000년 00월 00일</span>&nbsp;&middot;&nbsp;<span
+							class="time-now">오전 00:00</span></p>
 				</div>
-				<div class="d-flex justify-content-between">
-					<button class="btn btn-secondary dropdown dropdown-toggle">
-						<div class="btn-choice-hotel">
-							<img src="" alt="img" />
-							<p>이번 달 (7월)</p>
+				<div class="d-flex align-items-center">
+					<button class="btn btn-secondary dropdown dropdown-toggle" id="dateYearMonthDropdown">
+						<div class="btn-dropdown">
+							<p id="dateYearMonth">2026년 7월</p>
 						</div>
-						<div class="dropdown-menu" style="left: 0; top: 100%;">
-							<a class="dropdown-item" href="#">Action</a>
-							<a class="dropdown-item" href="#">Another action</a>
-							<a class="dropdown-item" href="#">Something else here</a>
+						<div class="dropdown-menu" style="left: 0; top: 100%;" id="dateYearMonthDropdownMenu">
+							<a class="dropdown-item" href="#">2026년 7월</a>
 							<div class="dropdown-divider"></div>
-							<a class="dropdown-item" href="#">Separated link</a>
+							<a class="dropdown-item" href="#">2026년 6월</a>
+							<a class="dropdown-item" href="#">2026년 5월</a>
 						</div>
 					</button>
-					<button class="btn btn-secondary">
-						<div class="btn-choice-hotel">
+					<button class="btn btn-secondary ms-3">
+						<div class="btn-dropdown">
 							<img src="" alt="img" />
-							<p>리포트 다운로드</p>
+							<p class="ms-3">리포트 다운로드</p>
 						</div>
 					</button>
-					<button class="btn btn-secondary">
-						<div class="btn-choice-hotel">
-							<img src="" alt="img" />
-							<p>예약 등록</p>
-						</div>
-					</button>
+					<!-- <button class="btn btn-primary ms-3">
+						<p>+ 예약 등록</p>
+					</button> -->
 				</div>
 			</section>
 			<section class="d-flex w-100 justify-content-between mb-3">
 				<div class="card">
 					<div class="card-body">
-						<div class="d-flex justify-content-between">
-							<img src="" alt="img" />
-							<span class="badge bg-success rounded-pill">+12.4%</span>
+						<div class="d-flex justify-content-between align-items-center">
+							<p class="card-subtitle text-muted">오늘 예약</p>
+							<span class="badge bg-success rounded-pill booking-rate">+12.4%</span>
 						</div>
-						<p class="card-subtitle text-muted">오늘 예약</p>
-						<h4 class="card-title">47건</h4>
-						<div class="progress">
-							<div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25"
-								aria-valuemin="0" aria-valuemax="100"></div>
-						</div>
+						<h4 class="card-title"><span class="today-booking-count">47</span>건</h4>
 						<div class="d-flex justify-content-between">
-							<small class="card-text text-muted">어제 대비</small>
-							<small class="card-text">41건 -> 47건</small>
+							<small class="card-text text-muted me-3">어제 대비</small>
+							<small class="card-text"><span
+									class="yesterday-booking-count">41</span>건&nbsp;&rarr;&nbsp;<span
+									class="today-booking-count">47</span>건</small>
 						</div>
 					</div>
 				</div>
 				<div class="card">
 					<div class="card-body">
-						<div class="d-flex justify-content-between">
-							<img src="" alt="img" />
+						<div class="d-flex justify-content-between align-items-center">
+							<p class="card-subtitle text-muted">체크인 예정</p>
 							<span class="badge bg-warning rounded-pill">오늘</span>
 						</div>
-						<p class="card-subtitle text-muted">체크인 예정</p>
-						<h4 class="card-title">18팀</h4>
-						<div class="progress">
-							<div class="progress-bar bg-warning" role="progressbar" style="width: 75%;"
-								aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
-						</div>
+						<h4 class="card-title"><span class="checkinCount">18</span>팀</h4>
 						<div class="d-flex justify-content-between">
-							<small class="card-text text-muted">체크아웃 예정</small>
-							<small class="card-text">12팀</small>
+							<small class="card-text text-muted me-3">체크아웃 예정</small>
+							<small class="card-text"><span class="checkoutCount">12</span>팀</small>
 						</div>
 					</div>
 				</div>
 				<div class="card">
 					<div class="card-body">
-						<div class="d-flex justify-content-between">
-							<img src="" alt="img" />
-							<span class="badge bg-success rounded-pill">+3.2%</span>
+						<div class="d-flex justify-content-between align-items-center">
+							<p class="card-subtitle text-muted">객실 점유율</p>
+							<span class="badge bg-success rounded-pill room-updown-rate">+3.2%</span>
 						</div>
-						<p class="card-subtitle text-muted">객실 점유율</p>
-						<h4 class="card-title">84.2%</h4>
-						<div class="progress">
-							<div class="progress-bar bg-success" role="progressbar" style="width: 25%;"
-								aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-						</div>
+						<h4 class="card-title"><span class="room-rate">0</span>%</h4>
 						<div class="d-flex justify-content-between">
-							<small class="card-text text-muted">전체 120실 중</small>
-							<small class="card-text">101실 이용중</small>
+							<small class="card-text text-muted me-3">전체 <span class="all-room-count">0</span>실
+								중</small>
+							<small class="card-text"><span class="use-room-count">0</span>실 이용중</small>
 						</div>
 					</div>
 				</div>
 				<div class="card">
 					<div class="card-body">
-						<div class="d-flex justify-content-between">
-							<img src="" alt="img" />
-							<span class="badge bg-success rounded-pill">+18.7%</span>
+						<div class="d-flex justify-content-between align-items-center">
+							<p class="card-subtitle text-muted">이번 달 매출</p>
+							<span class="badge bg-success rounded-pill sales-rate">+18.7%</span>
 						</div>
-						<p class="card-subtitle text-muted">이번 달 매출</p>
-						<h4 class="card-title">&#8361;284M</h4>
-						<div class="progress">
-							<div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25"
-								aria-valuemin="0" aria-valuemax="100"></div>
-						</div>
+						<h4 class="card-title">&#8361;<span class="sales">284,000,000</span></h4>
 						<div class="d-flex justify-content-between">
-							<small class="card-text text-muted">지난달 대비</small>
-							<small class="card-text">&#8361;239M -> &#8361;284M</small>
+							<small class="card-text text-muted me-3">지난달 대비</small>
+							<small class="card-text">&#8361;<span
+									class="last-month-sales">239,000,000</span>&nbsp;&rarr;&nbsp;&#8361;<span
+									class="sales">284,000,000</span></small>
 						</div>
 					</div>
 				</div>
 				<div class="card">
 					<div class="card-body">
-						<div class="d-flex justify-content-between">
-							<img src="" alt="img" />
-							<span class="badge bg-success rounded-pill">+0.2%</span>
+						<div class="d-flex justify-content-between align-items-center">
+							<p class="card-subtitle text-muted">평균 평점</p>
+							<span class="badge bg-success rounded-pill grade-rate">+0.2%</span>
 						</div>
-						<p class="card-subtitle text-muted">평균 평점</p>
-						<h4 class="card-title">9.4점</h4>
-						<div class="progress">
-							<div class="progress-bar bg-info" role="progressbar" style="width: 50%;" aria-valuenow="50"
-								aria-valuemin="0" aria-valuemax="100"></div>
-						</div>
+						<h4 class="card-title"><span class="grade">9.4</span>점</h4>
 						<div class="d-flex justify-content-between">
-							<small class="card-text text-muted">신규 리뷰</small>
-							<small class="card-text">이번 달 127건</small>
+							<small class="card-text text-muted me-3">신규 리뷰</small>
+							<small class="card-text">이번 달 <span class="month-review-count">127</span>건</small>
 						</div>
 					</div>
 				</div>
 			</section>
-			<section class="d-flex w-100 justify-content-between mb-3">
+			<section class="d-flex w-100 justify-content-between mb-3 section-aside">
 				<div class="card">
 					<div class="card-body">
 						<div class="d-flex justify-content-between w-100 mb-3">
@@ -340,11 +318,24 @@
 									<th scope="col">체크아웃</th>
 									<th scope="col">금액</th>
 									<th scope="col">상태</th>
-									<th scope="col">액션</th>
 								</tr>
 							</thead>
-							<tbody>
+							<tbody id="bookingList">
 								<tr>
+									<th scope="row" class="booking-number">SN-0714-8842</th>
+									<td>
+										<div class="d-flex justify-content-between">
+											<img src="" alt="김" class="booking-profile" />
+											<p class="booking-name">김민준</p>
+										</div>
+									</td>
+									<td class="text-mutedb booking-room">디럭스 더블 (도심뷰)</td>
+									<td class="text-muted booking-checkin">07.14</td>
+									<td class="text-muted booking-checkout">07.16</td>
+									<td><strong>&#8361;<span class="booking-amount">240,000</span></strong></td>
+									<td><span class="badge rounded-pill bg-success">예약확정</span></td>
+								</tr>
+								<!-- <tr>
 									<th scope="row">SN-0714-8842</th>
 									<td>
 										<div class="d-flex justify-content-between">
@@ -357,14 +348,6 @@
 									<td class="text-muted">07.16</td>
 									<td><strong>&#8361;240,000</strong></td>
 									<td><span class="badge rounded-pill bg-success">예약확정</span></td>
-									<td class="d-flex justify-content-between">
-										<button type="button" class="btn btn-primary">
-											<img src="" alt="img" />
-										</button>
-										<button type="button" class="btn btn-danger">
-											<img src="" alt="X" />
-										</button>
-									</td>
 								</tr>
 								<tr class="table-active">
 									<th scope="row">SN-0714-8841</th>
@@ -379,14 +362,6 @@
 									<td class="text-muted">07.17</td>
 									<td><strong>&#8361;1,800,000</strong></td>
 									<td><span class="badge rounded-pill bg-warning">체크인 중</span></td>
-									<td class="d-flex justify-content-between">
-										<button type="button" class="btn btn-primary">
-											<img src="" alt="img" />
-										</button>
-										<button type="button" class="btn btn-danger">
-											<img src="" alt="X" />
-										</button>
-									</td>
 								</tr>
 								<tr>
 									<th scope="row">SN-0714-8840</th>
@@ -401,14 +376,6 @@
 									<td class="text-muted">07.16</td>
 									<td><strong>&#8361;185,000</strong></td>
 									<td><span class="badge rounded-pill bg-success">예약확정</span></td>
-									<td class="d-flex justify-content-between">
-										<button type="button" class="btn btn-primary">
-											<img src="" alt="img" />
-										</button>
-										<button type="button" class="btn btn-danger">
-											<img src="" alt="X" />
-										</button>
-									</td>
 								</tr>
 								<tr class="table-active">
 									<th scope="row">SN-0714-8839</th>
@@ -423,14 +390,6 @@
 									<td class="text-muted">07.14</td>
 									<td><strong>&#8361;320,000</strong></td>
 									<td><span class="badge rounded-pill bg-primary">체크아웃</span></td>
-									<td class="d-flex justify-content-between">
-										<button type="button" class="btn btn-primary">
-											<img src="" alt="img" />
-										</button>
-										<button type="button" class="btn btn-danger">
-											<img src="" alt="X" />
-										</button>
-									</td>
 								</tr>
 								<tr>
 									<th scope="row">SN-0714-8838</th>
@@ -445,33 +404,28 @@
 									<td class="text-muted">07.15</td>
 									<td><strong>&#8361;165,000</strong></td>
 									<td><span class="badge rounded-pill bg-danger">취소요청</span></td>
-									<td class="d-flex justify-content-between">
-										<button type="button" class="btn btn-primary">
-											<img src="" alt="img" />
-										</button>
-										<button type="button" class="btn btn-success">
-											<img src="" alt="img" />
-										</button>
-									</td>
-								</tr>
+								</tr> -->
 							</tbody>
 						</table>
 					</div>
 				</div>
 				<section>
-					<div class="card">
+					<div class="card ms-3 mb-3">
 						<div class="card-body">
 							<h6 class="card-title">오늘 일정</h6>
-							<small class="card-subtitle mb-3 text-muted">체크인*체크아웃</small>
-							<ul class="list-group">
+							<small class="card-subtitle mb-3 text-muted">체크인&middot;체크아웃</small>
+							<ul class="list-group" id="schedule">
 								<li class="list-group-item">
 									<div class=" d-flex justify-content-between align-items-center">
-										<p>김민준 * 101호</p>
-										<span class="badge bg-primary rounded-pill">체크인</span>
+										<p><span class="schedule-booking-name">김민준</span>&nbsp;&middot;&nbsp;<span
+												class="schedule-booking-room-number">101</span>호</p>
+										<span class="badge bg-primary rounded-pill schedule-status">체크인</span>
 									</div>
-									<small class="text-muted">오후 3:00 예정 * 디럭스 더블</small>
+									<small class="text-muted"><span class="schedule-time">오후
+											3:00</span>&nbsp;예정&nbsp;&middot;&nbsp;<span
+											class="schedule-booking-room">디럭스 더블</span></small>
 								</li>
-								<li class="list-group-item">
+								<!-- <li class="list-group-item">
 									<div class=" d-flex justify-content-between align-items-center">
 										<p>박서연 * 502호</p>
 										<span class="badge bg-warning rounded-pill">체크인중</span>
@@ -498,35 +452,31 @@
 										<span class="badge bg-danger rounded-pill">취소요청</span>
 									</div>
 									<small class="text-muted">처리 필요 * 비즈니스 더블</small>
-								</li>
+								</li> -->
 							</ul>
 						</div>
 					</div>
-					<div class="card">
+					<div class="card ms-3">
 						<div class="card-body">
-							<div class="d-flex justify-content-between mb-3">
-								<h4 class="card-title">처리 필요 항목</h4>
-								<span class="badge rounded-pill bg-danger">5건</span>
-							</div>
+							<h6 class="card-title">처리 필요 항목</h6>
 							<ul class="list-group">
-								<li
+								<lin
 									class="list-group-item list-group-item-danger d-flex justify-content-between align-items-center">
-									<img src="" alt="img" />
 									<p>취소 요청</p>
-									<small class="text-muted">정하은 고객 * SN-0714-8838</small>
+									<small class="text-muted"><span
+											id="lastCanceledCustomer">정하은</span>&nbsp;고객&nbsp;&middot;&nbsp;<span
+											id="lastCanceledNumber">SN-0714-8838</span></small>
 									<button type="button" class="btn btn-danger">처리하기</button>
-								</li>
+								</lin>
 								<li
 									class="list-group-item list-group-item-warning d-flex justify-content-between align-items-center">
-									<img src="" alt="img" />
-									<p>미답변 리뷰 8건</p>
+									<p>미답변 리뷰 <span id="unansweredReviewCount">8</span>건</p>
 									<small class="text-muted">최근 7일 이내 리뷰</small>
 									<button type="button" class="btn btn-warning">답변하기</button>
 								</li>
 								<li
 									class="list-group-item list-group-item-primary d-flex justify-content-between align-items-center">
-									<img src="" alt="img" />
-									<p>고객 문의 3건</p>
+									<p>고객 문의 <span id="inquiryCount">3</span>건</p>
 									<small class="text-muted">미확인 문의 메시지</small>
 									<button type="button" class="btn btn-primary">확인하기</button>
 								</li>
@@ -535,34 +485,34 @@
 					</div>
 				</section>
 			</section>
-			<section class="d-flex w-100 justify-content-between mb-3">
+			<!-- <section class="d-flex w-100 justify-content-between mb-3">
 				<div class="card w-100">
 					<div class="card-body">
-						<div class="d-flex justify-content-between mb-3">
+						<div class="d-flex justify-content-between align-items-center mb-3">
 							<div>
 								<h6 class="card-title">객실 현황 맵</h6>
 								<small class="card-subtitle text-muted">실시간 객실 상태</small>
 							</div>
-							<div class="d-flex justify-content-between">
-								사용중 예약완료 체크아웃대기 공실 청소중
+							<div class="d-flex justify-content-between align-items-center">
+								<span class="badge rounded-pill bg-primary">사용중 / 예약완료 / 체크아웃대기 / 청소중</span>
+								<span class="badge rounded-pill bg-light ms-3">공실</span>
 							</div>
 						</div>
-						<ul class="list-group mb-3">
-							<li class="list-group-item d-flex justify-content-between align-items-center">
+						<ul class="list-group mb-3" id="roomStatus">
+							<li
+								class="list-group-item d-flex justify-content-between align-items-center room-status-list">
 								<div class="card">
 									<div class="card-body">
-										<h6 class="card-title">5F</h6>
-										<small class="card-subtitle text-muted">6실</small>
+										<h6 class="card-title"><span class="room-status-floor">5</span>F</h6>
+										<small class="card-subtitle text-muted"><span
+												class="room-status-count">6</span>실</small>
 									</div>
 								</div>
-								<div class="card bg-primary">
+								<div class="card bg-primary room-status-status">
 									<div class="card-body">
-										<div class="d-flex justify-content-between">
-											<h6 class="card-title">501</h6>
-											<img src="" alt="o" />
-										</div>
-										<p class="card-subtitle mb-2 text-muted">사용중</p>
-										<small class="card-text">김민준</small>
+										<h6 class="card-title room-status-number">501</h6>
+										<p class="card-subtitle mb-2 text-muted room-status-status">사용중</p>
+										<small class="card-text room-status-customer">김민준</small>
 									</div>
 								</div>
 								<div class="card bg-success">
@@ -873,44 +823,60 @@
 						</ul>
 						<ul class="list-group">
 							<li class="list-group-item d-flex justify-content-between align-items-center">
-								<div class="d-flex justify-content-between">
-									<div class="d-flex justify-content-between">
-										<p>사용중</p>
-										<strong>8실</strong>
-									</div>
-									<p>&nbsp;</p>
-									<div class="d-flex justify-content-between">
-										<p>예약완료</p>
-										<strong>7실</strong>
-									</div>
-									<p>&nbsp;</p>
-									<div class="d-flex justify-content-between">
-										<p>체크아웃대기</p>
-										<strong>4실</strong>
-									</div>
-									<p>&nbsp;</p>
-									<div class="d-flex justify-content-between">
-										<p>공실</p>
-										<strong>6실</strong>
-									</div>
-									<p>&nbsp;</p>
-									<div class="d-flex justify-content-between">
-										<p>청소중</p>
-										<strong>4실</strong>
-									</div>
+								<div class="d-flex justify-content-between align-items-center">
+									<span class="badge rounded-pill bg-primary me-3">사용중 / 예약완료 / 체크아웃대기 / 청소중</span>
+									<p><span id="useRoomCount">23</span>실</p>
+									<span class="badge rounded-pill bg-light mx-3">공실</span>
+									<p><span id="voidRoomCount">6</span>실</p>
 								</div>
-								<div class="d-flex justify-content-between">
+								<div class="d-flex">
+									<p>전체<strong><span id="allRoomCount">29</span>실</strong></p>
+									<p class="mx-1">&nbsp;|&nbsp;</p>
 									<div class="d-flex justify-content-between">
-										<p>전체</p>
-										<strong>29실</strong>
-									</div>
-									<p>&nbsp;|&nbsp;</p>
-									<div class="d-flex justify-content-between">
-										<p>점유율</p>
-										<span class="badge rounded-pill bg-primary">65.5%</span>
+										<p class="me-1">점유율</p>
+										<span class="badge rounded-pill bg-primary room-rate">65.5%</span>
 									</div>
 								</div>
 							</li>
+						</ul>
+					</div>
+				</div>
+			</section> -->
+			<section class="d-flex w-100 justify-content-between mb-3">
+				<div class="card w-100">
+					<div class="card-body">
+						<div class="d-flex justify-content-between align-items-center mb-3">
+							<div>
+								<h6 class="card-title">객실 현황 맵</h6>
+								<small class="card-subtitle text-muted">실시간 객실 상태</small>
+							</div>
+							<div class="d-flex justify-content-between align-items-center">
+								<span class="badge rounded-pill bg-primary">사용중 / 예약완료 / 체크아웃대기 / 청소중</span>
+								<span class="badge rounded-pill bg-light ms-3">공실</span>
+							</div>
+						</div>
+						<ul class="list-group mb-3" id="roomStatusList">
+
+						</ul>
+						<ul class="list-group">
+							<li class="list-group-item d-flex justify-content-between align-items-center">
+								<div class="d-flex justify-content-between align-items-center">
+									<span class="badge rounded-pill bg-primary me-3">사용중 / 예약완료 / 체크아웃대기 / 청소중</span>
+									<p><span class="use-room-count">0</span>실</p>
+									<span class="badge rounded-pill bg-light mx-3">공실</span>
+									<p><span id="voidRoomCount">0</span>실</p>
+								</div>
+								<div class="d-flex">
+									<p>전체&nbsp;<strong><span class="all-room-count">0</span>실</strong></p>
+									<p class="mx-1">&nbsp;|&nbsp;</p>
+									<div class="d-flex justify-content-between">
+										<p class="me-1">점유율</p>
+										<span class="badge rounded-pill bg-primary"><span
+												class="room-rate">0</span>%</span>
+									</div>
+								</div>
+							</li>
+						</ul>
 					</div>
 				</div>
 			</section>
@@ -920,10 +886,108 @@
 
 </html>
 
-<script src="jquery.min.js"></script>
+<script src="../js/jquery.min.js"></script>
 <script>
-	$(".dropdown").click((e) => {
+	//$(".dropdown").click((e) => {
+	//	e.preventDefault(false);
+	//	$(".dropdown-menu").toggleClass("show");
+	//})
+	$("#userDropdown").click((e) => {
 		e.preventDefault(false);
-		$(".dropdown-menu").toggleClass("show");
+		$("#userDropdownMenu").toggleClass("show");
 	})
+	$("#hotelDropdown").click((e) => {
+		e.preventDefault(false);
+		$("#hotelDropdownMenu").toggleClass("show");
+	})
+	$("#dateYearMonthDropdown").click((e) => {
+		e.preventDefault(false);
+		$("#dateYearMonthDropdownMenu").toggleClass("show");
+	})
+
+	function findAllByHotelIdEquals() {
+		let hotelId = $("#hotelId").val();
+
+		$.ajax({
+			url: "/api/v1/room/hotel/" + hotelId
+			, type: "GET"
+		}).done(function (data, textStatus, jqXHR) {
+			console.log("findAllByHotelIdEquals 성공:", data);
+			makeRoomStatusList(data.responseData.content);
+		}).fail(function (jqXHR, textStatus, errorThrown) {
+			console.error("findAllByHotelIdEquals 실패:", textStatus);
+		}).always(function () {
+		});
+	}
+
+	function makeRoomStatusList(data) {
+		let roomDtoList = sortRoomDto(data);
+		let listKeys = Object.keys(roomDtoList).sort((a, b) => Number(b) - Number(a));
+
+		let useRoomCount = 0;
+		let voidRoomCount = 0;
+
+		let html = ``;
+
+		listKeys.forEach((key) => {
+			html += `
+<li class="list-group-item d-flex align-items-center room-status-list">
+	<div class="card">
+		<div class="card-body">
+			<h6 class="card-title"><span class="room-status-floor">${key}</span>F</h6>
+			<small class="card-subtitle text-muted"><span class="room-status-count">${roomDtoList[key].length}</span>실</small>
+		</div>
+	</div>
+`;
+			roomDtoList[key].forEach((dto) => {
+				html += `
+	<button type="button" class="btn btn-${dto.roomStatus == "DisableReservation" ? "primary" : "light"} ms-3 room-status-status">
+		<p class="d-none room-status-id">${dto.roomId}</p>
+		<h6 class="card-title room-status-number">${dto.number}</h6>
+		<small class="card-text room-status-customer">${dto.roomStatus == "DisableReservation" ? "사용중" : "-"}</small>
+	</button>
+`;
+
+				if (dto.roomStatus == "DisableReservation") {
+					useRoomCount++;
+				} else {
+					voidRoomCount++;
+				}
+			});
+
+			html += `
+</li>
+`;
+		});
+
+		console.log(html);
+		$("#roomStatusList").empty();
+		$("#roomStatusList").append(html);
+
+		$(".use-room-count").text(useRoomCount);
+		$("#voidRoomCount").text(voidRoomCount);
+		$(".all-room-count").text(useRoomCount + voidRoomCount);
+		$(".room-rate").text((useRoomCount / (useRoomCount + voidRoomCount)) * 100);
+	}
+
+	function sortRoomDto(data) {
+		const result = {};
+
+		data.forEach(roomDto => {
+			const floorKey = roomDto.floor;
+
+			if (!result[floorKey]) {
+				result[floorKey] = [];
+			}
+
+			result[floorKey].push(roomDto);
+		});
+
+		Object.keys(result).forEach(floorKey => {
+			result[floorKey].sort((a, b) => a.number.localeCompare(b.number, "ko", { numeric: true }));
+		});
+
+		console.log(result);
+		return result;
+	}
 </script>
