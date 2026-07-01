@@ -29,3 +29,6 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+
+hotel:
+  save-folder: ./uploads

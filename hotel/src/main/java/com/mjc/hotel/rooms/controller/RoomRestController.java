@@ -3,7 +3,9 @@ package com.mjc.hotel.rooms.controller;
 import com.mjc.hotel.common.ApiResponse;
 import com.mjc.hotel.common.ResponseCode;
 import com.mjc.hotel.rooms.dto.RoomDto;
+import com.mjc.hotel.rooms.dto.RoomInsertResponseDto;
 import com.mjc.hotel.rooms.service.RoomService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +14,12 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.List;
+
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/room")
 public class RoomRestController {
@@ -22,6 +29,15 @@ public class RoomRestController {
 	@PostMapping
 	public ResponseEntity<ApiResponse<RoomDto>> insert(@RequestBody RoomDto requestDto) {
 		RoomDto resultDto = this.roomService.insert(requestDto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(
+				ApiResponse.make(ResponseCode.INSERT_OK, "ok", resultDto)
+		);
+	}
+
+	@PostMapping("/withimgs")
+	public ResponseEntity<ApiResponse<RoomInsertResponseDto>> insert(@RequestPart RoomDto requestDto
+			, @RequestPart List<MultipartFile> files) throws IOException {
+		RoomInsertResponseDto resultDto = this.roomService.insert(requestDto, files);
 		return ResponseEntity.status(HttpStatus.CREATED).body(
 				ApiResponse.make(ResponseCode.INSERT_OK, "ok", resultDto)
 		);
