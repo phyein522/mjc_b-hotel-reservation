@@ -53,7 +53,7 @@ public class RoomRestController {
 
 	@GetMapping("/hotel/{hotelId}")
 	public ResponseEntity<ApiResponse<Page<RoomDto>>> page(@PathVariable Long hotelId
-			, @PageableDefault(size=10, page=0, sort="id", direction= Sort.Direction.DESC) Pageable pageable) {
+			, @PageableDefault(size=10, page=0, sort="roomId", direction= Sort.Direction.DESC) Pageable pageable) {
 		Page<RoomDto> page = this.roomService.findAllByHotelIdEquals(hotelId, pageable);
 		return ResponseEntity.status(HttpStatus.OK).body(
 				ApiResponse.make(ResponseCode.SELECT_OK, "ok", page)
