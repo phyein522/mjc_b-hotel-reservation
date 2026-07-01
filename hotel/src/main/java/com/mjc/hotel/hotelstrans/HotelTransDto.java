@@ -11,7 +11,7 @@ import lombok.*;
 public class HotelTransDto {
     private Long transId;
     private String name;
-    private int time;
+    private String time;
     private String depart;
 
     private Long hotelId;

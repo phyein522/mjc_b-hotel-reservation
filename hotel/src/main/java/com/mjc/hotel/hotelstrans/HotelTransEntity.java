@@ -20,7 +20,7 @@ public class HotelTransEntity {
     private String name;
 
     @Column(name = "trans_time")
-    private Integer time;
+    private String time;
 
     @Column(name = "trans_depart")
     private String depart;
