@@ -25,6 +25,7 @@ public class HotelImageRestController {
     public HotelImageDto insertHotelImage(@RequestBody HotelImageDto hotelImageDto) {
         return hotelImageService.insert(hotelImageDto);
     }
+
     @PutMapping("/{hotelImageId}")
     public HotelImageDto updateHotelImage(@PathVariable Long hotelImageId,
                                           @RequestBody HotelImageDto hotelImageDto) {

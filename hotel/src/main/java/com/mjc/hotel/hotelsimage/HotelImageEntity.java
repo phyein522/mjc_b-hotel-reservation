@@ -1,5 +1,6 @@
 package com.mjc.hotel.hotelsimage;
 
+import com.mjc.hotel.common.dto.BaseEntity;
 import com.mjc.hotel.hotels.HotelEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class HotelImageEntity {
+public class HotelImageEntity extends BaseEntity implements IHotelImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "image_id")
@@ -33,4 +34,25 @@ public class HotelImageEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private HotelEntity hotel;
 
+    @Override
+    public Long getHotelId() {
+
+        if(hotel != null){
+            return hotel.getHotelId();
+        }
+
+        return hotelId;
+    }
+
+    @Override
+    public void setHotelId(Long hotelId) {
+
+        this.hotelId = hotelId;
+
+        if(hotel == null){
+            hotel = new HotelEntity();
+        }
+
+        hotel.setHotelId(hotelId);
+    }
 }

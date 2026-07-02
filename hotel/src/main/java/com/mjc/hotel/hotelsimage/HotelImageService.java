@@ -1,57 +1,68 @@
 package com.mjc.hotel.hotelsimage;
 
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
-@Slf4j
-@RequiredArgsConstructor
 @Service
-@Transactional
 public class HotelImageService {
-    private final HotelImageRepository hotelImageRepository;
-    private final HotelImageMapper hotelImageMapper;
+    @Autowired
+    private HotelImageRepository hotelImageRepository;
 
     public List<HotelImageDto> findAll() {
-        return hotelImageRepository.findAll()
-                .stream()
-                .map(hotelImageMapper::toDto)
+
+        List<HotelImageEntity> list = hotelImageRepository.findAll();
+
+        return getListHotelImageDto(list);
+    }
+
+    private List<HotelImageDto> getListHotelImageDto(List<HotelImageEntity> list) {
+
+        return list.stream()
+                .map(x -> (HotelImageDto) new HotelImageDto().copyMembers(x, true))
                 .toList();
     }
     public HotelImageDto findById(Long imageId) {
-        HotelImageEntity hotelImage = hotelImageRepository.findById(imageId).orElseThrow( () -> new IllegalArgumentException("호텔 이미지를 찾을 수 없습니다."));
-        return hotelImageMapper.toDto(hotelImage);
+
+        HotelImageEntity findEntity =
+                hotelImageRepository.findById(imageId)
+                        .orElseThrow(() -> new IllegalArgumentException("호텔 이미지를 찾을 수 없습니다."));
+
+        return (HotelImageDto) new HotelImageDto().copyMembers(findEntity, true);
     }
+    public HotelImageDto insert(IHotelImage hotelImageDto) {
 
-    public HotelImageDto insert(HotelImageDto insertDto) {
+        HotelImageEntity insertEntity =
+                (HotelImageEntity) new HotelImageEntity().copyMembers(hotelImageDto, true);
 
-        HotelImageEntity savedHotelImage =
-                hotelImageRepository.save(hotelImageMapper.toEntity(insertDto));
+        insertEntity.setImageId(null);
 
-        return hotelImageMapper.toDto(savedHotelImage);
+        HotelImageEntity insertedEntity =
+                hotelImageRepository.save(insertEntity);
+
+        return (HotelImageDto) new HotelImageDto().copyMembers(insertedEntity, true);
     }
+    public HotelImageDto update(Long imageId, IHotelImage hotelImageDto) {
 
-    public HotelImageDto update(Long imageId, HotelImageDto hotelImageDto) {
+        HotelImageDto findDto = this.findById(imageId);
 
-        HotelImageEntity hotelImage = hotelImageRepository.findById(imageId)
-                .orElseThrow(() -> new IllegalArgumentException("호텔 이미지를 찾을 수 없습니다."));
+        findDto.copyMembers(hotelImageDto, false);
 
-        hotelImage.setUrl(hotelImageDto.getUrl());
-        hotelImage.setSortOrder(hotelImageDto.getSortOrder());
-        hotelImage.setIsThumbnail(hotelImageDto.getIsThumbnail());
+        HotelImageEntity updateEntity =
+                (HotelImageEntity) new HotelImageEntity().copyMembers(findDto, true);
 
-        HotelImageEntity savedHotelImage = hotelImageRepository.save(hotelImage);
+        HotelImageEntity updatedEntity =
+                hotelImageRepository.save(updateEntity);
 
-        return hotelImageMapper.toDto(savedHotelImage);
+        return (HotelImageDto) new HotelImageDto().copyMembers(updatedEntity, true);
     }
-    public void deleteById(Long hotelImageId) {
+    public void deleteById(Long imageId) {
 
-        if (!hotelImageRepository.existsById(hotelImageId)) {
+        if (!hotelImageRepository.existsById(imageId)) {
             throw new IllegalArgumentException("호텔 이미지를 찾을 수 없습니다.");
         }
 
-        hotelImageRepository.deleteById(hotelImageId);
+        hotelImageRepository.deleteById(imageId);
     }
 }
