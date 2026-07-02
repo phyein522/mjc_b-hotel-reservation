@@ -1,0 +1,133 @@
+[MJC 호텔 - 매출 분석 기능 구현 가이드 (Stub 서비스 & 예외 처리 설정)]
+
+이 메모장은 타 팀원과의 머지 충돌을 최소화하고, 로컬 환경에서 DB 없이 API를 바로 테스트할 수 있도록 설계된 핵심 구현 가이드입니다.
+
+
+1. Spring Profile을 활용한 Stub/Real 서비스 스위칭 방법
+--------------------------------------------------
+Spring의 @Profile 어노테이션을 사용하여 application.yaml 설정에 따라 Mock 데이터를 리턴하는 Stub 구현체와 실제 데이터베이스를 연동하는 Real 구현체를 동적으로 스위칭합니다.
+
+[1] 서비스 공통 인터페이스 선언
+파일명: com/mjc/hotel/sales_analysis/service/SalesAnalysisService.java
+=========================================
+package com.mjc.hotel.sales_analysis.service;
+
+import com.mjc.hotel.sales_analysis.dto.SalesDashboardResponse;
+
+public interface SalesAnalysisService {
+    SalesDashboardResponse getDashboardData(Long hotelId, String targetMonth);
+}
+=========================================
+
+[2] Stub Service 구현체 작성 (더미 응답용)
+파일명: com/mjc/hotel/sales_analysis/service/SalesAnalysisServiceStub.java
+- 클래스 상단에 @Profile("stub")을 작성하여 stub 프로필이 켜졌을 때만 Bean으로 등록되도록 합니다.
+=========================================
+package com.mjc.hotel.sales_analysis.service;
+
+import com.mjc.hotel.sales_analysis.dto.*;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Service;
+import java.math.BigDecimal;
+
+@Service
+@Profile("stub")
+public class SalesAnalysisServiceStub implements SalesAnalysisService {
+    @Override
+    public SalesDashboardResponse getDashboardData(Long hotelId, String targetMonth) {
+        // 실제 스펙과 매칭되는 사실적인 모의(Mock) 데이터 생성 및 반환
+        return SalesDashboardResponse.builder()
+                .hotelId(hotelId)
+                .hotelName("MJC 가상 테스트 호텔")
+                .year(2026)
+                .month(6)
+                .metrics(DashboardMetricsDto.builder()
+                        .totalRevenue(new MetricValueDto(new BigDecimal("1150000.00"), 64.29, true))
+                        .bookingCount(new MetricValueDto(3L, 50.00, true))
+                        .occupancyRate(new MetricValueDto(45.50, 2.10, true))
+                        .adr(new MetricValueDto(164285.71, -1.25, false))
+                        .returningGuestRate(new MetricValueDto(66.67, 5.00, true))
+                        .vipReturningGuestRate(new MetricValueDto(100.00, 0.00, false))
+                        .build())
+                .build();
+    }
+}
+=========================================
+
+[3] Real Service 구현체 작성 (실제 DB 연동용)
+파일명: com/mjc/hotel/sales_analysis/service/SalesAnalysisServiceImpl.java
+- @Profile("!stub")을 설정하여 stub 프로필이 활성화되지 않은 일반/배포 모드에서 기본 동작하게 합니다.
+=========================================
+package com.mjc.hotel.sales_analysis.service;
+
+import com.mjc.hotel.sales_analysis.dto.SalesDashboardResponse;
+import com.mjc.hotel.sales_analysis.repository.mapper.SalesAnalysisMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Service;
+
+@Service
+@Profile("!stub")
+@RequiredArgsConstructor
+public class SalesAnalysisServiceImpl implements SalesAnalysisService {
+    private final SalesAnalysisMapper salesAnalysisMapper;
+
+    @Override
+    public SalesDashboardResponse getDashboardData(Long hotelId, String targetMonth) {
+        // 실제 MyBatis 매퍼 호출 및 통계 연산 수행 (2주차 구현 예정)
+        return null; 
+    }
+}
+=========================================
+
+[4] YAML 설정법 (로컬에서 Stub 켜기)
+파일명: hotel/src/main/resources/application.yaml
+=========================================
+spring:
+  profiles:
+    active: stub
+=========================================
+이렇게 설정하면 로컬 구동 시 DB 쿼리에 에러가 발생해도, Controller 호출 시 Stub Service가 더미 데이터를 반환해주어 서버가 정상 작동하고 프론트 연동 테스트를 즉시 진행할 수 있습니다.
+
+
+
+2. 패키지 전용 예외 핸들러 격리 구현 방법
+--------------------------------------------------
+공통 GlobalExceptionHandler.java 파일을 직접 수정하면 머지 과정에서 충돌이 자주 발생합니다. 이를 피하기 위해 sales_analysis 컨트롤러에만 전용으로 달라붙는 예외 처리기를 패키지 내부에 독립적으로 선언합니다.
+
+파일명: com/mjc/hotel/sales_analysis/controller/advice/SalesAnalysisExceptionHandler.java
+- @RestControllerAdvice(assignableTypes = SalesAnalysisController.class)를 사용하여 오직 SalesAnalysisController에서 발생하는 예외만 감지하여 처리하도록 격리합니다.
+=========================================
+package com.mjc.hotel.sales_analysis.controller.advice;
+
+import com.mjc.hotel.common.ApiResponse;
+import com.mjc.hotel.common.ResponseCode;
+import com.mjc.hotel.sales_analysis.controller.SalesAnalysisController;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@Slf4j
+@RestControllerAdvice(assignableTypes = SalesAnalysisController.class)
+public class SalesAnalysisExceptionHandler {
+
+    // 1. 유효하지 않은 입력 데이터 예외 처리 (예: 날짜 형식 오류 시)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<String>> handleIllegalArgument(IllegalArgumentException ex) {
+        log.warn("[매출 분석 API] 잘못된 요청 파라미터 유입: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.make(ResponseCode.BAD_REQUEST, ex.getMessage(), null));
+    }
+
+    // 2. 기타 비즈니스 로직 처리 예외 통합 처리 (DB 장애 등)
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<String>> handleGeneralException(Exception ex) {
+        log.error("[매출 분석 API] 연산 오류 발생", ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.make(ResponseCode.SELECT_ERROR, "매출 분석 통계 조회에 실패했습니다.", ex.getMessage()));
+    }
+}
+=========================================
+이 방식을 적용하면 타 팀원의 공통 코드를 일절 건드리지 않고도 안전하게 예외 코드를 ApiResponse 표준 규격으로 감싸 리턴할 수 있습니다.
