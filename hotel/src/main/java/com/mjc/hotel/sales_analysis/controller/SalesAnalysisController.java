@@ -2,7 +2,8 @@ package com.mjc.hotel.sales_analysis.controller;
 
 import com.mjc.hotel.sales_analysis.dto.SalesDashboardResponse;
 import com.mjc.hotel.sales_analysis.service.SalesAnalysisService;
-import com.mjc.hotel.util.ApiResponse;
+import com.mjc.hotel.common.ApiResponse;
+import com.mjc.hotel.common.ResponseCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,7 +36,7 @@ public class SalesAnalysisController {
             @RequestParam(name = "yearMonth", required = false) String yearMonth
     ) {
         SalesDashboardResponse data = salesAnalysisService.getDashboardData(hotelId, yearMonth);
-        ApiResponse<SalesDashboardResponse> response = new ApiResponse<>(true, "대시보드 데이터를 성공적으로 조회했습니다.", data);
+        ApiResponse<SalesDashboardResponse> response = ApiResponse.make(ResponseCode.SUCCESS, "대시보드 데이터를 성공적으로 조회했습니다.", data);
         return ResponseEntity.ok(response);
     }
 }

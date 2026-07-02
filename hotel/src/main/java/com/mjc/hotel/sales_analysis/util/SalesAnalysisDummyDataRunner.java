@@ -10,6 +10,9 @@ import com.mjc.hotel.sales_analysis.repository.HotelRepository;
 import com.mjc.hotel.sales_analysis.repository.PaymentRepository;
 import com.mjc.hotel.sales_analysis.repository.RoomRepository;
 import com.mjc.hotel.user.entity.User;
+import com.mjc.hotel.user.entity.Role;
+import com.mjc.hotel.user.entity.Status;
+import com.mjc.hotel.user.entity.Membership;
 import com.mjc.hotel.user.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -114,35 +117,35 @@ public class SalesAnalysisDummyDataRunner implements CommandLineRunner {
 
             // 3. 회원 등록 (ID: 10L, 20L, 30L)
             User normalUser1 = User.builder()
-                    .id(10L)
+                    .userId(10L)
                     .email("customer1@test.com")
                     .password("password123")
                     .name("김철수")
-                    .role("CUSTOMER")
-                    .status("ACTIVE")
-                    .grade("SILVER")
+                    .role(Role.CUSTOMER)
+                    .status(Status.ACTIVE)
+                    .membership(Membership.SILVER)
                     .build();
             userRepository.save(normalUser1);
 
             User normalUser2 = User.builder()
-                    .id(20L)
+                    .userId(20L)
                     .email("customer2@test.com")
                     .password("password123")
                     .name("이영희")
-                    .role("CUSTOMER")
-                    .status("ACTIVE")
-                    .grade("GOLD")
+                    .role(Role.CUSTOMER)
+                    .status(Status.ACTIVE)
+                    .membership(Membership.GOLD)
                     .build();
             userRepository.save(normalUser2);
 
             User vipUser = User.builder()
-                    .id(30L)
+                    .userId(30L)
                     .email("vip1@test.com")
                     .password("password123")
                     .name("박대표")
-                    .role("CUSTOMER")
-                    .status("ACTIVE")
-                    .grade("VIP")
+                    .role(Role.CUSTOMER)
+                    .status(Status.ACTIVE)
+                    .membership(Membership.PLATINUM)
                     .build();
             userRepository.save(vipUser);
 
