@@ -41,9 +41,9 @@ CREATE TABLE `reviews_tags` (
 );
 
 CREATE TABLE `promotionsale` (
-	`promotion_sale_id`	BIGINT	NOT NULL,
-	`promotion_id`	BIGINT	NOT NULL,
-	`promotion_sale_context`	TEXT	NULL
+	`pro_sale_id`	BIGINT	NOT NULL,
+	`pro_id`	BIGINT	NOT NULL,
+	`pro_sale_context`	TEXT	NULL
 );
 
 CREATE TABLE `point_transaction_types` (
@@ -106,6 +106,13 @@ CREATE TABLE `qr_code_statuses` (
 	`description`	VARCHAR(255)	NULL
 );
 
+CREATE TABLE `weekday_rates` (
+	`요일별요금ID`	BIGINT	NOT NULL,
+	`요일`	ENUM	NULL,
+	`요금변동률`	DECIMAL(5,2)	NULL,
+	`시즌요금`	BIGINT	NOT NULL	COMMENT '시즌요금ID - PK'
+);
+
 CREATE TABLE `membership_grades` (
 	`id`	BIGSERIAL	NOT NULL,
 	`code`	VARCHAR(20)	NOT NULL,
@@ -122,16 +129,26 @@ CREATE TABLE `membership_grades` (
 	`updated_at`	TIMESTAMPTZ	NOT NULL	DEFAULT now()
 );
 
-CREATE TABLE `hotel_info` (
-	`id`	VARCHAR(255)	NOT NULL,
+CREATE TABLE `hotel_amenities` (
+	`amen_id`	BIGINT	NOT NULL,
 	`hotel_id`	BIGSERIAL	NOT NULL,
-	`wifi`	BOOLEAN	NULL,
-	`swimpool`	BOOLEAN	NULL,
-	`health`	BOOLEAN	NULL,
+	`free_wifi`	BOOLEAN	NULL,
+	`pool`	BOOLEAN	NULL,
+	`fitness_center`	BOOLEAN	NULL,
 	`spa`	BOOLEAN	NULL,
 	`restaurant`	BOOLEAN	NULL,
-	`balletparking`	BOOLEAN	NULL,
-	`bar`	BOOLEAN	NULL
+	`valet_parking`	BOOLEAN	NULL,
+	`free_parking`	BOOLEAN	NOT NULL,
+	`concierge`	BOOLEAN	NOT NULL,
+	`bar`	BOOLEAN	NULL,
+	`breakfast`	BOOLEAN	NOT NULL,
+	`airport_shuttle`	BOOLEAN	NOT NULL,
+	`room_service`	BOOLEAN	NOT NULL,
+	`washing`	BOOLEAN	NOT NULL,
+	`lounge`	BOOLEAN	NOT NULL,
+	`sauna`	BOOLEAN	NOT NULL,
+	`free_cancel`	BOOLEAN	NOT NULL,
+	`pet_friendly`	BOOLEAN	NOT NULL
 );
 
 CREATE TABLE `refunds` (
@@ -157,7 +174,7 @@ CREATE TABLE `transportaion` (
 	`trans_id`	BIGINT	NOT NULL,
 	`hotel_id`	BIGINT	NOT NULL,
 	`transname`	VARCHAR(200)	NULL,
-	`transtime`	INT	NULL,
+	`transtime`	String	NULL,
 	`transdepart`	VARCHAR(100)	NULL
 );
 
@@ -177,11 +194,6 @@ CREATE TABLE `wishlists` (
 	`user_id`	BIGINT	NOT NULL,
 	`hotel_id`	BIGINT	NOT NULL,
 	`created_at`	TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE `amenties_type` (
-	`편의시설유형id`	BIGINT	NOT NULL,
-	`이름`	VARCHAR(200)	NULL
 );
 
 CREATE TABLE `season_rates` (
@@ -285,23 +297,25 @@ CREATE TABLE `rate_policies` (
 );
 
 CREATE TABLE `promotiontype` (
-	`promotion_type_id`	BIGINT	NOT NULL,
-	`promotion_id`	BIGINT	NOT NULL,
-	`promotion_context`	TEXT	NULL
+	`pro_type_id`	BIGINT	NOT NULL,
+	`pro_id`	BIGINT	NOT NULL,
+	`pro_context`	TEXT	NULL
 );
 
 CREATE TABLE `key_attraction` (
-	`attraction_id`	BIGINT	NOT NULL,
+	`attr_id`	BIGINT	NOT NULL,
 	`hotel_id`	BIGINT	NOT NULL,
-	`attraction_con`	TEXT	NULL
+	`context`	TEXT	NULL
 );
 
 CREATE TABLE `hotel_images` (
 	`hotel_image_id`	BIGINT	NOT NULL,
 	`hotel_id`	BIGINT	NOT NULL,
-	`image_url`	TEXT	NOT NULL,
-	`sort_order`	INT	NOT NULL	DEFAULT 0,
-	`is_thumbnail`	BOOLEAN	NOT NULL	DEFAULT FALSE
+	`filename`	String	NOT NULL,
+	`size`	INT	NOT NULL	DEFAULT 0,
+	`ext`	String	NOT NULL	DEFAULT FALSE,
+	`storeName`	String	NULL,
+	`path`	String	NULL
 );
 
 CREATE TABLE `rating_categories` (
@@ -328,12 +342,12 @@ CREATE TABLE `hotels` (
 );
 
 CREATE TABLE `promotion` (
-	`promotion_id`	BIGINT	NOT NULL,
+	`pro_id`	BIGINT	NOT NULL,
 	`room_id`	BIGINT	NOT NULL,
 	`name`	VARCHAR(100)	NOT NULL	COMMENT '프로모션명',
-	`desc`	TEXT	NULL	COMMENT '프로모션 설명',
-	`discount_type`	ENUM('RATE', 'AMOUNT')	NOT NULL	COMMENT '할인 유형(RATE: %, AMOUNT: 금액)',
-	`discount_value`	DECIMAL(10, 2)	NOT NULL	COMMENT '할인값',
+	`description`	TEXT	NULL	COMMENT '프로모션 설명',
+	`dis_type`	ENUM('RATE', 'AMOUNT')	NOT NULL	COMMENT '할인 유형(RATE: %, AMOUNT: 금액)',
+	`dis_value`	DECIMAL(10, 2)	NOT NULL	COMMENT '할인값',
 	`start_date`	DATETIME	NOT NULL	COMMENT '시작일',
 	`end_date`	DATETIME	NOT NULL	COMMENT '종료일',
 	`res_count`	INT	NULL,
@@ -366,15 +380,14 @@ CREATE TABLE `reivews_rating` (
 
 CREATE TABLE `coupon` (
 	`coupon_id`	BIGINT	NOT NULL,
-	`coupon_code`	VARCHAR(50)	NOT NULL,
-	`coupon_name`	VARCHAR(255)	NOT NULL,
+	`code`	VARCHAR(50)	NOT NULL,
+	`name`	VARCHAR(255)	NOT NULL,
 	`discount_type`	ENUM('FIXED', 'RATE')	NOT NULL,
 	`discount_value`	BIGINT	NOT NULL,
-	`min_order_amount`	BIGINT	NOT NULL,
-	`max_discount_amount`	BIGINT	NOT NULL,
-	`created_at`	DATETIME	NOT NULL,
+	`min_order`	BIGINT	NOT NULL,
+	`max_dis`	BIGINT	NOT NULL,
 	`expiration_date`	DATETIME	NOT NULL,
-	`coupon_status`	ENUM('ACTIVE', 'EXPIRED')	NOT NULL
+	`status`	ENUM('ACTIVE', 'EXPIRED')	NOT NULL
 );
 
 CREATE TABLE `point_transactions` (
@@ -389,14 +402,6 @@ CREATE TABLE `point_transactions` (
 	`description`	VARCHAR(255)	NULL,
 	`expires_at`	TIMESTAMPTZ	NULL,
 	`created_at`	TIMESTAMPTZ	NOT NULL	DEFAULT now()
-);
-
-CREATE TABLE `hotel_amenties` (
-	`id`	BIGINT	NULL,
-	`호텔아이디`	BIGINT	NOT NULL,
-	`편의시설유형id`	BIGINT	NOT NULL,
-	`유형`	TEXT	NULL,
-	`이름`	VARCHAR(200)	NULL
 );
 
 CREATE TABLE `users` (
@@ -421,13 +426,6 @@ CREATE TABLE `reviews_photo` (
 	`사진순서`	BIGINT	NULL
 );
 
-CREATE TABLE `weekday_rates` (
-	`요일별요금ID`	BIGINT	NOT NULL,
-	`요일`	ENUM	NULL,
-	`요금변동률`	DECIMAL(5,2)	NULL,
-	`시즌요금`	BIGINT	NOT NULL	COMMENT '시즌요금ID - PK'
-);
-
 ALTER TABLE `payments` ADD CONSTRAINT `PK_PAYMENTS` PRIMARY KEY (
 	`payment_id`
 );
@@ -445,7 +443,7 @@ ALTER TABLE `reviews_tags` ADD CONSTRAINT `PK_REVIEWS_TAGS` PRIMARY KEY (
 );
 
 ALTER TABLE `promotionsale` ADD CONSTRAINT `PK_PROMOTIONSALE` PRIMARY KEY (
-	`promotion_sale_id`
+	`pro_sale_id`
 );
 
 ALTER TABLE `point_transaction_types` ADD CONSTRAINT `PK_POINT_TRANSACTION_TYPES` PRIMARY KEY (
@@ -476,12 +474,16 @@ ALTER TABLE `qr_code_statuses` ADD CONSTRAINT `PK_QR_CODE_STATUSES` PRIMARY KEY 
 	`code`
 );
 
+ALTER TABLE `weekday_rates` ADD CONSTRAINT `PK_WEEKDAY_RATES` PRIMARY KEY (
+	`요일별요금ID`
+);
+
 ALTER TABLE `membership_grades` ADD CONSTRAINT `PK_MEMBERSHIP_GRADES` PRIMARY KEY (
 	`id`
 );
 
-ALTER TABLE `hotel_info` ADD CONSTRAINT `PK_HOTEL_INFO` PRIMARY KEY (
-	`id`
+ALTER TABLE `hotel_amenities` ADD CONSTRAINT `PK_HOTEL_AMENITIES` PRIMARY KEY (
+	`amen_id`
 );
 
 ALTER TABLE `refunds` ADD CONSTRAINT `PK_REFUNDS` PRIMARY KEY (
@@ -503,10 +505,6 @@ ALTER TABLE `point_reservation_earnings` ADD CONSTRAINT `PK_POINT_RESERVATION_EA
 ALTER TABLE `wishlists` ADD CONSTRAINT `PK_WISHLISTS` PRIMARY KEY (
 	`user_id`,
 	`hotel_id`
-);
-
-ALTER TABLE `amenties_type` ADD CONSTRAINT `PK_AMENTIES_TYPE` PRIMARY KEY (
-	`편의시설유형id`
 );
 
 ALTER TABLE `season_rates` ADD CONSTRAINT `PK_SEASON_RATES` PRIMARY KEY (
@@ -538,11 +536,11 @@ ALTER TABLE `rate_policies` ADD CONSTRAINT `PK_RATE_POLICIES` PRIMARY KEY (
 );
 
 ALTER TABLE `promotiontype` ADD CONSTRAINT `PK_PROMOTIONTYPE` PRIMARY KEY (
-	`promotion_type_id`
+	`pro_type_id`
 );
 
 ALTER TABLE `key_attraction` ADD CONSTRAINT `PK_KEY_ATTRACTION` PRIMARY KEY (
-	`attraction_id`
+	`attr_id`
 );
 
 ALTER TABLE `hotel_images` ADD CONSTRAINT `PK_HOTEL_IMAGES` PRIMARY KEY (
@@ -558,7 +556,7 @@ ALTER TABLE `hotels` ADD CONSTRAINT `PK_HOTELS` PRIMARY KEY (
 );
 
 ALTER TABLE `promotion` ADD CONSTRAINT `PK_PROMOTION` PRIMARY KEY (
-	`promotion_id`
+	`pro_id`
 );
 
 ALTER TABLE `point_reservation_usages` ADD CONSTRAINT `PK_POINT_RESERVATION_USAGES` PRIMARY KEY (
@@ -581,20 +579,12 @@ ALTER TABLE `point_transactions` ADD CONSTRAINT `PK_POINT_TRANSACTIONS` PRIMARY 
 	`id`
 );
 
-ALTER TABLE `hotel_amenties` ADD CONSTRAINT `PK_HOTEL_AMENTIES` PRIMARY KEY (
-	`id`
-);
-
 ALTER TABLE `users` ADD CONSTRAINT `PK_USERS` PRIMARY KEY (
 	`user_id`
 );
 
 ALTER TABLE `reviews_photo` ADD CONSTRAINT `PK_REVIEWS_PHOTO` PRIMARY KEY (
 	`id`
-);
-
-ALTER TABLE `weekday_rates` ADD CONSTRAINT `PK_WEEKDAY_RATES` PRIMARY KEY (
-	`요일별요금ID`
 );
 
 ALTER TABLE `wishlists` ADD CONSTRAINT `FK_users_TO_wishlists_1` FOREIGN KEY (
