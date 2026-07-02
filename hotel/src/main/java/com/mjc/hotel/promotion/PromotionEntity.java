@@ -1,7 +1,11 @@
 package com.mjc.hotel.promotion;
 
+import com.mjc.hotel.common.dto.BaseEntity;
+import com.mjc.hotel.rooms.dto.RoomEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.io.Serializable;
 
 @Entity
 @Table(name="promotion")
@@ -9,26 +13,24 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-public class PromotionEntity {
+@Builder
+
+public class PromotionEntity extends BaseEntity implements IPromotion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long promotionId;
+    private Long proId;
 
     @Column(nullable = false)
-    private Long roomId;
+    private String name;
 
     @Column(nullable = false)
-    private String promotionName;
+    private String description;
 
     @Column(nullable = false)
-    private String promotionDesc;
+    private String disType;
 
     @Column(nullable = false)
-    private String discountType;
-
-    @Column(nullable = false)
-    private String discountValue;
+    private String disValue;
 
     @Column(nullable = false)
     private String startDate;
@@ -38,4 +40,32 @@ public class PromotionEntity {
     private String conversionRate;
     private String status;
 
+    @Transient
+    private Long roomId;
+
+    @JoinColumn(name = "room_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private RoomEntity room;
+
+    @Override
+    public Long getRoomId() {
+
+        if (room != null) {
+            return room.getHotelId();
+        }
+
+        return roomId;
+    }
+
+    @Override
+    public void setRoomId(Long roomId) {
+
+        this.roomId = roomId;
+
+        if (room == null) {
+            room = new RoomEntity();
+        }
+
+        room.setHotelId(roomId);
+    }
 }
