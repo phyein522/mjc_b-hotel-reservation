@@ -1,72 +1,92 @@
 package com.mjc.hotel.user.controller;
 
-import com.mjc.hotel.user.dto.UserRequest;
-import com.mjc.hotel.user.dto.UserResponse;
-import com.mjc.hotel.user.entity.User;
-
-import com.mjc.hotel.user.repository.UserRepository;
-
+import com.mjc.hotel.user.dto.*;
+import com.mjc.hotel.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @RestController
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
 
+    private final UserService userService;
 
-    private final UserRepository userRepository;
-
-
-    // ===== JPA 기반 =====
-
-    @GetMapping("/repositoryUsers")
-    public List<UserResponse> getUsersByRepository() {
-        return userRepository.findAll()
-                .stream()
-                .map(UserResponse::from)
-                .collect(Collectors.toList());
+    // GET /api/users — 전체 조회
+    @GetMapping
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @GetMapping("/repositoryUsers/{userId}")
-    public ResponseEntity<UserResponse> getUserByRepository(@PathVariable Long userId) {
-        return userRepository.findById(userId)
-                .map(UserResponse::from)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    // GET /api/users/{userId} — 단건 조회
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserResponse> getUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.getUserById(userId));
     }
 
-    @PostMapping("/repositoryUsers")
-    public ResponseEntity<UserResponse> createUserByRepository(@Valid @RequestBody UserRequest request) {
-        // 평문 저장 (개발용, 보안 없음)
-        User saved = userRepository.save(request.toEntity());
-        return ResponseEntity.status(HttpStatus.CREATED).body(UserResponse.from(saved));
+    // GET /api/users/check-email?email= — 이메일 중복 체크
+    @GetMapping("/check-email")
+    public ResponseEntity<Map<String, Boolean>> checkEmail(@RequestParam String email) {
+        return ResponseEntity.ok(Map.of("available", userService.checkEmailAvailable(email)));
     }
 
-    @PutMapping("/repositoryUsers/{userId}")
-    public ResponseEntity<UserResponse> updateUserByRepository(
+    // GET /api/users/search — 페이징 + 복합 검색
+    // 예: /api/users/search?name=홍&status=ACTIVE&page=0&size=10&sortBy=createdAt&sortDir=desc
+    @GetMapping("/search")
+    public ResponseEntity<Page<UserResponse>> searchUsers(UserSearchRequest request) {
+        return ResponseEntity.ok(userService.searchUsers(request));
+    }
+
+    // POST /api/users — 생성
+    @PostMapping
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(userService.createUser(request));
+    }
+
+    // PUT /api/users/{userId} — 전체 수정
+    @PutMapping("/{userId}")
+    public ResponseEntity<UserResponse> updateUser(
             @PathVariable Long userId,
             @Valid @RequestBody UserRequest request) {
-        if (!userRepository.existsById(userId)) {
-            return ResponseEntity.notFound().build();
-        }
-        User user = request.toEntity();
-        user.setUserId(userId);
-        User saved = userRepository.save(user);
-        return ResponseEntity.ok(UserResponse.from(saved));
+        return ResponseEntity.ok(userService.updateUser(userId, request));
     }
 
-    @DeleteMapping("/repositoryUsers/{userId}")
-    public ResponseEntity<Void> deleteUserByRepository(@PathVariable Long userId) {
-        if (!userRepository.existsById(userId)) {
-            return ResponseEntity.notFound().build();
-        }
-        userRepository.deleteById(userId);
+    // PATCH /api/users/{userId} — 부분 수정 (이름/전화번호/상태/멤버십)
+    @PatchMapping("/{userId}")
+    public ResponseEntity<UserResponse> patchUser(
+            @PathVariable Long userId,
+            @Valid @RequestBody UserPatchRequest request) {
+        return ResponseEntity.ok(userService.patchUser(userId, request));
+    }
+
+    // PATCH /api/users/{userId}/password — 비밀번호 변경
+    @PatchMapping("/{userId}/password")
+    public ResponseEntity<Void> changePassword(
+            @PathVariable Long userId,
+            @Valid @RequestBody PasswordChangeRequest request) {
+        userService.changePassword(userId, request);
+        return ResponseEntity.noContent().build();
+    }
+
+    // PATCH /api/users/{userId}/withdraw — 소프트 딜리트 (탈퇴)
+    @PatchMapping("/{userId}/withdraw")
+    public ResponseEntity<Void> withdrawUser(@PathVariable Long userId) {
+        userService.withdrawUser(userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // DELETE /api/users/{userId} — 하드 딜리트
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
+        userService.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }
 }

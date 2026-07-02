@@ -38,7 +38,6 @@ public class UserRequest {
 
     private Membership membership;
 
-    // 생성용 (password는 호출부에서 암호화해서 별도로 set)
     public User toEntity() {
         return User.builder()
                 .email(email)

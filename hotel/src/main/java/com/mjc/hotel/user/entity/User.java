@@ -1,6 +1,6 @@
 package com.mjc.hotel.user.entity;
 
-import com.mjc.hotel.util.BaseEntity;
+import com.mjc.hotel.common.dto.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 @ToString
 @Builder
 @Entity(name = "room")
-public class RoomEntity extends BaseEntity implements IRoom {
+public class 	RoomEntity extends BaseEntity implements IRoom {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long roomId;

@@ -23,7 +23,7 @@ public class UserResponse {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    // password는 의도적으로 제외 (응답에 노출 금지)
+    // password는 의도적으로 제외
 
     public static UserResponse from(User user) {
         return UserResponse.builder()
