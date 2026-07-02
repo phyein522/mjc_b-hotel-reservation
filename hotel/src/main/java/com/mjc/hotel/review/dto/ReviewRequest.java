@@ -1,12 +1,14 @@
 package com.mjc.hotel.review.dto;
 
+import com.mjc.hotel.review.entity.ReviewTripType;
+
 import java.util.List;
 
 public record ReviewRequest(
         Long reservationId,
         Long userId,
         Long hotelId,
-        Long tripTypeSelectionId,
+        ReviewTripType tripType,
         Short viewCount,
         String title,
         String content,

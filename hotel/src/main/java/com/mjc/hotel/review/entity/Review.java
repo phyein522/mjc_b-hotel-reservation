@@ -1,7 +1,10 @@
 package com.mjc.hotel.review.entity;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,6 +17,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.Set;
 
 @Entity
 @Table(name = "reviews")
@@ -37,8 +42,9 @@ public class Review {
     @Column(name = "hotel_id")
     private Long hotelId;
 
-    @Column(name = "trip_type_selection_id")
-    private Long tripTypeSelectionId;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "trip_type", length = 30)
+    private ReviewTripType tripType;
 
     @Column(name = "view_count", nullable = false)
     private Short viewCount;
@@ -59,6 +65,14 @@ public class Review {
 
     @Column(name = "overall_rating")
     private Long overallRating;
+
+    @Convert(converter = ReviewTagSetConverter.class)
+    @Column(name = "tags", length = 500)
+    private Set<ReviewTagType> tags;
+
+    @Convert(converter = ReviewRatingMapConverter.class)
+    @Column(name = "category_ratings", length = 500)
+    private Map<ReviewRatingCategory, Long> categoryRatings;
 
     @Column(name = "like_count")
     private Long likeCount;

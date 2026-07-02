@@ -1,19 +1,12 @@
 package com.mjc.hotel.review.dto;
 
-import com.mjc.hotel.review.entity.ReviewRating;
+import com.mjc.hotel.review.entity.ReviewRatingCategory;
 
 public record ReviewRatingResponse(
-        Long id,
-        Long reviewId,
-        String categoryId,
+        ReviewRatingCategory category,
         Long score
 ) {
-    public static ReviewRatingResponse from(ReviewRating rating) {
-        return new ReviewRatingResponse(
-                rating.getId(),
-                rating.getReviewId(),
-                rating.getCategoryId(),
-                rating.getScore()
-        );
+    public static ReviewRatingResponse from(ReviewRatingCategory category, Long score) {
+        return new ReviewRatingResponse(category, score);
     }
 }

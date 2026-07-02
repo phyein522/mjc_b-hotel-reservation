@@ -1,19 +1,11 @@
 package com.mjc.hotel.review.dto;
 
-import com.mjc.hotel.review.entity.ReviewTag;
+import com.mjc.hotel.review.entity.ReviewTagType;
 
 public record ReviewTagResponse(
-        Long reviewTagId,
-        Long reviewId,
-        Long tagId,
-        Boolean status
+        ReviewTagType tag
 ) {
-    public static ReviewTagResponse from(ReviewTag tag) {
-        return new ReviewTagResponse(
-                tag.getReviewTagId(),
-                tag.getReviewId(),
-                tag.getTagId(),
-                tag.getStatus()
-        );
+    public static ReviewTagResponse from(ReviewTagType tag) {
+        return new ReviewTagResponse(tag);
     }
 }

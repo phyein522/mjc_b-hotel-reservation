@@ -1,7 +1,9 @@
 package com.mjc.hotel.review.dto;
 
+import com.mjc.hotel.review.entity.ReviewRatingCategory;
+
 public record ReviewRatingRequest(
-        String categoryId,
+        ReviewRatingCategory category,
         Long score
 ) {
 }

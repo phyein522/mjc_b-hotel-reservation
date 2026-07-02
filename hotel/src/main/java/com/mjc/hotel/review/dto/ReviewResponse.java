@@ -2,18 +2,22 @@ package com.mjc.hotel.review.dto;
 
 import com.mjc.hotel.review.entity.Review;
 import com.mjc.hotel.review.entity.ReviewPhoto;
-import com.mjc.hotel.review.entity.ReviewRating;
-import com.mjc.hotel.review.entity.ReviewTag;
+import com.mjc.hotel.review.entity.ReviewRatingCategory;
+import com.mjc.hotel.review.entity.ReviewTagType;
+import com.mjc.hotel.review.entity.ReviewTripType;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public record ReviewResponse(
         Long reviewId,
         Long reservationId,
         Long userId,
         Long hotelId,
-        Long tripTypeSelectionId,
+        ReviewTripType tripType,
         Short viewCount,
         String title,
         String content,
@@ -28,16 +32,14 @@ public record ReviewResponse(
 ) {
     public static ReviewResponse from(
             Review review,
-            List<ReviewPhoto> photos,
-            List<ReviewTag> tags,
-            List<ReviewRating> ratings
+            List<ReviewPhoto> photos
     ) {
         return new ReviewResponse(
                 review.getReviewId(),
                 review.getReservationId(),
                 review.getUserId(),
                 review.getHotelId(),
-                review.getTripTypeSelectionId(),
+                review.getTripType(),
                 review.getViewCount(),
                 review.getTitle(),
                 review.getContent(),
@@ -47,8 +49,18 @@ public record ReviewResponse(
                 review.getLikeCount(),
                 review.getDislikeCount(),
                 photos.stream().map(ReviewPhotoResponse::from).toList(),
-                tags.stream().map(ReviewTagResponse::from).toList(),
-                ratings.stream().map(ReviewRatingResponse::from).toList()
+                safeTags(review.getTags()).stream().map(ReviewTagResponse::from).toList(),
+                safeRatings(review.getCategoryRatings()).entrySet().stream()
+                        .map(entry -> ReviewRatingResponse.from(entry.getKey(), entry.getValue()))
+                        .toList()
         );
+    }
+
+    private static Set<ReviewTagType> safeTags(Set<ReviewTagType> tags) {
+        return tags == null ? Collections.emptySet() : tags;
+    }
+
+    private static Map<ReviewRatingCategory, Long> safeRatings(Map<ReviewRatingCategory, Long> ratings) {
+        return ratings == null ? Collections.emptyMap() : ratings;
     }
 }
