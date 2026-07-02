@@ -1,10 +1,9 @@
 {
   "info": {
-    "_postman_id": "8133fcfb-39c7-4354-81a9-6153fc75806c",
+    "_postman_id": "f4bfb0b1-63e9-4d4d-b825-e3a8619dcc93",
     "name": "Hotel",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "16448427",
-    "_collection_link": "https://go.postman.co/collection/16448427-8133fcfb-39c7-4354-81a9-6153fc75806c?source=collection_link"
+    "_exporter_id": "53674091"
   },
   "item": [
     {
@@ -111,6 +110,287 @@
                 "1"
               ]
             }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "hotels",
+      "item": [
+        {
+          "name": "Hotel findAll",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Hotel findbyid",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Hotel insert",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Hotel Update",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Hotel deletebyid",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "hotelsimage",
+      "item": [
+        {
+          "name": "Image findAll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:33000//api/hotelimages/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "33000",
+              "path": [
+                "",
+                "api",
+                "hotelimages",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Image findbyid",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Image insert",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Image Update",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Image deletebyid",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "hoteltrans",
+      "item": [
+        {
+          "name": "transfindAll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:33000//api/hotelimages/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "33000",
+              "path": [
+                "",
+                "api",
+                "hotelimages",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "transfindbyid",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "transinsert",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "transUpdate",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "transdeletebyid",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "hotelAttr",
+      "item": [
+        {
+          "name": "attrfindAll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:33000//api/hotelimages/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "33000",
+              "path": [
+                "",
+                "api",
+                "hotelimages",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "attrfindbyid",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "attrinsert",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "attrUpdate",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "attrdeletebyid",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "hotelsamen",
+      "item": [
+        {
+          "name": "amenfindAll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:33000//api/hotelimages/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "33000",
+              "path": [
+                "",
+                "api",
+                "hotelimages",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "amenfindbyid",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "ameninsert",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "amenUpdate",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "amendeletebyid",
+          "request": {
+            "method": "GET",
+            "header": []
           },
           "response": []
         }
