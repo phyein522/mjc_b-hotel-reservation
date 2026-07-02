@@ -193,7 +193,8 @@ CREATE TABLE `season_rates` (
 	`주말요금`	NUMERIC(12, 2)	NOT NULL	COMMENT '주말요금 (금/토/일 기준)',
 	`상태`	VARCHAR(20)	NOT NULL	COMMENT '상태 - UPCOMING(예정)/ONGOING(진행중)/ENDED(종료)',
 	`등록일시`	TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP	COMMENT '등록일시',
-	`policy_id`	BIGINT	NOT NULL	COMMENT '정책ID - PK'
+	`policy_id`	BIGINT	NOT NULL	COMMENT '정책ID - PK',
+	`room_type`	INT	NULL
 );
 
 CREATE TABLE `rooms` (
@@ -322,7 +323,7 @@ CREATE TABLE `hotels` (
 	`starRate`	SMALLINT	NULL,
 	`isActive`	BOOLEAN	NOT NULL	DEFAULT TRUE,
 	`latitude`	VARCHAR(30)	NULL,
-	`hardness`	VARCHAR(30)	NULL,
+	`longitude`	VARCHAR(30)	NULL,
 	`type`	INT	NULL
 );
 
@@ -418,6 +419,13 @@ CREATE TABLE `reviews_photo` (
 	`리뷰_id`	BIGINT	NOT NULL,
 	`사진경로`	VARCAHR(500)	NOT NULL,
 	`사진순서`	BIGINT	NULL
+);
+
+CREATE TABLE `weekday_rates` (
+	`요일별요금ID`	BIGINT	NOT NULL,
+	`요일`	ENUM	NULL,
+	`요금변동률`	DECIMAL(5,2)	NULL,
+	`시즌요금`	BIGINT	NOT NULL	COMMENT '시즌요금ID - PK'
 );
 
 ALTER TABLE `payments` ADD CONSTRAINT `PK_PAYMENTS` PRIMARY KEY (
@@ -583,6 +591,10 @@ ALTER TABLE `users` ADD CONSTRAINT `PK_USERS` PRIMARY KEY (
 
 ALTER TABLE `reviews_photo` ADD CONSTRAINT `PK_REVIEWS_PHOTO` PRIMARY KEY (
 	`id`
+);
+
+ALTER TABLE `weekday_rates` ADD CONSTRAINT `PK_WEEKDAY_RATES` PRIMARY KEY (
+	`요일별요금ID`
 );
 
 ALTER TABLE `wishlists` ADD CONSTRAINT `FK_users_TO_wishlists_1` FOREIGN KEY (
