@@ -1,6 +1,6 @@
 package com.mjc.hotel.common.dto;
 
-import com.mjc.hotel.user.entity.Role;
+import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.*;
@@ -21,10 +21,11 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity implements IBase {
     @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
+    @Column(name = "modified_at", nullable = false, updatable = true)
     private LocalDateTime modifiedAt;
-
 
 }
