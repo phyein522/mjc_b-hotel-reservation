@@ -33,16 +33,23 @@
     <main class="admin-main">
       <header class="admin-topbar">
         <div><h1>프로모션 관리</h1><p>회원 등급 할인과 장기 투숙 할인만 등록하고 호텔별 적용 여부를 관리합니다.</p></div>
-        <div class="admin-actions"><button class="btn primary">프로모션 저장</button></div>
+        <div class="admin-actions"><a class="btn primary" href="#promo-add">+ 프로모션 추가</a><button class="btn">변경 저장</button></div>
       </header>
       <section class="grid-2">
   <div class="promo-card"><h3>회원 등급 할인</h3><p class="muted">회원 등급에 따라 자동 적용되는 할인만 운영합니다.</p><div class="promo-rule"><span>Silver 회원</span><strong>3%</strong><span class="status">사용중</span></div><div class="promo-rule"><span>Gold 회원</span><strong>7%</strong><span class="status">사용중</span></div><div class="promo-rule"><span>VIP 회원</span><strong>12%</strong><span class="status warn">검토</span></div></div>
   <div class="promo-card"><h3>장기 투숙 할인</h3><p class="muted">숙박 기간 기준으로 자동 적용되는 할인만 운영합니다.</p><div class="promo-rule"><span>7박 이상</span><strong>5%</strong><span class="status">사용중</span></div><div class="promo-rule"><span>14박 이상</span><strong>10%</strong><span class="status">사용중</span></div><div class="promo-rule"><span>30박 이상</span><strong>18%</strong><span class="status warn">검토</span></div></div>
 </section>
-<section class="panel" style="margin-top:14px"><h2>프로모션 등록 / 수정</h2><div class="form-grid"><div class="field"><label>프로모션 유형</label><select><option>회원 등급 할인</option><option>장기 투숙 할인</option></select></div><div class="field"><label>적용 호텔</label><select><option>전체 호텔</option><option>그랜드 서울</option><option>해운대 오션</option></select></div><div class="field"><label>대상 조건</label><input value="Gold 회원 또는 14박 이상"></div><div class="field"><label>할인율</label><input value="10%"></div><div class="field"><label>상태</label><select><option>사용중</option><option>중지</option><option>검토</option></select></div><div class="field"><label>적용 기간</label><input value="2026.07.01 - 2026.12.31"></div></div></section>
+<section id="promo-add" class="panel promo-add-panel" style="margin-top:14px">
+  <div class="promo-add-head"><div><h2>프로모션 추가</h2><p class="muted">새 회원 등급 할인 또는 장기 투숙 할인을 등록합니다.</p></div><span class="status warn">신규 등록</span></div>
+  <div class="form-grid"><div class="field"><label>프로모션명</label><input value="VIP 회원 주중 할인"></div><div class="field"><label>프로모션 유형</label><select><option>회원 등급 할인</option><option>장기 투숙 할인</option></select></div><div class="field"><label>적용 호텔</label><select><option>전체 호텔</option><option>그랜드 서울</option><option>해운대 오션</option><option>제주 포레스트</option></select></div><div class="field"><label>대상 조건</label><input value="VIP 회원"></div><div class="field"><label>할인 방식</label><select><option>정률 할인</option><option>정액 할인</option></select></div><div class="field"><label>할인값</label><input value="12%"></div><div class="field"><label>적용 기간</label><input value="2026.07.01 - 2026.12.31"></div><div class="field"><label>상태</label><select><option>사용중</option><option>검토</option><option>중지</option></select></div><div class="field full"><label>관리 메모</label><textarea>VIP 회원에게 자동 적용되는 신규 할인입니다.</textarea></div></div>
+  <div class="promo-preview"><strong>미리보기</strong><p class="muted">VIP 회원이 전체 호텔 예약 시 12% 할인이 적용됩니다.</p></div>
+  <div class="admin-actions" style="margin-top:14px"><button class="btn">초기화</button><button class="btn primary">프로모션 추가</button></div>
+</section>
+<section class="panel" style="margin-top:14px"><h2>기존 프로모션 수정</h2><div class="form-grid"><div class="field"><label>프로모션 유형</label><select><option>회원 등급 할인</option><option>장기 투숙 할인</option></select></div><div class="field"><label>적용 호텔</label><select><option>전체 호텔</option><option>그랜드 서울</option><option>해운대 오션</option></select></div><div class="field"><label>대상 조건</label><input value="Gold 회원 또는 14박 이상"></div><div class="field"><label>할인율</label><input value="10%"></div><div class="field"><label>상태</label><select><option>사용중</option><option>중지</option><option>검토</option></select></div><div class="field"><label>적용 기간</label><input value="2026.07.01 - 2026.12.31"></div></div></section>
     </main>
   </div>
 </body>
 </html>
+
 
 

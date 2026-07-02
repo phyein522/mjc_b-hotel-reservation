@@ -1,0 +1,261 @@
+{
+  "info": {
+    "name": "Hotel Review CRUD",
+    "_postman_id": "a44f8f31-5db1-4bf8-8c57-reviewcrud001",
+    "description": "Review CRUD requests for the hotel reservation backend. Import this file into Postman and run the Spring Boot app on {{baseUrl}}.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8989"
+    },
+    {
+      "key": "reviewId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Create Review",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('response is successful', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "const review = body.data || body;",
+                  "if (review.reviewId) {",
+                  "  pm.collectionVariables.set('reviewId', review.reviewId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reservationId\": 1,\n  \"userId\": 1,\n  \"hotelId\": 1,\n  \"tripType\": \"FAMILY\",\n  \"viewCount\": 0,\n  \"title\": \"가족 여행 리뷰\",\n  \"content\": \"객실이 깨끗하고 직원이 친절했습니다.\",\n  \"overallRating\": 5,\n  \"likeCount\": 0,\n  \"dislikeCount\": 0,\n  \"photos\": [\n    {\n      \"photoPath\": \"/uploads/reviews/room-1.jpg\",\n      \"photoOrder\": 1\n    },\n    {\n      \"photoPath\": \"/uploads/reviews/view-1.jpg\",\n      \"photoOrder\": 2\n    }\n  ],\n  \"tags\": [\n    {\n      \"tag\": \"CLEAN\"\n    },\n    {\n      \"tag\": \"KIND\"\n    },\n    {\n      \"tag\": \"GOOD_LOCATION\"\n    }\n  ],\n  \"ratings\": [\n    {\n      \"category\": \"CLEANLINESS\",\n      \"score\": 5\n    },\n    {\n      \"category\": \"SERVICE\",\n      \"score\": 5\n    },\n    {\n      \"category\": \"LOCATION\",\n      \"score\": 4\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reviews"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Review List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('response is successful', function () {",
+                  "  pm.expect(pm.response.code).to.equal(200);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reviews"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Review",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('response is successful', function () {",
+                  "  pm.expect(pm.response.code).to.equal(200);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reviews/{{reviewId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reviews",
+                "{{reviewId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Review",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('response is successful', function () {",
+                  "  pm.expect(pm.response.code).to.equal(200);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reservationId\": 1,\n  \"userId\": 1,\n  \"hotelId\": 1,\n  \"tripType\": \"COUPLE\",\n  \"viewCount\": 10,\n  \"title\": \"수정된 리뷰 제목\",\n  \"content\": \"수정 후에도 객실과 위치가 만족스러웠습니다.\",\n  \"overallRating\": 4,\n  \"likeCount\": 2,\n  \"dislikeCount\": 0,\n  \"photos\": [\n    {\n      \"photoPath\": \"/uploads/reviews/updated-room-1.jpg\",\n      \"photoOrder\": 1\n    }\n  ],\n  \"tags\": [\n    {\n      \"tag\": \"GOOD_VIEW\"\n    },\n    {\n      \"tag\": \"GOOD_VALUE\"\n    }\n  ],\n  \"ratings\": [\n    {\n      \"category\": \"CLEANLINESS\",\n      \"score\": 4\n    },\n    {\n      \"category\": \"FACILITY\",\n      \"score\": 4\n    },\n    {\n      \"category\": \"VALUE\",\n      \"score\": 5\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reviews/{{reviewId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reviews",
+                "{{reviewId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Review",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('response is successful', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reviews/{{reviewId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reviews",
+                "{{reviewId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Enum Values",
+      "item": [
+        {
+          "name": "Trip Type Values",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reviews"
+              ]
+            },
+            "description": "Allowed tripType values: FAMILY, COUPLE, FRIENDS, BUSINESS, SOLO, OTHER"
+          },
+          "response": []
+        },
+        {
+          "name": "Tag Values",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reviews"
+              ]
+            },
+            "description": "Allowed tag values: CLEAN, KIND, GOOD_LOCATION, QUIET, GOOD_VALUE, GOOD_VIEW, DELICIOUS_BREAKFAST, EASY_PARKING, UNCLEAN, NOISY, BAD_LOCATION, EXPENSIVE, UNKIND, INCONVENIENT"
+          },
+          "response": []
+        },
+        {
+          "name": "Rating Category Values",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reviews"
+              ]
+            },
+            "description": "Allowed rating category values: CLEANLINESS, SERVICE, LOCATION, FACILITY, VALUE, COMFORT"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
