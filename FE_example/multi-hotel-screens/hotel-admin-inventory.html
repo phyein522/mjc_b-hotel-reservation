@@ -1,0 +1,44 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>그랜드 서울 객실 관리 - 그랜드 서울 관리자</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="feature-additions.css">
+</head>
+<body class="admin-page">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+  <div class="admin-brand"><span class="mark">S</span><div><strong>StayNow Admin</strong><small>개별 호텔 관리자</small></div></div>
+  <div class="admin-hotel-switcher selectable"><span class="hotel-mark">GS</span><select onchange="location.href=this.value"><option value="admin-dashboard.html">전체 호텔</option><option value="hotel-admin-dashboard.html" selected>그랜드 서울</option></select></div>
+  <nav class="admin-nav">
+    <div class="admin-nav-group">호텔 운영</div>
+    <a class="" href="hotel-admin-dashboard.html">호텔 대시보드</a>
+    <a class="" href="hotel-admin-reservations.html">예약 관리 <span class="nav-count">42</span></a>
+    <a class="" href="hotel-admin-checkins.html">체크인 현황 <span class="nav-count alert">3</span></a>
+    <a class="" href="hotel-admin-customers.html">고객 관리</a>
+    <div class="admin-nav-group">객실</div>
+    <a class="active" href="hotel-admin-inventory.html">객실 관리</a>
+    <a class="" href="hotel-admin-room-add.html">객실 추가</a>
+    <div class="admin-nav-group">매출</div>
+    <a class="" href="hotel-admin-promotions.html">호텔 프로모션</a>
+    <a class="" href="hotel-admin-settlement.html">호텔 정산</a>
+  </nav>
+</aside>
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <div><h1>그랜드 서울 객실 관리</h1><p>그랜드 서울 객실 재고, 객실별 요금, 편의시설 태그를 관리합니다.</p></div>
+        <div class="admin-actions"><a class="btn primary" href="hotel-admin-room-add.html">객실 추가</a></div>
+      </header>
+      <section class="panel"><h2>그랜드 서울 객실 목록</h2><table class="table"><thead><tr><th>객실명</th><th>재고</th><th>기본가</th><th>주말가</th><th>편의시설</th><th>판매상태</th><th>관리</th></tr></thead><tbody><tr><td>디럭스 더블</td><td>18 / 24</td><td>₩198,000</td><td>₩238,000</td><td>무료 Wi-Fi, 시티뷰</td><td><span class="status">판매중</span></td><td><div class="action-cell"><a class="btn small" href="#room-edit">수정</a><button class="btn small danger">삭제</button></div></td></tr><tr><td>프리미어 트윈</td><td>8 / 16</td><td>₩226,000</td><td>₩278,000</td><td>욕조, 조식 가능</td><td><span class="status warn">재고 낮음</span></td><td><div class="action-cell"><a class="btn small" href="#room-edit">수정</a><button class="btn small danger">삭제</button></div></td></tr><tr><td>로열 스위트</td><td>1 / 5</td><td>₩460,000</td><td>₩520,000</td><td>라운지, 고층</td><td><span class="status">판매중</span></td><td><div class="action-cell"><a class="btn small" href="#room-edit">수정</a><button class="btn small danger">삭제</button></div></td></tr></tbody></table></section>
+<section class="room-management-grid">
+  <div id="room-edit" class="panel room-edit-panel"><div class="panel-title-row"><div><h2>객실 정보 수정</h2><p class="muted">그랜드 서울 객실의 재고, 요금, 판매 상태, 편의시설 태그를 수정합니다.</p></div><span class="status warn">디럭스 더블</span></div><div class="form-grid"><div class="field"><label>객실명</label><input value="디럭스 더블"></div><div class="field"><label>판매 상태</label><select><option>판매중</option><option>판매중지</option><option>점검중</option></select></div><div class="field"><label>전체 객실 수</label><input value="24"></div><div class="field"><label>판매 가능 객실</label><input value="18"></div><div class="field"><label>기본가</label><input value="198000"></div><div class="field"><label>주말가</label><input value="238000"></div><div class="field"><label>최대 인원</label><input value="2"></div><div class="field"><label>침대 타입</label><select><option>더블</option><option>트윈</option><option>스위트</option></select></div><div class="field full"><label>객실 편의시설</label><div class="amenity-tags"><span class="amenity-tag">무료 Wi-Fi <button>x</button></span><span class="amenity-tag">시티뷰 <button>x</button></span><span class="amenity-tag">업무 데스크 <button>x</button></span></div><div class="tag-input-row"><input placeholder="편의시설 태그 추가"><button class="btn primary">태그 추가</button></div></div><div class="field full"><label>객실 설명</label><textarea>비즈니스 고객에게 적합한 도심 전망 객실입니다.</textarea></div></div><div class="admin-actions" style="margin-top:14px"><button class="btn">취소</button><button class="btn primary">수정 저장</button></div></div>
+  <aside class="panel"><h2>객실 삭제</h2><p class="muted">삭제 버튼을 누르면 예약 상태를 확인한 뒤 삭제 가능 여부를 판단합니다.</p><div class="room-delete-box"><h3>프리미어 트윈 삭제 확인</h3><p>체크인 예정 예약이 있어 즉시 삭제할 수 없습니다. 판매중지 후 예약 종료 시 삭제할 수 있습니다.</p><div class="action-cell"><button class="btn small">판매중지</button><button class="btn small danger">삭제 대기 등록</button></div></div><table class="table" style="margin-top:14px"><tbody><tr><td>진행 중 예약</td><td>3건</td></tr><tr><td>오늘 체크인</td><td>1건</td></tr><tr><td>삭제 가능 여부</td><td><span class="status warn">예약 종료 필요</span></td></tr></tbody></table></aside>
+</section>
+    </main>
+  </div>
+</body>
+</html>
+
+
