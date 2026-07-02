@@ -16,10 +16,11 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @ToString
 @Builder
-@Entity(name = "room")
+@Entity(name = "rooms")
 public class RoomEntity extends BaseEntity implements IRoom {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "room_id")
 	private Long roomId;
 
 	@Column(nullable = false, length = 50)
@@ -34,30 +35,29 @@ public class RoomEntity extends BaseEntity implements IRoom {
 	@Column(nullable = false)
 	private Integer size;
 
-	@Column(nullable = false)
+	@Column(name = "base_price", nullable = false)
 	private BigDecimal basePrice;
 
-	@Column(nullable = false)
+	@Column(name = "max_adult", nullable = false)
 	private Integer maxAdult;
 
-	@Column(nullable = false)
+	@Column(name = "max_child", nullable = false)
 	private Integer maxChild;
 
-	@Column(nullable = false)
+	@Column(name = "is_active", nullable = false)
 	private Boolean isActive;
 
-	@Column(nullable = false)
+	@Column(name = "room_type", nullable = false)
 	private RoomType roomType;
 
-	@Column(nullable = false)
+	@Column(name = "room_status", nullable = false)
 	private RoomStatus roomStatus;
 
-	@Column(nullable = false)
+	@Column(name = "room_view_option", nullable = false)
 	private RoomViewOption roomViewOption;
 
-	@Column(nullable = false)
+	@Column(name = "room_bed_option", nullable = false)
 	private RoomBedOption roomBedOption;
 
-	@Column(nullable = false)
 	private Long hotelId;
 }
