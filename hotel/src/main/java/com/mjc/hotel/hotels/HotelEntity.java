@@ -1,5 +1,6 @@
 package com.mjc.hotel.hotels;
 
+import com.mjc.hotel.common.dto.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,10 +13,9 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class HotelEntity {
+public class HotelEntity extends BaseEntity implements IHotel{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "hotel_id")
     private Long hotelId;
 
     @Column(nullable = false, length = 200)
@@ -57,7 +57,6 @@ public class HotelEntity {
     @Column(nullable = false)
     private String longitude;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private HotelTypeEnum type;
 }

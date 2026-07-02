@@ -1,5 +1,7 @@
 package com.mjc.hotel.hotels;
 
+import com.mjc.hotel.common.dto.BaseDto;
+import com.mjc.hotel.common.dto.IBase;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -11,7 +13,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @Builder
 @ToString
-public class HotelDto {
+public class HotelDto extends BaseDto implements IHotel{
     private Long hotelId;
     private String name;
     private String description;

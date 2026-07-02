@@ -1,73 +1,66 @@
 package com.mjc.hotel.hotels;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import java.time.LocalDateTime;
 import java.util.List;
 
-@Slf4j
 @Service
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class HotelService {
-    private final HotelRepository hotelRepository;
-    private final HotelMapper hotelMapper;
+    @Autowired
+    private HotelRepository hotelRepository;
 
     public List<HotelDto> findAll() {
-        return hotelRepository.findAll()
-                .stream()
-                .map(hotelMapper::toDto)
+        List<HotelEntity> list = hotelRepository.findAll();
+        return getListHotelDto(list);
+    }
+
+    private List<HotelDto> getListHotelDto(List<HotelEntity> list) {
+        return list.stream()
+                .map(x -> (HotelDto) new HotelDto().copyMembers(x, true))
                 .toList();
     }
 
     public HotelDto findById(Long hotelId) {
         HotelEntity hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(() -> new IllegalArgumentException("호텔을 찾을 수 없습니다."));
-        return hotelMapper.toDto(hotel);
+
+        return (HotelDto) new HotelDto().copyMembers(hotel, true);
     }
 
-    @Transactional
-    public HotelDto insert(HotelDto insertDto) {
-        LocalDateTime now = LocalDateTime.now();
+    public HotelDto insert(IHotel insertDto) {
 
         if (insertDto.getIsActive() == null) {
             insertDto.setIsActive(true);
         }
 
-        HotelEntity savedHotel = hotelRepository.save(hotelMapper.toEntity(insertDto));
+        HotelEntity insertEntity =
+                (HotelEntity) new HotelEntity().copyMembers(insertDto, true);
 
-        return hotelMapper.toDto(savedHotel);
+        insertEntity.setHotelId(null);
+
+        HotelEntity insertedEntity =
+                hotelRepository.save(insertEntity);
+
+        return (HotelDto) new HotelDto().copyMembers(insertedEntity, true);
     }
 
-    @Transactional
-    public HotelDto update(Long hotelId, HotelDto hotelDto) {
-        log.debug("update hotelId = {}, hotelDto = {}", hotelId, hotelDto);
+    public HotelDto update(Long hotelId, IHotel hotelDto) {
 
-        HotelEntity hotel = hotelRepository.findById(hotelId)
-                .orElseThrow(() -> new IllegalArgumentException("호텔을 찾을 수 없습니다."));
+        HotelDto findDto = this.findById(hotelId);
 
-        hotel.setName(hotelDto.getName());
-        hotel.setDescription(hotelDto.getDescription());
-        hotel.setAddress(hotelDto.getAddress());
-        hotel.setCity(hotelDto.getCity());
-        hotel.setZipCode(hotelDto.getZipCode());
-        hotel.setPhone(hotelDto.getPhone());
-        hotel.setEmail(hotelDto.getEmail());
-        hotel.setCheckIn(hotelDto.getCheckIn());
-        hotel.setCheckOut(hotelDto.getCheckOut());
-        hotel.setStarRate(hotelDto.getStarRate());
-        hotel.setIsActive(hotelDto.getIsActive());
-        hotel.setLatitude(hotelDto.getLatitude());
-        hotel.setLongitude(hotelDto.getLongitude());
-        hotel.setType(hotelDto.getType());
+        findDto.copyMembers(hotelDto, false);
 
-        return hotelMapper.toDto(hotel);
+        HotelEntity updateEntity =
+                (HotelEntity) new HotelEntity().copyMembers(findDto, true);
+
+        HotelEntity updatedEntity =
+                hotelRepository.save(updateEntity);
+
+        return (HotelDto) new HotelDto().copyMembers(updatedEntity, true);
     }
 
-    @Transactional
     public void deleteByID(Long hotelId) {
+
         if (!hotelRepository.existsById(hotelId)) {
             throw new IllegalArgumentException("호텔을 찾을 수 없습니다.");
         }
