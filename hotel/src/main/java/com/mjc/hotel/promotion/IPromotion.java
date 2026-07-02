@@ -1,0 +1,88 @@
+package com.mjc.hotel.promotion;
+
+import com.mjc.hotel.common.dto.IBase;
+
+public interface IPromotion extends IBase {
+    Long getProId();
+    void setProId(Long proId);
+
+    String getName();
+    void setName(String name);
+
+    String  getDescription();
+    void setDescription(String description);
+
+    String getDisType();
+    void setDisType(String disType);
+
+    String getDisValue();
+    void setDisValue(String disValue);
+
+    String getStartDate();
+    void setStartDate(String startDate);
+
+    String getEndDate();
+    void setEndDate(String endDate);
+
+    String getResCount();
+    void setResCount(String resCount);
+
+    String getConversionRate();
+    void setConversionRate(String conversionRate);
+
+    String getStatus();
+    void setStatus(String status);
+
+    Long getRoomId();
+    void setRoomId(Long roomId);
+    default IPromotion copyMembers(IPromotion source, boolean forced) {
+
+        if (source == null) {
+            return this;
+        }
+
+        IBase.super.copyMembers(source, forced);
+
+        if (forced || source.getProId() != null) {
+            this.setProId(source.getProId());
+        }
+
+        if (forced || source.getName() != null) {
+            this.setName(source.getName());
+        }
+        if (forced || source.getDescription() != null) {
+            this.setDescription(source.getDescription());
+        }
+        if (forced || source.getDisType() != null) {
+            this.setDisType(source.getDisType());
+        }
+        if (forced || source.getDisValue() != null) {
+            this.setDisValue(source.getDisValue());
+        }
+
+        if (forced || source.getStartDate() != null) {
+            this.setStartDate(source.getStartDate());
+        }
+
+        if (forced || source.getEndDate() != null) {
+            this.setEndDate(source.getEndDate());
+        }
+
+        if (forced || source.getResCount() != null) {
+            this.setResCount(source.getResCount());
+        }
+
+        if (forced || source.getConversionRate() != null) {
+            this.setConversionRate(source.getConversionRate());
+        }
+
+        if (forced || source.getStatus() != null) {
+            this.setStatus(source.getStatus());
+        }
+
+        if (forced || source.getRoomId() != null) {
+            this.setRoomId(source.getRoomId());
+        }
+        return this;
+    }
+}
