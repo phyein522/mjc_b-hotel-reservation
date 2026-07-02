@@ -1,17 +1,16 @@
 package com.mjc.hotel.hotelstrans;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/hotelTrans")
+@RequestMapping("/api/hoteltrans")
 public class HotelTransRestController {
-    private final HotelTransService hotelTransService;
-
+    @Autowired
+    private HotelTransService hotelTransService;
     @GetMapping
     public List<HotelTransDto> getTrans() {
         return hotelTransService.findAll();

@@ -1,52 +1,64 @@
 package com.mjc.hotel.hotelstrans;
 
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
-@Slf4j
-@RequiredArgsConstructor
 @Service
-@Transactional
 public class HotelTransService {
-    private final HotelTransRepository hotelTransRepository;
-    private final HotelTransMapper hotelTransMapper;
+    @Autowired
+    private HotelTransRepository hotelTransRepository;
 
     public List<HotelTransDto> findAll() {
-        return hotelTransRepository.findAll()
-                .stream()
-                .map(hotelTransMapper::toDto)
+
+        List<HotelTransEntity> list = hotelTransRepository.findAll();
+
+        return getListHotelTransDto(list);
+    }
+
+    private List<HotelTransDto> getListHotelTransDto(List<HotelTransEntity> list) {
+
+        return list.stream()
+                .map(x -> (HotelTransDto) new HotelTransDto().copyMembers(x, true))
                 .toList();
     }
     public HotelTransDto findById(Long transId) {
-        HotelTransEntity hotelTrans = hotelTransRepository.findById(transId).orElseThrow( () -> new IllegalArgumentException("호텔 이미지를 찾을 수 없습니다."));
-        return hotelTransMapper.toDto(hotelTrans);
+
+        HotelTransEntity entity = hotelTransRepository.findById(transId)
+                .orElseThrow(() -> new IllegalArgumentException("호텔 교통편을 찾을 수 없습니다."));
+
+        return (HotelTransDto) new HotelTransDto().copyMembers(entity, true);
     }
-    public HotelTransDto insert(HotelTransDto insertDto) {
 
-        HotelTransEntity savedHotelTrans = hotelTransRepository.save(hotelTransMapper.toEntity(insertDto));
+    public HotelTransDto insert(IHotelTrans dto) {
 
-        return hotelTransMapper.toDto(savedHotelTrans);
+        HotelTransEntity entity =
+                (HotelTransEntity) new HotelTransEntity().copyMembers(dto, true);
+
+        entity.setTransId(null);
+
+        HotelTransEntity inserted = hotelTransRepository.save(entity);
+
+        return (HotelTransDto) new HotelTransDto().copyMembers(inserted, true);
     }
-    public HotelTransDto update(Long transId, HotelTransDto hotelTransDto) {
+    public HotelTransDto update(Long transId, IHotelTrans dto) {
 
-        HotelTransEntity hotelTrans = hotelTransRepository.findById(transId)
-                .orElseThrow(() -> new IllegalArgumentException("호텔 이미지를 찾을 수 없습니다."));
+        HotelTransDto findDto = this.findById(transId);
 
-        hotelTrans.setName(hotelTransDto.getName());
-        hotelTrans.setTime(hotelTransDto.getTime());
-        hotelTrans.setDepart(hotelTransDto.getDepart());
+        findDto.copyMembers(dto, false);
 
-        HotelTransEntity savedHotelTrans = hotelTransRepository.save(hotelTrans);
+        HotelTransEntity entity =
+                (HotelTransEntity) new HotelTransEntity().copyMembers(findDto, true);
 
-        return hotelTransMapper.toDto(savedHotelTrans);
+        HotelTransEntity updated = hotelTransRepository.save(entity);
+
+        return (HotelTransDto) new HotelTransDto().copyMembers(updated, true);
     }
+
     public void deleteById(Long transId) {
 
         if (!hotelTransRepository.existsById(transId)) {
-            throw new IllegalArgumentException("호텔 이미지를 찾을 수 없습니다.");
+            throw new IllegalArgumentException("호텔 교통편을 찾을 수 없습니다.");
         }
 
         hotelTransRepository.deleteById(transId);

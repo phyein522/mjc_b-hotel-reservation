@@ -1,5 +1,6 @@
 package com.mjc.hotel.hotelstrans;
 
+import com.mjc.hotel.common.dto.BaseEntity;
 import com.mjc.hotel.hotels.HotelEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class HotelTransEntity {
+public class HotelTransEntity extends BaseEntity implements IHotelTrans {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long transId;
@@ -31,4 +32,26 @@ public class HotelTransEntity {
     @JoinColumn(name = "hotel_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private HotelEntity hotel;
+
+    @Override
+    public Long getHotelId() {
+
+        if (hotel != null) {
+            return hotel.getHotelId();
+        }
+
+        return hotelId;
+    }
+
+    @Override
+    public void setHotelId(Long hotelId) {
+
+        this.hotelId = hotelId;
+
+        if (hotel == null) {
+            hotel = new HotelEntity();
+        }
+
+        hotel.setHotelId(hotelId);
+    }
 }
