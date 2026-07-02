@@ -1,5 +1,8 @@
 package com.mjc.hotel.review.entity;
 
+import com.mjc.hotel.review.enums.ReviewRatingCategory;
+import com.mjc.hotel.review.enums.ReviewTagType;
+import com.mjc.hotel.review.enums.ReviewTripType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;

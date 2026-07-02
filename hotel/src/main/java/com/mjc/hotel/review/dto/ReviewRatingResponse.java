@@ -1,6 +1,6 @@
 package com.mjc.hotel.review.dto;
 
-import com.mjc.hotel.review.entity.ReviewRatingCategory;
+import com.mjc.hotel.review.enums.ReviewRatingCategory;
 
 public record ReviewRatingResponse(
         ReviewRatingCategory category,

@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -60,4 +61,24 @@ public class RoomEntity extends BaseEntity implements IRoom {
 	private RoomBedOption roomBedOption;
 
 	private Long hotelId;
+
+	@Override
+	public LocalDateTime getCreatedAt() {
+		return null;
+	}
+
+	@Override
+	public void setCreatedAt(LocalDateTime createdAt) {
+
+	}
+
+	@Override
+	public LocalDateTime getModifiedAt() {
+		return null;
+	}
+
+	@Override
+	public void setModifiedAt(LocalDateTime modifiedAt) {
+
+	}
 }

@@ -1,6 +1,6 @@
 package com.mjc.hotel.review.dto;
 
-import com.mjc.hotel.review.entity.ReviewTripType;
+import com.mjc.hotel.review.enums.ReviewTripType;
 
 import java.util.List;
 

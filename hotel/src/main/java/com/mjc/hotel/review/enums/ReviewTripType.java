@@ -1,4 +1,4 @@
-package com.mjc.hotel.review.entity;
+package com.mjc.hotel.review.enums;
 
 public enum ReviewTripType {
     FAMILY,

@@ -1,5 +1,6 @@
 package com.mjc.hotel.review.entity;
 
+import com.mjc.hotel.review.enums.ReviewRatingCategory;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 

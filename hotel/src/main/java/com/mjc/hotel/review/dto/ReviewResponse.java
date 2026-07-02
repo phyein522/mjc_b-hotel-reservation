@@ -2,9 +2,9 @@ package com.mjc.hotel.review.dto;
 
 import com.mjc.hotel.review.entity.Review;
 import com.mjc.hotel.review.entity.ReviewPhoto;
-import com.mjc.hotel.review.entity.ReviewRatingCategory;
-import com.mjc.hotel.review.entity.ReviewTagType;
-import com.mjc.hotel.review.entity.ReviewTripType;
+import com.mjc.hotel.review.enums.ReviewRatingCategory;
+import com.mjc.hotel.review.enums.ReviewTagType;
+import com.mjc.hotel.review.enums.ReviewTripType;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
