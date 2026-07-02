@@ -1,5 +1,6 @@
-package com.mjc.hotel.common.dto;
+package com.mjc.hotel.util;
 
+import com.mjc.hotel.common.dto.IBase;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.*;

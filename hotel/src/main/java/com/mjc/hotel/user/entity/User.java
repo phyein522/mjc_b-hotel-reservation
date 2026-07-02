@@ -1,14 +1,15 @@
 package com.mjc.hotel.user.entity;
 
 import com.mjc.hotel.util.BaseEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 
 @Entity
 @AllArgsConstructor
@@ -16,11 +17,14 @@ import org.springframework.data.annotation.Id;
 @Data
 @Builder
 public class User extends BaseEntity {
-    @jakarta.persistence.Id
-    private Long id;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private Long id;
+
+    @Column(nullable = false, unique = true)
     private String email;
+
     private String password;
     private String name;
     private String phone;

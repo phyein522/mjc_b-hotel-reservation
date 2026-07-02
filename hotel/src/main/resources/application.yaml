@@ -9,7 +9,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/hotel?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: hotel_user
-    password: hotel9876!
+    password: qwer1234!
   jpa:
     hibernate:
       ddl-auto: update

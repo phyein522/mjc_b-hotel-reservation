@@ -1,6 +1,6 @@
 package com.mjc.hotel.rooms.dto;
 
-import com.mjc.hotel.common.dto.BaseEntity;
+import com.mjc.hotel.util.BaseEntity;
 import com.mjc.hotel.rooms.enums.RoomBedOption;
 import com.mjc.hotel.rooms.enums.RoomStatus;
 import com.mjc.hotel.rooms.enums.RoomType;
