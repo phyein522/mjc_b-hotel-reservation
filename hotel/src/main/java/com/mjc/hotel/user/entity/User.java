@@ -1,6 +1,6 @@
 package com.mjc.hotel.user.entity;
 
-import com.mjc.hotel.util.BaseEntity;
+import com.mjc.hotel.common.util.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

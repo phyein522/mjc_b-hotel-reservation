@@ -1,4 +1,4 @@
-package com.mjc.hotel.util;
+package com.mjc.hotel.common.util;
 
 import com.mjc.hotel.common.dto.IBase;
 import jakarta.persistence.EntityListeners;
