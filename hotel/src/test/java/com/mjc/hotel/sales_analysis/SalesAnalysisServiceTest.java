@@ -7,8 +7,17 @@ import com.mjc.hotel.sales_analysis.dto.TopBookingDto;
 import com.mjc.hotel.sales_analysis.entity.*;
 import com.mjc.hotel.sales_analysis.repository.*;
 import com.mjc.hotel.sales_analysis.service.SalesAnalysisService;
-import com.mjc.hotel.user.entity.FakeUser;
-import com.mjc.hotel.user.repository.FakeUserRepository;
+import com.mjc.hotel.user.entity.User;
+import com.mjc.hotel.user.repository.UserRepository;
+import com.mjc.hotel.hotels.HotelEntity;
+import com.mjc.hotel.hotels.HotelRepository;
+import com.mjc.hotel.hotels.HotelTypeEnum;
+import com.mjc.hotel.rooms.dto.RoomEntity;
+import com.mjc.hotel.rooms.service.RoomRepository;
+import com.mjc.hotel.rooms.enums.RoomStatus;
+import com.mjc.hotel.rooms.enums.RoomType;
+import com.mjc.hotel.rooms.enums.RoomViewOption;
+import com.mjc.hotel.rooms.enums.RoomBedOption;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,13 +41,13 @@ public class SalesAnalysisServiceTest {
     private SalesAnalysisService salesAnalysisService;
 
     @Autowired
-    private FakeHotelRepository hotelRepository;
+    private HotelRepository hotelRepository;
 
     @Autowired
-    private FakeRoomRepository roomRepository;
+    private RoomRepository roomRepository;
 
     @Autowired
-    private FakeUserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private FakeBookingRepository bookingRepository;
@@ -49,13 +58,13 @@ public class SalesAnalysisServiceTest {
     @Autowired
     private EntityManager em;
 
-    private FakeHotel testHotel;
-    private FakeRoom standardRoom;
-    private FakeRoom deluxeRoom;
-    private FakeRoom suiteRoom;
-    private FakeUser normalUser1;
-    private FakeUser normalUser2;
-    private FakeUser vipUser;
+    private HotelEntity testHotel;
+    private RoomEntity standardRoom;
+    private RoomEntity deluxeRoom;
+    private RoomEntity suiteRoom;
+    private User normalUser1;
+    private User normalUser2;
+    private User vipUser;
 
     @BeforeEach
     public void setUp() {
@@ -69,91 +78,45 @@ public class SalesAnalysisServiceTest {
         em.createNativeQuery("INSERT INTO channels (채널ID, 채널명, 채널유형, 수수료율, 활성여부) VALUES (3, '직접예약', 'DIRECT', 0.0, true) " +
                 "ON DUPLICATE KEY UPDATE 채널명='직접예약'").executeUpdate();
 
-        // 1. 테스트 호텔 등록
-        testHotel = FakeHotel.builder()
-                .id(9999L)
-                .name("테스트 MJC 호텔")
-                .address("서울시 테스트구")
-                .city("서울")
-                .checkInTime(LocalTime.of(15, 0))
-                .checkOutTime(LocalTime.of(11, 0))
-                .isActive(true)
-                .build();
-        hotelRepository.save(testHotel);
+        // 1. 테스트 호텔 등록 (Native SQL로 삽입하여 GeneratedValue 충돌 우회)
+        em.createNativeQuery("INSERT INTO hotels (hotelId, name, address, city, checkIn, checkOut, isActive, zipCode, phone, email, latitude, longitude, type, created_at, modified_at) " +
+                "VALUES (9999, '테스트 MJC 호텔', '서울시 테스트구', '서울', '15:00:00', '11:00:00', true, '12345', '02-1234-5678', 'test@hotel.com', '37.5665', '126.9780', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)")
+                .executeUpdate();
 
-        // 2. 객실 등록
-        standardRoom = FakeRoom.builder()
-                .id(99991L)
-                .roomNumber("T101")
-                .status("AVAILABLE")
-                .name("스탠다드 룸")
-                .basePrice(new BigDecimal("100000.00"))
-                .isActive(true)
-                .hotel(testHotel)
-                .roomTypeId("STANDARD")
-                .roomKindId("NORMAL")
-                .build();
-        roomRepository.save(standardRoom);
+        // 2. 객실 등록 (Native SQL로 삽입)
+        em.createNativeQuery("INSERT INTO rooms (room_id, number, room_status, name, size, base_price, max_adult, max_child, is_active, hotel_id, room_type, room_view_option, room_bed_option, floor, created_at, modified_at) " +
+                "VALUES (99991, 'T101', 0, '스탠다드 룸', 20, 100000.00, 2, 1, true, 9999, 0, 0, 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)")
+                .executeUpdate();
 
-        deluxeRoom = FakeRoom.builder()
-                .id(99992L)
-                .roomNumber("T102")
-                .status("AVAILABLE")
-                .name("디럭스 룸")
-                .basePrice(new BigDecimal("150000.00"))
-                .isActive(true)
-                .hotel(testHotel)
-                .roomTypeId("DELUXE")
-                .roomKindId("NORMAL")
-                .build();
-        roomRepository.save(deluxeRoom);
+        em.createNativeQuery("INSERT INTO rooms (room_id, number, room_status, name, size, base_price, max_adult, max_child, is_active, hotel_id, room_type, room_view_option, room_bed_option, floor, created_at, modified_at) " +
+                "VALUES (99992, 'T102', 0, '디럭스 룸', 30, 150000.00, 2, 1, true, 9999, 2, 0, 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)")
+                .executeUpdate();
 
-        suiteRoom = FakeRoom.builder()
-                .id(99993L)
-                .roomNumber("T103")
-                .status("AVAILABLE")
-                .name("스위트 룸")
-                .basePrice(new BigDecimal("300000.00"))
-                .isActive(true)
-                .hotel(testHotel)
-                .roomTypeId("SUITE")
-                .roomKindId("NORMAL")
-                .build();
-        roomRepository.save(suiteRoom);
+        em.createNativeQuery("INSERT INTO rooms (room_id, number, room_status, name, size, base_price, max_adult, max_child, is_active, hotel_id, room_type, room_view_option, room_bed_option, floor, created_at, modified_at) " +
+                "VALUES (99993, 'T103', 0, '스위트 룸', 50, 300000.00, 4, 2, true, 9999, 1, 3, 2, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)")
+                .executeUpdate();
 
-        // 3. 회원 등록
-        normalUser1 = FakeUser.builder()
-                .id(999910L)
-                .email("test_user1_unique@test.com")
-                .password("password")
-                .name("김철수")
-                .role("CUSTOMER")
-                .status("ACTIVE")
-                .grade("SILVER")
-                .build();
-        userRepository.save(normalUser1);
+        // 3. 회원 등록 (Native SQL로 삽입)
+        em.createNativeQuery("INSERT INTO users (user_id, email, password, name, phone, role, status, Membership, created_at, modified_at) " +
+                "VALUES (999910, 'test_user1_unique@test.com', 'password', '김철수', '010-0000-0000', 'CUSTOMER', 'ACTIVE', 'SILVER', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)")
+                .executeUpdate();
 
-        normalUser2 = FakeUser.builder()
-                .id(999920L)
-                .email("test_user2_unique@test.com")
-                .password("password")
-                .name("이영희")
-                .role("CUSTOMER")
-                .status("ACTIVE")
-                .grade("GOLD")
-                .build();
-        userRepository.save(normalUser2);
+        em.createNativeQuery("INSERT INTO users (user_id, email, password, name, phone, role, status, Membership, created_at, modified_at) " +
+                "VALUES (999920, 'test_user2_unique@test.com', 'password', '이영희', '010-0000-0000', 'CUSTOMER', 'ACTIVE', 'GOLD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)")
+                .executeUpdate();
 
-        vipUser = FakeUser.builder()
-                .id(999930L)
-                .email("test_vip_unique@test.com")
-                .password("password")
-                .name("박대표")
-                .role("CUSTOMER")
-                .status("ACTIVE")
-                .grade("VIP")
-                .build();
-        userRepository.save(vipUser);
+        em.createNativeQuery("INSERT INTO users (user_id, email, password, name, phone, role, status, Membership, created_at, modified_at) " +
+                "VALUES (999930, 'test_vip_unique@test.com', 'password', '박대표', '010-0000-0000', 'CUSTOMER', 'ACTIVE', 'VIP', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)")
+                .executeUpdate();
+
+        // 영속성 컨텍스트 로딩
+        testHotel = hotelRepository.findById(9999L).orElseThrow();
+        standardRoom = roomRepository.findById(99991L).orElseThrow();
+        deluxeRoom = roomRepository.findById(99992L).orElseThrow();
+        suiteRoom = roomRepository.findById(99993L).orElseThrow();
+        normalUser1 = userRepository.findById(999910L).orElseThrow();
+        normalUser2 = userRepository.findById(999920L).orElseThrow();
+        vipUser = userRepository.findById(999930L).orElseThrow();
 
         // 4. 예약 및 결제 설정 (2026-06 기준 테스트용)
 
@@ -198,7 +161,7 @@ public class SalesAnalysisServiceTest {
     }
 
     private void createBookingAndPayment(
-            Long id, FakeUser user, FakeHotel hotel, FakeRoom room, String bookingNo, int nights,
+            Long id, User user, HotelEntity hotel, RoomEntity room, String bookingNo, int nights,
             LocalDate checkIn, LocalDate checkOut, BigDecimal amount, LocalDateTime paidAt, Long channelId
     ) {
         FakeBooking booking = FakeBooking.builder()
@@ -239,7 +202,7 @@ public class SalesAnalysisServiceTest {
     @Test
     public void testSalesDashboardStatistics() {
         // Given
-        Long hotelId = testHotel.getId();
+        Long hotelId = testHotel.getHotelId();
         String targetMonth = "2026-06";
 
         // When

@@ -38,3 +38,6 @@
 - **테스트 환경 최적화**:
   - H2 인메모리 DB를 테스트 전용 프로필에 구성하여 로컬에서 MySQL 서버 구동 없이도 테스트가 성공하도록 구현하였습니다 ([application.yaml](file:///mnt/c/Users/LG/IdeaProjects/mjc_b-hotel-reservation/hotel/src/test/resources/application.yaml)).
   - 타 패키지(예: `rooms`)와의 엔티티 충돌 방지를 위해 리포지토리명을 `@Repository("salesFakeRoomRepository")`로 지정하고, 테스트에 필요한 뼈대 엔티티들(`FakeUser`, `FakeRoom`, `FakeHotel`, `FakeBooking`, `FakePayment`, `FakeChannel`, `FakeRoomType`)을 패키지 내부에 독립적으로 설계했습니다.
+
+
+

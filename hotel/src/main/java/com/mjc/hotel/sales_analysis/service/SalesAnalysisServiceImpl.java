@@ -1,9 +1,9 @@
 package com.mjc.hotel.sales_analysis.service;
 
 import com.mjc.hotel.sales_analysis.dto.*;
-import com.mjc.hotel.sales_analysis.entity.FakeHotel;
+import com.mjc.hotel.hotels.HotelEntity;
 import com.mjc.hotel.sales_analysis.mapper.SalesAnalysisMapper;
-import com.mjc.hotel.sales_analysis.repository.FakeHotelRepository;
+import com.mjc.hotel.hotels.HotelRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import java.util.List;
 public class SalesAnalysisServiceImpl implements SalesAnalysisService {
 
     private final SalesAnalysisMapper salesAnalysisMapper;
-    private final FakeHotelRepository hotelRepository;
+    private final HotelRepository hotelRepository;
 
     @Override
     public SalesDashboardResponse getDashboardData(Long hotelId, String targetMonth) {
@@ -27,7 +27,7 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
 
         // 1. 호텔 이름 조회
         String hotelName = hotelRepository.findById(hotelId)
-                .map(FakeHotel::getName)
+                .map(HotelEntity::getName)
                 .orElse("알 수 없는 호텔");
 
         // 2. 날짜 계산

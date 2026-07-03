@@ -1,9 +1,0 @@
-package com.mjc.hotel.user.repository;
-
-import com.mjc.hotel.user.entity.FakeUser;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public interface FakeUserRepository extends JpaRepository<FakeUser, Long> {
-}

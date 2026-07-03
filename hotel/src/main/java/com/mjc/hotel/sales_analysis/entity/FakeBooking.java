@@ -1,6 +1,8 @@
 package com.mjc.hotel.sales_analysis.entity;
 
-import com.mjc.hotel.user.entity.FakeUser;
+import com.mjc.hotel.user.entity.User;
+import com.mjc.hotel.hotels.HotelEntity;
+import com.mjc.hotel.rooms.dto.RoomEntity;
 import lombok.*;
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -22,15 +24,15 @@ public class FakeBooking {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private FakeUser user;
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hotel_id", nullable = false)
-    private FakeHotel hotel;
+    private HotelEntity hotel;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false)
-    private FakeRoom room;
+    private RoomEntity room;
 
     @Column(name = "channel_id")
     private Long channelId;

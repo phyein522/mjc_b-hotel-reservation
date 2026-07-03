@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS channels CASCADE;
 DROP TABLE IF EXISTS room_type CASCADE;
 
 CREATE TABLE hotels (
-    hotel_id BIGINT PRIMARY KEY,
+    hotelId BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(200),
     description TEXT,
     address VARCHAR(500),
@@ -21,34 +21,43 @@ CREATE TABLE hotels (
     isActive BOOLEAN,
     latitude VARCHAR(30),
     longitude VARCHAR(30),
-    type INT
+    type INT,
+    created_at TIMESTAMP NULL,
+    modified_at TIMESTAMP NULL
 );
 
 CREATE TABLE rooms (
-    room_id BIGINT PRIMARY KEY,
-    room_number VARCHAR(50),
+    room_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    number VARCHAR(50),
     floor INT,
-    status VARCHAR(50),
+    room_status INT,
     name VARCHAR(100),
     size INT,
     base_price NUMERIC(12, 2),
     max_adult INT,
-    max_children INT,
+    max_child INT,
     is_active BOOLEAN,
-    호텔아이디 BIGINT,
-    room_type_id VARCHAR(50),
-    room_kind_id VARCHAR(50)
+    hotel_id BIGINT,
+    room_type INT,
+    room_view_option INT,
+    room_bed_option INT,
+    created_at TIMESTAMP NULL,
+    modified_at TIMESTAMP NULL
 );
 
 CREATE TABLE users (
-    user_id BIGINT PRIMARY KEY,
+    user_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255),
     password VARCHAR(255),
     name VARCHAR(100),
     phone VARCHAR(30),
     role VARCHAR(50),
     status VARCHAR(50),
-    Membership VARCHAR(50)
+    Membership VARCHAR(50),
+    socialLogin VARCHAR(10),
+    socialLoginId VARCHAR(30),
+    created_at TIMESTAMP NULL,
+    modified_at TIMESTAMP NULL
 );
 
 CREATE TABLE bookings (
