@@ -1,6 +1,6 @@
 package com.mjc.hotel.room_images.dto;
 
-import com.mjc.hotel.common.util.BaseEntity;
+import com.mjc.hotel.common.dto.BaseEntity;
 import com.mjc.hotel.rooms.dto.IRoom;
 import com.mjc.hotel.rooms.dto.RoomEntity;
 import jakarta.persistence.*;
