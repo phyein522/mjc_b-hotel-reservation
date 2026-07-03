@@ -1,6 +1,6 @@
 {
   "info": {
-    "_postman_id": "f4bfb0b1-63e9-4d4d-b825-e3a8619dcc93",
+    "_postman_id": "7650ddd1-e22a-4721-af71-d89ed61eadea",
     "name": "Hotel",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "53674091"
@@ -536,6 +536,146 @@
         },
         {
           "name": "deletebyid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "hotelAttr",
+      "item": [
+        {
+          "name": "attrfindAll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:33000/api/hotelimages/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "33000",
+              "path": [
+                "api",
+                "hotelimages",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "attrfindbyid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "attrinsert",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "attrUpdate",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "attrdeletebyid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "hotelsame",
+      "item": [
+        {
+          "name": "amenfindAll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:33000/api/hotelimages/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "33000",
+              "path": [
+                "api",
+                "hotelimages",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "amenfindbyid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ameninsert",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "amenUpdate",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "amendeletebyid",
           "request": {
             "method": "GET",
             "header": [],
