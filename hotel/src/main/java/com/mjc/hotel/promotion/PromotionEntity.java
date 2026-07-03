@@ -5,8 +5,6 @@ import com.mjc.hotel.rooms.dto.RoomEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serializable;
-
 @Entity
 @Table(name="promotion")
 @Getter
