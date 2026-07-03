@@ -1,14 +1,18 @@
 package com.mjc.hotel.rooms.dto;
 
+import com.mjc.hotel.common.dto.BaseDto;
 import com.mjc.hotel.common.dto.IBase;
 import com.mjc.hotel.hotels.IHotel;
 import com.mjc.hotel.rooms.enums.RoomBedOption;
 import com.mjc.hotel.rooms.enums.RoomStatus;
 import com.mjc.hotel.rooms.enums.RoomType;
 import com.mjc.hotel.rooms.enums.RoomViewOption;
+import org.hibernate.LazyInitializationException;
 
 import java.math.BigDecimal;
 
+
+@tools.jackson.databind.annotation.JsonDeserialize(as = RoomDto.class)
 public interface IRoom extends IBase {
 	Long getRoomId();
 	void setRoomId(Long roomId);
@@ -101,7 +105,11 @@ public interface IRoom extends IBase {
 		}
 		if ( forced || source.getHotelId() != null ) {
 			this.setHotelId(source.getHotelId());
-			this.getHotel().copyMembers(source.getHotel(), forced);
+			try {
+				this.getHotel().copyMembers(source.getHotel(), forced);
+			} catch (LazyInitializationException e) {
+				System.err.println(e.getMessage());
+			}
 		}
 		return this;
 	}
