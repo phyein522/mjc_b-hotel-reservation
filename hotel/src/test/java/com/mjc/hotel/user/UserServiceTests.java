@@ -27,11 +27,10 @@ public class UserServiceTests {
                     .password("1234")
                     .name("test" + i)
                     .phone("0102020303" + i)
-                    .grade("bronze")
-                    .status("")
                     .build();
 
             userRepository.save(u);
         }
     }
 }
+

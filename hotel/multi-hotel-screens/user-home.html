@@ -1,0 +1,87 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>StayNow 사용자 - 메인</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="feature-additions.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top-inner">
+      <a class="logo" href="user-home.html"><span class="mark">S</span>StayNow</a>
+      <nav class="nav"><a class="active" href="user-home.html">메인</a><a href="user-search.html">숙소 검색</a><a href="user-coupons.html">쿠폰함</a><a href="user-history.html">예약내역</a><a href="user-login.html">로그인</a></nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <h1>전국 여러 호텔을 비교하고 바로 예약하세요</h1>
+        <p class="lead">StayNow는 여러 호텔이 입점한 예약 플랫폼입니다. 메인 화면에서 호텔을 정렬하고 바로 상세 페이지로 이동할 수 있습니다.</p>
+        <div class="actions" style="margin-top:24px">
+          <a class="btn primary" href="user-search.html">숙소 검색하기</a>
+          <a class="btn" href="user-coupons.html">쿠폰함 보기</a>
+          <a class="btn" href="user-history.html">예약내역 확인</a>
+        </div>
+      </div>
+      <div class="visual"></div>
+    </div>
+  </section>
+
+  <main class="wrap main">
+    <form class="search">
+      <div class="field"><label>지역 또는 호텔명</label><input value="서울 강남, 부산 해운대, 제주"></div>
+      <div class="field"><label>체크인</label><input type="date" value="2026-07-14"></div>
+      <div class="field"><label>체크아웃</label><input type="date" value="2026-07-16"></div>
+      <div class="field"><label>인원/객실</label><select><option>성인 2명 · 객실 1개</option></select></div>
+      <a class="btn primary" href="user-search.html">검색</a>
+    </form>
+
+    <section>
+      <div class="hotel-sort-bar">
+        <div>
+          <h2>추천 호텔</h2>
+          <p class="sub">호텔 태그, 가격, 평점 기준으로 여러 입점 호텔을 비교하고 바로 상세로 이동합니다.</p>
+        </div>
+        <div class="actions">
+          <button class="btn primary">추천순</button>
+          <button class="btn">낮은 가격순</button>
+          <button class="btn">평점순</button>
+        </div>
+      </div>
+
+      <div class="home-hotel-grid" style="margin-top:18px">
+        <article class="card home-hotel-card">
+          <div class="photo"></div>
+          <div class="body">
+            <div class="topline"><div><div class="title">그랜드 서울 호텔</div><div class="meta">서울 강남구 · 5성급 · 리뷰 2,847개</div></div><strong>9.4</strong></div>
+            <div class="tags"><span class="tag">비즈니스</span><span class="tag">역세권</span><span class="tag">시티뷰</span></div>
+            <div class="price-row"><div><div class="meta">1박 기준</div><div class="price">198,000원</div></div><a class="btn primary" href="user-detail.html">상세보기</a></div>
+          </div>
+        </article>
+
+        <article class="card home-hotel-card">
+          <div class="photo green"></div>
+          <div class="body">
+            <div class="topline"><div><div class="title">해운대 오션 리조트</div><div class="meta">부산 해운대구 · 오션뷰 · 리뷰 1,536개</div></div><strong>9.2</strong></div>
+            <div class="tags"><span class="tag">오션뷰</span><span class="tag">가족여행</span><span class="tag">수영장</span></div>
+            <div class="price-row"><div><div class="meta">1박 기준</div><div class="price">228,000원</div></div><a class="btn primary" href="user-detail.html">상세보기</a></div>
+          </div>
+        </article>
+
+        <article class="card home-hotel-card">
+          <div class="photo warm"></div>
+          <div class="body">
+            <div class="topline"><div><div class="title">제주 숲 스테이</div><div class="meta">제주 서귀포시 · 자연뷰 · 리뷰 924개</div></div><strong>8.9</strong></div>
+            <div class="tags"><span class="tag">자연휴식</span><span class="tag">렌터카</span><span class="tag">조용한 숙소</span></div>
+            <div class="price-row"><div><div class="meta">1박 기준</div><div class="price">168,000원</div></div><a class="btn primary" href="user-detail.html">상세보기</a></div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
+

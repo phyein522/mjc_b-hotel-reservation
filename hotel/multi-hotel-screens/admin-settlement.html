@@ -1,0 +1,46 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>정산 리포트 - StayNow Admin</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="feature-additions.css">
+</head>
+<body class="admin-page">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+  <div class="admin-brand"><span class="mark">S</span><div><strong>StayNow Admin</strong><small>다중 호텔 예약 플랫폼</small></div></div>
+  <div class="admin-hotel-switcher selectable"><span class="hotel-mark">ALL</span><select onchange="location.href=this.value"><option value="admin-dashboard.html" selected>전체 호텔</option><option value="hotel-admin-dashboard.html">그랜드 서울</option></select></div>
+  <nav class="admin-nav">
+    <div class="admin-nav-group">메인</div>
+    <a class="" href="admin-dashboard.html">대시보드</a>
+    <a class="" href="admin-reservations.html">예약 관리 <span class="nav-count">12</span></a>
+    <a class="" href="admin-checkins.html">체크인 현황 <span class="nav-count alert">3</span></a>
+    <a class="" href="admin-customers.html">고객 관리</a>
+    <div class="admin-nav-group">객실</div>
+    <a class="" href="admin-inventory.html">객실 관리</a>
+    <a class="" href="admin-room-add.html">객실 추가</a>
+    <div class="admin-nav-group">플랫폼</div>
+    <a class="" href="admin-hotels.html">입점 호텔 관리</a>
+    <a class="" href="admin-hotel-add.html">호텔 추가</a>
+    <a class="" href="admin-promotions.html">프로모션</a>
+    <a class="active" href="admin-settlement.html">정산 리포트</a>
+    <div class="admin-nav-group">시스템</div>
+    <a href="#">시스템 설정</a>
+  </nav>
+</aside>
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <div><h1>정산 리포트</h1><p>호텔별 결제, 환불, 수수료, 지급 예정액을 정산 리포트로 확인합니다.</p></div>
+        <div class="admin-actions"><button class="btn ghost">월 선택</button><button class="btn primary">리포트 다운로드</button></div>
+      </header>
+      <section class="grid-4"><div class="panel metric"><span>이번 달 결제</span><strong>₩1.28B</strong><span>전체 호텔 합산</span></div><div class="panel metric"><span>취소 / 환불</span><strong>₩84.2M</strong><span>정산 제외</span></div><div class="panel metric"><span>플랫폼 수수료</span><strong>₩92.6M</strong><span>계약 수수료 기준</span></div><div class="panel metric"><span>정산 예정액</span><strong>₩1.10B</strong><span>7월 5일 지급</span></div></section>
+<section class="grid-2" style="margin-top:14px"><div class="panel"><h2>정산 요약</h2><div class="settlement-total"><span>총 결제금액</span><strong>₩1,284,000,000</strong></div><div class="settlement-total"><span>환불 차감</span><strong>₩84,200,000</strong></div><div class="settlement-total"><span>수수료 차감</span><strong>₩92,600,000</strong></div><div class="settlement-total"><span>최종 정산액</span><strong>₩1,107,200,000</strong></div></div><div class="panel"><h2>지급 일정</h2><table class="table"><tbody><tr><td>정산 생성</td><td>2026.07.01</td><td><span class="status">완료</span></td></tr><tr><td>운영 검수</td><td>2026.07.03</td><td><span class="status warn">진행</span></td></tr><tr><td>호텔 지급</td><td>2026.07.05</td><td><span class="status warn">예정</span></td></tr></tbody></table></div></section>
+<section class="panel" style="margin-top:14px"><h2>호텔별 정산 리포트</h2><table class="table"><thead><tr><th>호텔</th><th>결제금액</th><th>환불</th><th>수수료</th><th>정산액</th><th>상태</th></tr></thead><tbody><tr><td>그랜드 서울</td><td>₩328,000,000</td><td>₩18,400,000</td><td>₩24,700,000</td><td>₩284,900,000</td><td><span class="status">확정</span></td></tr><tr><td>해운대 오션</td><td>₩214,000,000</td><td>₩11,200,000</td><td>₩16,900,000</td><td>₩185,900,000</td><td><span class="status warn">검수중</span></td></tr><tr><td>제주 포레스트</td><td>₩142,000,000</td><td>₩7,800,000</td><td>₩10,600,000</td><td>₩123,600,000</td><td><span class="status">확정</span></td></tr></tbody></table></section>
+    </main>
+  </div>
+</body>
+</html>
+
+

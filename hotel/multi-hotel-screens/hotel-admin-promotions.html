@@ -1,0 +1,47 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>그랜드 서울 프로모션 - 그랜드 서울 관리자</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="feature-additions.css">
+</head>
+<body class="admin-page">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+  <div class="admin-brand"><span class="mark">S</span><div><strong>StayNow Admin</strong><small>개별 호텔 관리자</small></div></div>
+  <div class="admin-hotel-switcher selectable"><span class="hotel-mark">GS</span><select onchange="location.href=this.value"><option value="admin-dashboard.html">전체 호텔</option><option value="hotel-admin-dashboard.html" selected>그랜드 서울</option></select></div>
+  <nav class="admin-nav">
+    <div class="admin-nav-group">호텔 운영</div>
+    <a class="" href="hotel-admin-dashboard.html">호텔 대시보드</a>
+    <a class="" href="hotel-admin-reservations.html">예약 관리 <span class="nav-count">42</span></a>
+    <a class="" href="hotel-admin-checkins.html">체크인 현황 <span class="nav-count alert">3</span></a>
+    <a class="" href="hotel-admin-customers.html">고객 관리</a>
+    <div class="admin-nav-group">객실</div>
+    <a class="" href="hotel-admin-inventory.html">객실 관리</a>
+    <a class="" href="hotel-admin-room-add.html">객실 추가</a>
+    <div class="admin-nav-group">매출</div>
+    <a class="active" href="hotel-admin-promotions.html">호텔 프로모션</a>
+    <a class="" href="hotel-admin-settlement.html">호텔 정산</a>
+  </nav>
+</aside>
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <div><h1>그랜드 서울 프로모션</h1><p>그랜드 서울에 적용되는 회원 등급 할인과 장기 투숙 할인만 관리합니다.</p></div>
+        <div class="admin-actions"><a class="btn primary" href="#promo-add">+ 프로모션 추가</a><button class="btn">변경 저장</button></div>
+      </header>
+      <section class="grid-2"><div class="promo-card"><h3>그랜드 서울 회원 등급 할인</h3><p class="muted">전체 플랫폼 프로모션 중 그랜드 서울에 적용되는 등급 할인입니다.</p><div class="promo-rule"><span>Gold 회원</span><strong>7%</strong><span class="status">사용중</span></div><div class="promo-rule"><span>VIP 회원</span><strong>12%</strong><span class="status">사용중</span></div></div><div class="promo-card"><h3>그랜드 서울 장기 투숙 할인</h3><p class="muted">그랜드 서울 숙박 기간 기준으로 자동 적용됩니다.</p><div class="promo-rule"><span>7박 이상</span><strong>5%</strong><span class="status">사용중</span></div><div class="promo-rule"><span>14박 이상</span><strong>10%</strong><span class="status warn">검토</span></div></div></section>
+<section id="promo-add" class="panel promo-add-panel" style="margin-top:14px">
+  <div class="promo-add-head"><div><h2>그랜드 서울 프로모션 추가</h2><p class="muted">그랜드 서울에만 적용할 프로모션을 새로 등록합니다.</p></div><span class="status warn">신규 등록</span></div>
+  <div class="form-grid"><div class="field"><label>프로모션명</label><input value="그랜드 서울 장기 투숙 특가"></div><div class="field"><label>프로모션 유형</label><select><option>장기 투숙 할인</option><option>회원 등급 할인</option></select></div><div class="field"><label>대상 조건</label><input value="7박 이상"></div><div class="field"><label>할인 방식</label><select><option>정률 할인</option><option>정액 할인</option></select></div><div class="field"><label>할인값</label><input value="8%"></div><div class="field"><label>상태</label><select><option>사용중</option><option>검토</option><option>중지</option></select></div><div class="field full"><label>적용 기간</label><input value="2026.07.01 - 2026.09.30"></div></div>
+  <div class="promo-preview"><strong>미리보기</strong><p class="muted">그랜드 서울을 7박 이상 예약하면 8% 할인이 적용됩니다.</p></div>
+  <div class="admin-actions" style="margin-top:14px"><button class="btn">초기화</button><button class="btn primary">프로모션 추가</button></div>
+</section>
+<section class="panel" style="margin-top:14px"><h2>호텔 적용 조건 수정</h2><div class="form-grid"><div class="field"><label>프로모션 유형</label><select><option>회원 등급 할인</option><option>장기 투숙 할인</option></select></div><div class="field"><label>할인율</label><input value="7%"></div><div class="field"><label>대상 조건</label><input value="Gold 회원"></div><div class="field"><label>상태</label><select><option>사용중</option><option>중지</option></select></div></div></section>
+    </main>
+  </div>
+</body>
+</html>
+
+

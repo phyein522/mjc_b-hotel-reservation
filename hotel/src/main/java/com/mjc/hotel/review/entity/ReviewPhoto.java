@@ -1,33 +1,34 @@
-package com.mjc.hotel.user.entity;
+package com.mjc.hotel.review.entity;
 
-import com.mjc.hotel.common.util.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "reviews_photo")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class User extends BaseEntity {
+public class ReviewPhoto {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String email;
+    @Column(name = "review_id", nullable = false)
+    private Long reviewId;
 
-    private String password;
-    private String name;
-    private String phone;
-    private String socialLogin;
-    private String socialLoginId;
+    @Column(name = "photo_path", nullable = false, length = 500)
+    private String photoPath;
+
+    @Column(name = "photo_order")
+    private Long photoOrder;
 }
