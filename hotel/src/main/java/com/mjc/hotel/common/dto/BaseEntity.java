@@ -21,11 +21,11 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity implements IBase {
     @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false, comment = "생성시각")
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(name = "modified_at", nullable = false, updatable = true)
+    @Column(name = "modified_at", nullable = false, updatable = true, comment = "수정시각")
     private LocalDateTime modifiedAt;
 
 }
