@@ -2,6 +2,7 @@ package com.mjc.hotel.hotelsimage;
 
 import com.mjc.hotel.common.dto.BaseEntity;
 import com.mjc.hotel.hotels.HotelEntity;
+import com.mjc.hotel.hotels.IHotel;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,16 +17,22 @@ public class HotelImageEntity extends BaseEntity implements IHotelImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "image_id")
-    private Long imageId;
+    private Long hotelImageId;
 
-    @Column(name = "image_url", nullable = false, columnDefinition = "TEXT")
-    private String url;
+    @Column(nullable = false, length = 100)
+    private String fileName;
 
-    @Column(name = "sort_order")
-    private Integer sortOrder;
+    @Column(nullable = false)
+    private Integer size;
 
-    @Column(name = "is_thumbnail")
-    private Boolean isThumbnail;
+    @Column(name = "ext")
+    private String ext;
+
+    @Column(name = "store_name")
+    private String storeName;
+
+    @Column(name = "path")
+    private String path;
 
     @Transient
     private Long hotelId;
@@ -49,10 +56,30 @@ public class HotelImageEntity extends BaseEntity implements IHotelImage {
 
         this.hotelId = hotelId;
 
-        if(hotel == null){
-            hotel = new HotelEntity();
+        if (this.hotel == null) {
+            this.hotel = new HotelEntity();
         }
 
-        hotel.setHotelId(hotelId);
+        this.hotel.setHotelId(hotelId);
+        this.hotelId = hotelId;
+    }
+    @Override
+    public HotelEntity getHotel() {
+        return hotel;
+    }
+    @Override
+    public void setHotel(IHotel hotel) {
+
+        if (hotel == null) {
+            this.hotel = null;
+            return;
+        }
+
+        if (this.hotel == null) {
+            this.hotel = new HotelEntity();
+        }
+
+        this.hotel.copyMembers(hotel, true);
+        this.hotelId = hotel.getHotelId();
     }
 }

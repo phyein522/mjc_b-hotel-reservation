@@ -1,23 +1,33 @@
 package com.mjc.hotel.hotelsimage;
 
 import com.mjc.hotel.common.dto.IBase;
+import com.mjc.hotel.hotels.IHotel;
 
 public interface IHotelImage extends IBase {
 
-    Long getImageId();
-    void setImageId(Long imageId);
+    Long getHotelImageId();
+    void setHotelImageId(Long hotelImageId);
 
-    String getUrl();
-    void setUrl(String url);
+    String getFileName();
+    void setFileName(String fileName);
 
-    Integer getSortOrder();
-    void setSortOrder(Integer sortOrder);
+    Integer getSize();
+    void setSize(Integer size);
 
-    Boolean getIsThumbnail();
-    void setIsThumbnail(Boolean isThumbnail);
+    String getExt();
+    void setExt(String ext);
+
+    String getStoreName();
+    void setStoreName(String storeName);
+
+    String getPath();
+    void setPath(String path);
 
     Long getHotelId();
     void setHotelId(Long hotelId);
+
+    IHotel getHotel();
+    void setHotel(IHotel hotel);
 
     default IHotelImage copyMembers(IHotelImage source, boolean forced) {
 
@@ -27,26 +37,37 @@ public interface IHotelImage extends IBase {
 
         IBase.super.copyMembers(source, forced);
 
-        if(forced || source.getImageId()!=null){
-            this.setImageId(source.getImageId());
+        if(forced || source.getHotelImageId()!=null){
+            this.setHotelImageId(source.getHotelImageId());
         }
 
-        if(forced || source.getUrl()!=null){
-            this.setUrl(source.getUrl());
+        if(forced || source.getFileName()!=null){
+            this.setFileName(source.getFileName());
         }
 
-        if(forced || source.getSortOrder()!=null){
-            this.setSortOrder(source.getSortOrder());
+        if(forced || source.getSize()!=null){
+            this.setSize(source.getSize());
         }
 
-        if(forced || source.getIsThumbnail()!=null){
-            this.setIsThumbnail(source.getIsThumbnail());
+        if(forced || source.getExt()!=null){
+            this.setExt(source.getExt());
+        }
+
+        if(forced || source.getStoreName()!=null){
+            this.setStoreName(source.getStoreName());
+        }
+
+        if(forced || source.getPath()!=null){
+            this.setPath(source.getPath());
         }
 
         if(forced || source.getHotelId()!=null){
             this.setHotelId(source.getHotelId());
         }
 
+        if (forced && source.getHotel() != null) {
+            this.setHotel(source.getHotel());
+        }
         return this;
     }
 }

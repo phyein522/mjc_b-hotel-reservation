@@ -2,19 +2,22 @@ package com.mjc.hotel.hotelsimage;
 
 import com.mjc.hotel.common.dto.BaseDto;
 import com.mjc.hotel.hotels.HotelDto;
+import com.mjc.hotel.hotels.IHotel;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-
+@SuperBuilder
 public class HotelImageDto extends BaseDto implements IHotelImage {
-    private Long imageId;
-    private String url;
-    private Integer sortOrder;
-    private Boolean isThumbnail;
+    private Long hotelImageId;
+    private String fileName;
+    private Integer size;
+    private String ext;
+    private String storeName;
+    private String path;
 
     private Long hotelId;
     private HotelDto hotel;
@@ -38,5 +41,21 @@ public class HotelImageDto extends BaseDto implements IHotelImage {
             hotel = new HotelDto();
         }
         hotel.setHotelId(hotelId);
+        this.hotelId = hotelId;
+    }
+    public void setHotel(IHotel hotel) {
+
+        if(hotel == null){
+            this.hotel = new HotelDto();
+        }
+        if(this.hotel== null){
+            this.hotel = new HotelDto();
+        }
+        this.hotel.copyMembers(hotel, true);
+        this.hotelId = hotel.getHotelId();
+    }
+    @Override
+    public HotelDto getHotel() {
+        return hotel;
     }
 }
