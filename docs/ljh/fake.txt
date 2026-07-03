@@ -1,0 +1,101 @@
+================================================================================
+[MJC Hotel] 매출 분석(Sales Analysis) 개발 상태 분석 및 가이드 (fake.txt)
+================================================================================
+
+1. 임시 생성 파일 (Fake / Stub 파일 목록)
+--------------------------------------------------------------------------------
+로컬 동작 검증 및 타 팀 개발 미완료 상태에서 빌드/테스트를 통과시키기 위해 임시로 생성한 파일들입니다. 모두 접두사 "Fake"가 붙어 있습니다.
+
+* Stub 서비스:
+  - com/mjc/hotel/sales_analysis/service/SalesAnalysisServiceStub.java (가상 데이터 반환 서비스)
+* Mock 엔티티 (타 패키지 개발 지연에 대응하기 위한 임시 Entity):
+  - com/mjc/hotel/user/entity/FakeUser.java
+  - com/mjc/hotel/sales_analysis/entity/FakeHotel.java
+  - com/mjc/hotel/sales_analysis/entity/FakeRoom.java
+  - com/mjc/hotel/sales_analysis/entity/FakeBooking.java
+  - com/mjc/hotel/sales_analysis/entity/FakePayment.java
+  - com/mjc/hotel/sales_analysis/entity/FakePaymentStatus.java
+  - com/mjc/hotel/sales_analysis/entity/FakeChannel.java
+  - com/mjc/hotel/sales_analysis/entity/FakeRoomType.java
+* Mock 레포지토리 (임시 CRUD용 JpaRepository 인터페이스):
+  - com/mjc/hotel/user/repository/FakeUserRepository.java
+  - com/mjc/hotel/sales_analysis/repository/FakeHotelRepository.java
+  - com/mjc/hotel/sales_analysis/repository/FakeRoomRepository.java
+  - com/mjc/hotel/sales_analysis/repository/FakeBookingRepository.java
+  - com/mjc/hotel/sales_analysis/repository/FakePaymentRepository.java
+
+
+2. 머지 시 삭제해야 할 파일 목록
+--------------------------------------------------------------------------------
+다른 팀원들이 구현한 실제 엔티티/레포지토리 코드를 머지하게 되면 충돌을 방지하기 위해 반드시 프로젝트에서 물리적으로 삭제해야 할 파일들입니다.
+
+* 임시 데이터 모델 (엔티티) 파일:
+  - com/mjc/hotel/user/entity/FakeUser.java (회원 도메인 머지 시 삭제)
+  - com/mjc/hotel/sales_analysis/entity/FakeHotel.java (호텔 도메인 머지 시 삭제)
+  - com/mjc/hotel/sales_analysis/entity/FakeRoom.java (객실 도메인 머지 시 삭제)
+  - com/mjc/hotel/sales_analysis/entity/FakeBooking.java (예약 도메인 머지 시 삭제)
+  - com/mjc/hotel/sales_analysis/entity/FakePayment.java (결제 도메인 머지 시 삭제)
+  - com/mjc/hotel/sales_analysis/entity/FakePaymentStatus.java (결제 상태 Enum)
+  - com/mjc/hotel/sales_analysis/entity/FakeChannel.java (채널 테이블)
+  - com/mjc/hotel/sales_analysis/entity/FakeRoomType.java (객실 타입 테이블)
+* 임시 레포지토리 파일:
+  - com/mjc/hotel/user/repository/FakeUserRepository.java
+  - com/mjc/hotel/sales_analysis/repository/FakeHotelRepository.java
+  - com/mjc/hotel/sales_analysis/repository/FakeRoomRepository.java
+  - com/mjc/hotel/sales_analysis/repository/FakeBookingRepository.java
+  - com/mjc/hotel/sales_analysis/repository/FakePaymentRepository.java
+* 임시 테스트 설정 파일 (H2 환경용):
+  - hotel/src/test/resources/schema.sql (MySQL 실 DB 연결 시 불필요)
+
+
+3. sales_analysis 이외 패키지에서 수정한 파일 목록
+--------------------------------------------------------------------------------
+매출 분석(sales_analysis) 패키지 외의 공용 영역에서 부득이하게 추가/수정한 내역입니다.
+
+* hotel/build.gradle:
+  - spring-boot-starter-webmvc-test 오타 수정 -> spring-boot-starter-test로 변경
+  - 테스트 구동을 위해 com.h2database:h2 의존성 추가
+* com/mjc/hotel/config/SecurityConfig.java:
+  - Spring Security 관련 기본 로그인 창 차단을 위해 모든 API 허용(permitAll()) 및 필터 체인 빈 등록
+* com/mjc/hotel/user/entity/FakeUser.java:
+  - 회원 관리 임시 엔티티
+* com/mjc/hotel/user/repository/FakeUserRepository.java:
+  - 회원 관리 임시 레포지토리
+
+
+4. 실제 팀원 Entity와 교체해야 하는 부분 목록
+--------------------------------------------------------------------------------
+머지 후 실제 서비스 연동을 위해 임시 객체를 실제 개발 소스로 교체(Import/호출 변경)해야 하는 위치입니다.
+
+* com/mjc/hotel/sales_analysis/service/SalesAnalysisServiceImpl.java:
+  - 임시 FakeHotel 엔티티 임포트(import com.mjc.hotel.sales_analysis.entity.FakeHotel;)를 실제 호텔 Entity 패키지 경로로 교체
+  - 임시 FakeHotelRepository 호출을 실제 호텔 서비스/레포지토리 빈으로 교체
+* com/mjc/hotel/sales_analysis/SalesAnalysisServiceTest.java (통합 테스트 코드):
+  - 임시 엔티티(FakeUser, FakeHotel, FakeRoom, FakeBooking, FakePayment) 및 각 레포지토리의 임포트 경로를 타 팀원들의 실제 패키지 경로로 전부 교체
+  - RoomEntity 등과 같이 필드명 차이가 나는 부분(roomId vs id, number vs roomNumber 등)의 빌더 호출 코드 수정
+
+
+5. API 동작 모드 구분 (Stubbed vs Real SQL)
+--------------------------------------------------------------------------------
+동일한 API 컨트롤러(/api/sales/**)를 사용하되, 설정(Profile)에 따라 다르게 작동합니다.
+
+* [Stub API 모드] (spring.profiles.active=stub)
+  - 대상 구현체: SalesAnalysisServiceStub.java
+  - 동작 방식: 데이터베이스 쿼리를 일절 수행하지 않으며, 코드 내부에서 생성한 완전한 형태의 모의(Mock) 데이터 목록을 즉시 리턴합니다.
+  - 대상 API 및 반환값:
+    1) GET /api/sales/dashboard: 모의 매출액, 예약수, 점유율 등 종합 Metrics 및 TOP 3 예약 내역 반환
+    2) GET /api/sales/monthly: 8개월 분량의 모의 월 매출 목록 반환
+    3) GET /api/sales/channels: 아고다, 야놀자, 직접예약의 모의 점유율 반환
+    4) GET /api/sales/top-bookings: 3건의 모의 우수 예약 목록 반환
+    5) GET /api/sales/rooms: 객실 유형별 모의 매출 통계 반환
+
+* [Real SQL API 모드] (spring.profiles.active=default 또는 stub 외의 값)
+  - 대상 구현체: SalesAnalysisServiceImpl.java
+  - 동작 방식: MyBatis XML 매퍼의 SELECT 쿼리를 실제 가동하여 DB 테이블의 원시 데이터를 집계하고 자바 단에서 수학적 연산을 가쳐 최종 DTO를 반환합니다.
+  - 대상 API 및 내부 SQL 연동 매핑:
+    1) GET /api/sales/dashboard: getBasicMetrics, getRoomTypeRevenue, getChannelShares, getTopBookings, getReturningGuestRate, getVipReturningGuestRate 쿼리 결과를 합산하고, 자바 코드에서 ADR, 점유율 및 전월 대비 증감률을 연산하여 반환
+    2) GET /api/sales/monthly: getMonthlyRevenueTrend 쿼리 연동
+    3) GET /api/sales/channels: getChannelShares 쿼리 연동
+    4) GET /api/sales/top-bookings: getTopBookings 쿼리 연동
+    5) GET /api/sales/rooms: getRoomTypeRevenue 쿼리 연동
+================================================================================
