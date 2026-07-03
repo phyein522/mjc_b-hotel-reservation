@@ -13,7 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 
-public class PromotionEntity extends BaseEntity implements IPromotion {
+public class  PromotionEntity extends BaseEntity implements IPromotion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long proId;
@@ -32,7 +32,6 @@ public class PromotionEntity extends BaseEntity implements IPromotion {
 
     @Column(nullable = false)
     private String startDate;
-
     private String endDate;
     private String resCount;
     private String conversionRate;
