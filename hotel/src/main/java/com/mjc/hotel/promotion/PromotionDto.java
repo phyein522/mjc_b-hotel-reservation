@@ -1,0 +1,48 @@
+package com.mjc.hotel.promotion;
+
+import com.mjc.hotel.common.dto.BaseDto;
+import com.mjc.hotel.rooms.dto.RoomDto;
+import lombok.*;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class PromotionDto extends BaseDto implements IPromotion {
+    private Long proId;
+    private String name;
+    private String description;
+    private String disType;
+    private String disValue;
+    private String startDate;
+    private String endDate;
+    private String resCount;
+    private String conversionRate;
+    private String status;
+
+    private Long roomId;
+    private RoomDto room;
+
+    @Override
+    public Long getRoomId() {
+
+        if (room != null) {
+            return room.getHotelId();
+        }
+
+        return roomId;
+    }
+
+    @Override
+    public void setRoomId(Long roomId) {
+
+        this.roomId = roomId;
+
+        if (room == null) {
+            room = new RoomDto();
+        }
+
+        room.setHotelId(roomId);
+    }
+}
