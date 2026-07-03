@@ -4,18 +4,11 @@ import com.mjc.hotel.sales_analysis.dto.SalesDashboardResponse;
 import com.mjc.hotel.sales_analysis.dto.RoomTypeRevenueDto;
 import com.mjc.hotel.sales_analysis.dto.ChannelShareDto;
 import com.mjc.hotel.sales_analysis.dto.TopBookingDto;
-import com.mjc.hotel.sales_analysis.entity.Booking;
-import com.mjc.hotel.sales_analysis.entity.Hotel;
-import com.mjc.hotel.sales_analysis.entity.Payment;
-import com.mjc.hotel.sales_analysis.entity.PaymentStatus;
-import com.mjc.hotel.sales_analysis.entity.Room;
-import com.mjc.hotel.sales_analysis.repository.BookingRepository;
-import com.mjc.hotel.sales_analysis.repository.HotelRepository;
-import com.mjc.hotel.sales_analysis.repository.PaymentRepository;
-import com.mjc.hotel.sales_analysis.repository.RoomRepository;
+import com.mjc.hotel.sales_analysis.entity.*;
+import com.mjc.hotel.sales_analysis.repository.*;
 import com.mjc.hotel.sales_analysis.service.SalesAnalysisService;
-import com.mjc.hotel.user.entity.User;
-import com.mjc.hotel.user.repository.UserRepository;
+import com.mjc.hotel.user.entity.FakeUser;
+import com.mjc.hotel.user.repository.FakeUserRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,35 +32,35 @@ public class SalesAnalysisServiceTest {
     private SalesAnalysisService salesAnalysisService;
 
     @Autowired
-    private HotelRepository hotelRepository;
+    private FakeHotelRepository hotelRepository;
 
     @Autowired
-    private RoomRepository roomRepository;
+    private FakeRoomRepository roomRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private FakeUserRepository userRepository;
 
     @Autowired
-    private BookingRepository bookingRepository;
+    private FakeBookingRepository bookingRepository;
 
     @Autowired
-    private PaymentRepository paymentRepository;
+    private FakePaymentRepository paymentRepository;
 
     @Autowired
     private EntityManager em;
 
-    private Hotel testHotel;
-    private Room standardRoom;
-    private Room deluxeRoom;
-    private Room suiteRoom;
-    private User normalUser1;
-    private User normalUser2;
-    private User vipUser;
+    private FakeHotel testHotel;
+    private FakeRoom standardRoom;
+    private FakeRoom deluxeRoom;
+    private FakeRoom suiteRoom;
+    private FakeUser normalUser1;
+    private FakeUser normalUser2;
+    private FakeUser vipUser;
 
     @BeforeEach
     public void setUp() {
         // 기존 데이터와 충돌을 원천 차단하기 위해 9999 범위의 유니크 ID 적용
-        
+
         // 0. 채널 테이블 초기 적재
         em.createNativeQuery("INSERT INTO channels (채널ID, 채널명, 채널유형, 수수료율, 활성여부) VALUES (1, '야놀자', 'OTA', 10.0, true) " +
                 "ON DUPLICATE KEY UPDATE 채널명='야놀자'").executeUpdate();
@@ -77,7 +70,7 @@ public class SalesAnalysisServiceTest {
                 "ON DUPLICATE KEY UPDATE 채널명='직접예약'").executeUpdate();
 
         // 1. 테스트 호텔 등록
-        testHotel = Hotel.builder()
+        testHotel = FakeHotel.builder()
                 .id(9999L)
                 .name("테스트 MJC 호텔")
                 .address("서울시 테스트구")
@@ -89,7 +82,7 @@ public class SalesAnalysisServiceTest {
         hotelRepository.save(testHotel);
 
         // 2. 객실 등록
-        standardRoom = Room.builder()
+        standardRoom = FakeRoom.builder()
                 .id(99991L)
                 .roomNumber("T101")
                 .status("AVAILABLE")
@@ -102,7 +95,7 @@ public class SalesAnalysisServiceTest {
                 .build();
         roomRepository.save(standardRoom);
 
-        deluxeRoom = Room.builder()
+        deluxeRoom = FakeRoom.builder()
                 .id(99992L)
                 .roomNumber("T102")
                 .status("AVAILABLE")
@@ -115,7 +108,7 @@ public class SalesAnalysisServiceTest {
                 .build();
         roomRepository.save(deluxeRoom);
 
-        suiteRoom = Room.builder()
+        suiteRoom = FakeRoom.builder()
                 .id(99993L)
                 .roomNumber("T103")
                 .status("AVAILABLE")
@@ -129,7 +122,7 @@ public class SalesAnalysisServiceTest {
         roomRepository.save(suiteRoom);
 
         // 3. 회원 등록
-        normalUser1 = User.builder()
+        normalUser1 = FakeUser.builder()
                 .id(999910L)
                 .email("test_user1_unique@test.com")
                 .password("password")
@@ -140,7 +133,7 @@ public class SalesAnalysisServiceTest {
                 .build();
         userRepository.save(normalUser1);
 
-        normalUser2 = User.builder()
+        normalUser2 = FakeUser.builder()
                 .id(999920L)
                 .email("test_user2_unique@test.com")
                 .password("password")
@@ -151,7 +144,7 @@ public class SalesAnalysisServiceTest {
                 .build();
         userRepository.save(normalUser2);
 
-        vipUser = User.builder()
+        vipUser = FakeUser.builder()
                 .id(999930L)
                 .email("test_vip_unique@test.com")
                 .password("password")
@@ -163,38 +156,38 @@ public class SalesAnalysisServiceTest {
         userRepository.save(vipUser);
 
         // 4. 예약 및 결제 설정 (2026-06 기준 테스트용)
-        
+
         // 4.1. 5월 예약 1 (김철수 투숙 -> 6월 재방문 여부 체크용 - 야놀자 1L)
         createBookingAndPayment(
-                999901L, normalUser1, testHotel, standardRoom, "BT260501", 1, 
+                999901L, normalUser1, testHotel, standardRoom, "BT260501", 1,
                 LocalDate.of(2026, 5, 10), LocalDate.of(2026, 5, 11),
                 new BigDecimal("100000.00"), LocalDateTime.of(2026, 5, 10, 14, 0), 1L
         );
 
         // 4.2. 5월 예약 2 (박대표 VIP 투숙 -> 6월 VIP 재방문 여부 체크용 - 아고다 2L)
         createBookingAndPayment(
-                999902L, vipUser, testHotel, suiteRoom, "BT260502", 2, 
+                999902L, vipUser, testHotel, suiteRoom, "BT260502", 2,
                 LocalDate.of(2026, 5, 20), LocalDate.of(2026, 5, 22),
                 new BigDecimal("600000.00"), LocalDateTime.of(2026, 5, 20, 12, 0), 2L
         );
 
         // 4.3. 6월 예약 1 (김철수: 일반 재방문 유저 - 디럭스 150,000원 결제 - 야놀자 1L)
         createBookingAndPayment(
-                999903L, normalUser1, testHotel, deluxeRoom, "BT260601", 1, 
+                999903L, normalUser1, testHotel, deluxeRoom, "BT260601", 1,
                 LocalDate.of(2026, 6, 5), LocalDate.of(2026, 6, 6),
                 new BigDecimal("150000.00"), LocalDateTime.of(2026, 6, 5, 15, 0), 1L
         );
 
         // 4.4. 6월 예약 2 (박대표: VIP 재방문 유저 - 스위트 900,000원 결제 - 아고다 2L)
         createBookingAndPayment(
-                999904L, vipUser, testHotel, suiteRoom, "BT260602", 3, 
+                999904L, vipUser, testHotel, suiteRoom, "BT260602", 3,
                 LocalDate.of(2026, 6, 28), LocalDate.of(2026, 7, 1),
                 new BigDecimal("900000.00"), LocalDateTime.of(2026, 6, 28, 10, 0), 2L
         );
 
         // 4.5. 6월 예약 3 (이영희: 일반 신규 예약 - 스탠다드 100,000원 결제 - 직접예약 3L)
         createBookingAndPayment(
-                999905L, normalUser2, testHotel, standardRoom, "BT260603", 1, 
+                999905L, normalUser2, testHotel, standardRoom, "BT260603", 1,
                 LocalDate.of(2026, 6, 29), LocalDate.of(2026, 6, 30),
                 new BigDecimal("100000.00"), LocalDateTime.of(2026, 6, 29, 11, 30), 3L
         );
@@ -205,10 +198,10 @@ public class SalesAnalysisServiceTest {
     }
 
     private void createBookingAndPayment(
-            Long id, User user, Hotel hotel, Room room, String bookingNo, int nights,
+            Long id, FakeUser user, FakeHotel hotel, FakeRoom room, String bookingNo, int nights,
             LocalDate checkIn, LocalDate checkOut, BigDecimal amount, LocalDateTime paidAt, Long channelId
     ) {
-        Booking booking = Booking.builder()
+        FakeBooking booking = FakeBooking.builder()
                 .id(id)
                 .user(user)
                 .hotel(hotel)
@@ -228,11 +221,11 @@ public class SalesAnalysisServiceTest {
                 .checkOutTime(LocalTime.of(11, 0))
                 .build();
 
-        Payment payment = Payment.builder()
+        FakePayment payment = FakePayment.builder()
                 .id(id)
                 .booking(booking)
                 .paymentMethod("CARD")
-                .paymentStatus(PaymentStatus.PAID)
+                .paymentStatus(FakePaymentStatus.PAID)
                 .amount(amount)
                 .currency("KRW")
                 .paidAt(paidAt)
