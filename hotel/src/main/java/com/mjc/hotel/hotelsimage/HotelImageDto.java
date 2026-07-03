@@ -46,7 +46,7 @@ public class HotelImageDto extends BaseDto implements IHotelImage {
     public void setHotel(IHotel hotel) {
 
         if(hotel == null){
-            this.hotel = new HotelDto();
+            return;
         }
         if(this.hotel== null){
             this.hotel = new HotelDto();
