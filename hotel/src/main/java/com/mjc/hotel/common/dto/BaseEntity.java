@@ -1,6 +1,5 @@
-package com.mjc.hotel.common.util;
+package com.mjc.hotel.common.dto;
 
-import com.mjc.hotel.common.dto.IBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;

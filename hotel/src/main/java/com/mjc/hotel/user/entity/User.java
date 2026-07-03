@@ -1,21 +1,17 @@
 package com.mjc.hotel.user.entity;
 
-import com.mjc.hotel.common.util.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.mjc.hotel.common.dto.BaseEntity;
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-@Entity
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
-@Data
-@Builder
+@AllArgsConstructor
+@ToString
+@SuperBuilder
+@Entity
 public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
