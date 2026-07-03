@@ -1,9 +1,9 @@
 {
   "info": {
-    "_postman_id": "02b8a7f8-c91f-4e21-b3a0-99baedb5837f",
-    "name": "Hotel Copy",
+    "_postman_id": "f4bfb0b1-63e9-4d4d-b825-e3a8619dcc93",
+    "name": "Hotel",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "53643729"
+    "_exporter_id": "53674091"
   },
   "item": [
     {
@@ -551,179 +551,115 @@
       "name": "Reviews",
       "item": [
         {
-          "name": "Create Review",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('response is successful', function () {",
-                  "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
-                  "});",
-                  "",
-                  "const body = pm.response.json();",
-                  "const review = body.data || body;",
-                  "if (review.reviewId) {",
-                  "  pm.collectionVariables.set('reviewId', review.reviewId);",
-                  "}"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"reservationId\": 1,\n  \"userId\": 1,\n  \"hotelId\": 1,\n  \"tripType\": \"FAMILY\",\n  \"viewCount\": 0,\n  \"title\": \"媛議??ы뻾 由щ럭\",\n  \"content\": \"媛앹떎??源⑤걮?섍퀬 吏곸썝??移쒖젅?덉뒿?덈떎.\",\n  \"overallRating\": 5,\n  \"likeCount\": 0,\n  \"dislikeCount\": 0,\n  \"photos\": [\n    {\n      \"photoPath\": \"/uploads/reviews/room-1.jpg\",\n      \"photoOrder\": 1\n    },\n    {\n      \"photoPath\": \"/uploads/reviews/view-1.jpg\",\n      \"photoOrder\": 2\n    }\n  ],\n  \"tags\": [\n    {\n      \"tag\": \"CLEAN\"\n    },\n    {\n      \"tag\": \"KIND\"\n    },\n    {\n      \"tag\": \"GOOD_LOCATION\"\n    }\n  ],\n  \"ratings\": [\n    {\n      \"category\": \"CLEANLINESS\",\n      \"score\": 5\n    },\n    {\n      \"category\": \"SERVICE\",\n      \"score\": 5\n    },\n    {\n      \"category\": \"LOCATION\",\n      \"score\": 4\n    }\n  ]\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/reviews",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "reviews"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Review List",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('response is successful', function () {",
-                  "  pm.expect(pm.response.code).to.equal(200);",
-                  "});"
-                ]
-              }
-            }
-          ],
+          "name": "attrfindAll",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/reviews",
+              "raw": "http://localhost:33000//api/hotelimages/1",
+              "protocol": "http",
               "host": [
-                "{{baseUrl}}"
+                "localhost"
               ],
+              "port": "33000",
               "path": [
-                "reviews"
+                "",
+                "api",
+                "hotelimages",
+                "1"
               ]
             }
           },
           "response": []
         },
         {
-          "name": "Get Review",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('response is successful', function () {",
-                  "  pm.expect(pm.response.code).to.equal(200);",
-                  "});"
-                ]
-              }
-            }
-          ],
+          "name": "attrfindbyid",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "attrinsert",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "attrUpdate",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "attrdeletebyid",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "hotelsamen",
+      "item": [
+        {
+          "name": "amenfindAll",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/reviews/{{reviewId}}",
+              "raw": "http://localhost:33000//api/hotelimages/1",
+              "protocol": "http",
               "host": [
-                "{{baseUrl}}"
+                "localhost"
               ],
+              "port": "33000",
               "path": [
-                "reviews",
-                "{{reviewId}}"
+                "",
+                "api",
+                "hotelimages",
+                "1"
               ]
             }
           },
           "response": []
         },
         {
-          "name": "Update Review",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('response is successful', function () {",
-                  "  pm.expect(pm.response.code).to.equal(200);",
-                  "});"
-                ]
-              }
-            }
-          ],
+          "name": "amenfindbyid",
           "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"reservationId\": 1,\n  \"userId\": 1,\n  \"hotelId\": 1,\n  \"tripType\": \"COUPLE\",\n  \"viewCount\": 10,\n  \"title\": \"?섏젙??由щ럭 ?쒕ぉ\",\n  \"content\": \"?섏젙 ?꾩뿉??媛앹떎怨??꾩튂媛 留뚯”?ㅻ윭?좎뒿?덈떎.\",\n  \"overallRating\": 4,\n  \"likeCount\": 2,\n  \"dislikeCount\": 0,\n  \"photos\": [\n    {\n      \"photoPath\": \"/uploads/reviews/updated-room-1.jpg\",\n      \"photoOrder\": 1\n    }\n  ],\n  \"tags\": [\n    {\n      \"tag\": \"GOOD_VIEW\"\n    },\n    {\n      \"tag\": \"GOOD_VALUE\"\n    }\n  ],\n  \"ratings\": [\n    {\n      \"category\": \"CLEANLINESS\",\n      \"score\": 4\n    },\n    {\n      \"category\": \"FACILITY\",\n      \"score\": 4\n    },\n    {\n      \"category\": \"VALUE\",\n      \"score\": 5\n    }\n  ]\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/reviews/{{reviewId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "reviews",
-                "{{reviewId}}"
-              ]
-            }
+            "method": "GET",
+            "header": []
           },
           "response": []
         },
         {
-          "name": "Delete Review",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('response is successful', function () {",
-                  "  pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
-                  "});"
-                ]
-              }
-            }
-          ],
+          "name": "ameninsert",
           "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/reviews/{{reviewId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "reviews",
-                "{{reviewId}}"
-              ]
-            }
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "amenUpdate",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "amendeletebyid",
+          "request": {
+            "method": "GET",
+            "header": []
           },
           "response": []
         }
