@@ -1,8 +1,10 @@
 package com.mjc.hotel.hotels;
 
+import com.mjc.hotel.common.dto.BaseDto;
 import com.mjc.hotel.common.dto.IBase;
 import java.time.LocalTime;
 
+@tools.jackson.databind.annotation.JsonDeserialize(as = HotelDto.class)
 public interface IHotel extends IBase {
     Long getHotelId();
     void setHotelId(Long hotelId);

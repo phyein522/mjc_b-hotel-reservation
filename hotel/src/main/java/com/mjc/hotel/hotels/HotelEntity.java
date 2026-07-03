@@ -13,7 +13,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class HotelEntity extends BaseEntity implements IHotel{
+public class HotelEntity extends BaseEntity implements IHotel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long hotelId;
