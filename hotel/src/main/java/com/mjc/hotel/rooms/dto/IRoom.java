@@ -1,6 +1,7 @@
 package com.mjc.hotel.rooms.dto;
 
 import com.mjc.hotel.common.dto.IBase;
+import com.mjc.hotel.hotels.IHotel;
 import com.mjc.hotel.rooms.enums.RoomBedOption;
 import com.mjc.hotel.rooms.enums.RoomStatus;
 import com.mjc.hotel.rooms.enums.RoomType;
@@ -51,6 +52,9 @@ public interface IRoom extends IBase {
 	Long getHotelId();
 	void setHotelId(Long hotelId);
 
+	IHotel getHotel();
+	void setHotel(IHotel room);
+
 	default IRoom copyMembers(IRoom source, boolean forced) {
 		if ( source == null ) {
 			return this;
@@ -97,6 +101,7 @@ public interface IRoom extends IBase {
 		}
 		if ( forced || source.getHotelId() != null ) {
 			this.setHotelId(source.getHotelId());
+			this.getHotel().copyMembers(source.getHotel(), forced);
 		}
 		return this;
 	}

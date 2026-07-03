@@ -1,6 +1,8 @@
 package com.mjc.hotel.rooms.dto;
 
 import com.mjc.hotel.common.dto.BaseEntity;
+import com.mjc.hotel.hotels.HotelEntity;
+import com.mjc.hotel.hotels.IHotel;
 import com.mjc.hotel.rooms.enums.RoomBedOption;
 import com.mjc.hotel.rooms.enums.RoomStatus;
 import com.mjc.hotel.rooms.enums.RoomType;
@@ -62,5 +64,46 @@ public class RoomEntity extends BaseEntity implements IRoom {
 	@Column(name = "room_bed_option", nullable = false, comment = "침대(Floor/DoubleBed/QueenBed)")
 	private RoomBedOption roomBedOption;
 
+	@Transient
 	private Long hotelId;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "hotel_id", nullable = false, comment = "호텔외래키")
+	private HotelEntity hotel;
+
+	@Override
+	public Long getHotelId() {
+		if ( this.hotel == null ) {
+			this.hotel = new HotelEntity();
+		}
+		if ( this.hotel.getHotelId() != null) {
+			this.hotelId = this.hotel.getHotelId();
+		} else {
+			this.hotel.setHotelId(this.hotelId);
+		}
+		return this.hotel.getHotelId();
+	}
+
+	@Override
+	public void setHotelId(Long hotelId) {
+		// Long 외래키값 과 객체.기본키 값을 항상 같도록 해야 한다.
+		if ( this.hotel == null ) {
+			this.hotel = new HotelEntity();
+		}
+		this.hotel.setHotelId(hotelId);
+		this.hotelId = hotelId;
+	}
+
+	@Override
+	public void setHotel(IHotel hotel) {
+		// Long 외래키값 과 객체.기본키 값을 항상 같도록 해야 한다.
+		if ( hotel == null ) {
+			return;
+		}
+		if ( this.hotel == null ) {
+			this.hotel = new HotelEntity();
+		}
+		this.hotel.copyMembers(hotel, true);
+		this.hotelId = hotel.getHotelId();
+	}
 }
