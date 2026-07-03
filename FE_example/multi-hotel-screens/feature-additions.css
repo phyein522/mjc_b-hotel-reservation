@@ -142,3 +142,24 @@
 .promo-add-head p { margin: 6px 0 0; }
 .promo-preview { border: 1px dashed #9fc2ff; background: #eff6ff; border-radius: 8px; padding: 14px; margin-top: 14px; }
 .promo-preview strong { color: #2563eb; }
+
+/* room review screens */
+.review-summary { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 18px; align-items: center; }
+.review-score { display: grid; place-items: center; min-height: 150px; border-radius: 14px; background: #eff6ff; color: #2563eb; text-align: center; }
+.review-score strong { font-size: 42px; line-height: 1; }
+.review-bars { display: grid; gap: 10px; }
+.review-bar { display: grid; grid-template-columns: 88px minmax(0, 1fr) 42px; align-items: center; gap: 10px; font-size: 13px; color: #667085; }
+.review-track { height: 8px; border-radius: 999px; background: #eef2f7; overflow: hidden; }
+.review-fill { height: 100%; border-radius: 999px; background: #2563eb; }
+.review-list { display: grid; gap: 14px; }
+.review-item { padding: 18px; border: 1px solid #e5eaf2; border-radius: 14px; background: #fff; }
+.review-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 10px; }
+.review-stars { color: #f59e0b; font-weight: 900; letter-spacing: 1px; }
+.review-photos { display: flex; gap: 8px; margin-top: 12px; }
+.review-photo { width: 78px; height: 58px; border-radius: 8px; background: linear-gradient(135deg,#bfdbfe,#fef3c7); }
+.review-filter { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0 18px; }
+.review-chip { border: 1px solid #e5eaf2; border-radius: 999px; background: #fff; padding: 7px 11px; font-size: 13px; font-weight: 900; color: #344054; }
+.review-chip.active { border-color: #2563eb; background: #eff6ff; color: #2563eb; }
+.review-admin-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(320px, .65fr); gap: 14px; align-items: start; }
+.review-reply-box { border: 1px solid #cfe0ff; background: #f7fbff; border-radius: 10px; padding: 14px; }
+@media (max-width: 900px) { .review-summary, .review-admin-grid { grid-template-columns: 1fr; } }
