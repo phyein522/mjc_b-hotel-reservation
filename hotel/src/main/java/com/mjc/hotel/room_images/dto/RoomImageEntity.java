@@ -49,6 +49,8 @@ public class RoomImageEntity extends BaseEntity implements IRoomImage {
 		}
 		if ( this.room.getRoomId() != null) {
 			this.roomId = this.room.getRoomId();
+		} else {
+			this.room.setRoomId(this.roomId);
 		}
 		return this.room.getRoomId();
 	}

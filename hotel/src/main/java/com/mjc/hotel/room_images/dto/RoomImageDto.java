@@ -28,7 +28,11 @@ public class RoomImageDto extends BaseDto implements IRoomImage {
 		if ( this.room == null ) {
 			this.room = new RoomDto();
 		}
-		this.room.setRoomId(this.roomId);
+		if ( this.room.getRoomId() != null) {
+			this.roomId = this.room.getRoomId();
+		} else {
+			this.room.setRoomId(this.roomId);
+		}
 		return this.room.getRoomId();
 	}
 

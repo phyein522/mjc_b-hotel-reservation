@@ -17,7 +17,7 @@ public class HotelImageResponseDto extends HotelImageDto {
         if(imageUrl == null){
 
             imageUrl = String.format(
-                    "http://localhost:8989/api/v1/hotelimage/image/%d",
+                    "http://localhost:8989/api/hotelimage/image/%d",
                     this.getHotelImageId());
         }
 
