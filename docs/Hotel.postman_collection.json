@@ -356,7 +356,16 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": ""
+              "raw": "http://localhost:8989/api/hotels",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotels"
+              ]
             }
           },
           "response": []
@@ -367,7 +376,17 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": ""
+              "raw": "http://localhost:8989/api/hotels/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotels",
+                "1"
+              ]
             }
           },
           "response": []
@@ -375,10 +394,28 @@
         {
           "name": "Hotel insert",
           "request": {
-            "method": "GET",
+            "method": "POST",
             "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"신라 서울\",\n    \"description\": \"서울 중심에 위치한 5성급 호텔\",\n    \"address\": \"서울특별시 중구 동호로 249\",\n    \"city\": \"서울\",\n    \"zipCode\": \"04605\",\n    \"phone\": \"02-2233-3131\",\n    \"email\": \"hotel@test.com\",\n    \"checkIn\": \"15:00:00\",\n    \"checkOut\": \"11:00:00\",\n    \"starRate\": 5,\n    \"isActive\": true,\n    \"latitude\": \"37.5567\",\n    \"longitude\": \"127.0055\",\n    \"type\": \"HOTEL\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
-              "raw": ""
+              "raw": "http://localhost:8989/api/hotels",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotels"
+              ]
             }
           },
           "response": []
@@ -386,10 +423,29 @@
         {
           "name": "Hotel Update",
           "request": {
-            "method": "GET",
+            "method": "PUT",
             "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"백제 서울\",\n    \"description\": \"서울 중심에 위치한 4성급 호텔\",\n    \"address\": \"서울특별시 서대문구 홍은동 249\",\n    \"city\": \"서울\",\n    \"zipCode\": \"03241\",\n    \"phone\": \"02-1234-5678\",\n    \"email\": \"baekjae@test.com\",\n    \"checkIn\": \"12:00:00\",\n    \"checkOut\": \"12:00:00\",\n    \"starRate\": 4,\n    \"isActive\": true,\n    \"latitude\": \"37.1111\",\n    \"longitude\": \"127.1111\",\n    \"type\": \"HOTEL\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
-              "raw": ""
+              "raw": "http://localhost:8989/api/hotels/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotels",
+                "1"
+              ]
             }
           },
           "response": []
@@ -397,10 +453,20 @@
         {
           "name": "Hotel deletebyid",
           "request": {
-            "method": "GET",
+            "method": "DELETE",
             "header": [],
             "url": {
-              "raw": ""
+              "raw": "http://localhost:8989/api/hotels/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotels",
+                "1"
+              ]
             }
           },
           "response": []
@@ -416,16 +482,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:33000/api/hotelimages/1",
+              "raw": "http://localhost:8989/api/hotelimage",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
-              "port": "33000",
+              "port": "8989",
               "path": [
                 "api",
-                "hotelimages",
-                "1"
+                "hotelimage"
               ]
             }
           },
@@ -437,7 +502,17 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": ""
+              "raw": "http://localhost:8989/api/hotelimage/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelimage",
+                "1"
+              ]
             }
           },
           "response": []
@@ -445,10 +520,30 @@
         {
           "name": "Image insert",
           "request": {
-            "method": "GET",
+            "method": "POST",
             "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "",
+                  "type": "file",
+                  "uuid": "d95c0f7b-1783-490f-a70b-f3ae714d21d2",
+                  "src": "/Users/minsang/Desktop/hotel1.jpg"
+                }
+              ]
+            },
             "url": {
-              "raw": ""
+              "raw": "http://localhost:8989/api/hotelimage",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelimage"
+              ]
             }
           },
           "response": []
@@ -456,10 +551,31 @@
         {
           "name": "Image Update",
           "request": {
-            "method": "GET",
+            "method": "PUT",
             "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "",
+                  "type": "file",
+                  "uuid": "978339d6-114e-4f21-9b31-7ea6b61eb3bf",
+                  "src": "/Users/minsang/Desktop/hotel2.jpg"
+                }
+              ]
+            },
             "url": {
-              "raw": ""
+              "raw": "http://localhost:8989/api/hotelimage/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelimage",
+                "1"
+              ]
             }
           },
           "response": []
@@ -467,10 +583,20 @@
         {
           "name": "Image deletebyid",
           "request": {
-            "method": "GET",
+            "method": "DELETE",
             "header": [],
             "url": {
-              "raw": ""
+              "raw": "http://localhost:8989/api/hotelimage/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelimage",
+                "1"
+              ]
             }
           },
           "response": []
@@ -486,16 +612,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:33000/api/hotelimages/1",
+              "raw": "http://localhost:8989/api/hoteltrans",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
-              "port": "33000",
+              "port": "8989",
               "path": [
                 "api",
-                "hotelimages",
-                "1"
+                "hoteltrans"
               ]
             }
           },
@@ -507,7 +632,17 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": ""
+              "raw": "http://localhost:8989/api/hoteltrans/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hoteltrans",
+                "1"
+              ]
             }
           },
           "response": []
@@ -515,10 +650,28 @@
         {
           "name": "transinsert",
           "request": {
-            "method": "GET",
+            "method": "POST",
             "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"transName\": \"지하철\",\n    \"transDepart\": \"서울역\",\n    \"transTime\": \"10분\",\n    \"hotelId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
-              "raw": ""
+              "raw": "http://localhost:8989/api/hoteltrans",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hoteltrans"
+              ]
             }
           },
           "response": []
@@ -526,10 +679,29 @@
         {
           "name": "transUpdate",
           "request": {
-            "method": "GET",
+            "method": "PUT",
             "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"transName\": \"자동차\",\n    \"transDepart\": \"용산역\",\n    \"transTime\": \"30분\",\n    \"hotelId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
-              "raw": ""
+              "raw": "http://localhost:8989/api/hoteltrans/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hoteltrans",
+                "1"
+              ]
             }
           },
           "response": []
@@ -537,10 +709,20 @@
         {
           "name": "deletebyid",
           "request": {
-            "method": "GET",
+            "method": "DELETE",
             "header": [],
             "url": {
-              "raw": ""
+              "raw": "http://localhost:8989/api/hotelimage/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelimage",
+                "1"
+              ]
             }
           },
           "response": []
@@ -556,16 +738,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:33000/api/hotelimages/1",
+              "raw": "http://localhost:8989/api/hotelattr",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
-              "port": "33000",
+              "port": "8989",
               "path": [
                 "api",
-                "hotelimages",
-                "1"
+                "hotelattr"
               ]
             }
           },
@@ -573,11 +754,35 @@
         },
         {
           "name": "attrfindbyid",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
           "request": {
             "method": "GET",
             "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "",
+                  "type": "file",
+                  "uuid": "d95c0f7b-1783-490f-a70b-f3ae714d21d2",
+                  "src": "/Users/minsang/Desktop/hotel1.jpg"
+                }
+              ]
+            },
             "url": {
-              "raw": ""
+              "raw": "http://localhost:8989/api/hotelattr/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelattr",
+                "1"
+              ]
             }
           },
           "response": []
@@ -585,10 +790,28 @@
         {
           "name": "attrinsert",
           "request": {
-            "method": "GET",
+            "method": "POST",
             "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"context\": \"무료취소\",\n    \"hotelId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
-              "raw": ""
+              "raw": "http://localhost:8989/api/hotelattr",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelattr"
+              ]
             }
           },
           "response": []
@@ -596,10 +819,29 @@
         {
           "name": "attrUpdate",
           "request": {
-            "method": "GET",
+            "method": "PUT",
             "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"context\": \"한강뷰\",\n    \"hotelId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
-              "raw": ""
+              "raw": "http://localhost:8989/api/hotelattr/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelattr",
+                "1"
+              ]
             }
           },
           "response": []
@@ -607,10 +849,20 @@
         {
           "name": "attrdeletebyid",
           "request": {
-            "method": "GET",
+            "method": "DELETE",
             "header": [],
             "url": {
-              "raw": ""
+              "raw": "http://localhost:8989/api/hotelattr/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelattr",
+                "1"
+              ]
             }
           },
           "response": []
@@ -618,7 +870,7 @@
       ]
     },
     {
-      "name": "hotelsame",
+      "name": "hotelsamen",
       "item": [
         {
           "name": "amenfindAll",
@@ -647,7 +899,17 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": ""
+              "raw": "http://localhost:8989/api/hotelamenities/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelamenities",
+                "1"
+              ]
             }
           },
           "response": []
@@ -655,10 +917,28 @@
         {
           "name": "ameninsert",
           "request": {
-            "method": "GET",
+            "method": "POST",
             "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"wifi\": true,\n    \"pool\": true,\n    \"health\": true,\n    \"spa\": true,\n    \"restaurant\": true,\n    \"balletParking\": true,\n    \"bar\": true,\n    \"hotelId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
-              "raw": ""
+              "raw": "http://localhost:8989/api/hotelamenities",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelamenities"
+              ]
             }
           },
           "response": []
@@ -666,10 +946,29 @@
         {
           "name": "amenUpdate",
           "request": {
-            "method": "GET",
+            "method": "PUT",
             "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"wifi\": false,\n    \"pool\": true,\n    \"health\": false,\n    \"spa\": true,\n    \"restaurant\": false,\n    \"balletParking\": false,\n    \"bar\": true,\n    \"hotelId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
-              "raw": ""
+              "raw": "http://localhost:8989/api/hotelamenities/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelamenities",
+                "1"
+              ]
             }
           },
           "response": []
@@ -677,10 +976,20 @@
         {
           "name": "amendeletebyid",
           "request": {
-            "method": "GET",
+            "method": "DELETE",
             "header": [],
             "url": {
-              "raw": ""
+              "raw": "http://localhost:8989/api/hotelamenities/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelamenities",
+                "1"
+              ]
             }
           },
           "response": []
