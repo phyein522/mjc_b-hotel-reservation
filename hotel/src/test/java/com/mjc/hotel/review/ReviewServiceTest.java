@@ -102,6 +102,7 @@ class ReviewServiceTest {
         stubReferences();
 
         when(reviewRepository.findById(10L)).thenReturn(Optional.of(review));
+        when(reviewRepository.save(any(Review.class))).thenReturn(review);
         when(reviewPhotoRepository.findByReviewIdOrderByPhotoOrderAscIdAsc(10L)).thenReturn(List.of());
 
         ReviewResponse response = reviewService.updateReview(10L, request());
