@@ -1215,7 +1215,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"email\": \"test@example.com\", \"password\": \"123456\", \"name\": \"홍길동\", \"phone\": \"010-1234-5678\", \"role\": \"USER\", \"status\": \"ACTIVE\", \"membership\": \"BASIC\"}",
+              "raw": "{\r\n    \"email\":\"bAAA@naver.com\",\r\n    \"password\":\"1111\",\r\n    \"name\":\"서현\",\r\n    \"phone\":\"01043898888\",\r\n    \"membership\":\"SILVER\",\r\n    \"role\":\"CUSTOMER\",\r\n    \"status\":\"ACTIVE\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1223,16 +1223,15 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8181/api/v1/user",
+              "raw": "http://localhost:8989/api/users",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
-              "port": "8181",
+              "port": "8989",
               "path": [
                 "api",
-                "v1",
-                "user"
+                "users"
               ]
             },
             "description": "Generated from cURL: curl -X POST http://localhost:8181/api/v1/user -H \"Content-Type: application/json\" -d '{\"email\": \"test@example.com\", \"password\": \"123456\", \"name\": \"홍길동\", \"phone\": \"010-1234-5678\", \"role\": \"USER\", \"status\": \"ACTIVE\", \"membership\": \"BASIC\"}'"
