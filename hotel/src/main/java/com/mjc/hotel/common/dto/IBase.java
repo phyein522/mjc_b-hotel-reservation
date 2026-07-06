@@ -2,6 +2,7 @@ package com.mjc.hotel.common.dto;
 
 import java.time.LocalDateTime;
 
+@tools.jackson.databind.annotation.JsonDeserialize(as = BaseDto.class)
 public interface IBase {
 	LocalDateTime getCreatedAt();
 	void setCreatedAt(LocalDateTime createdAt);

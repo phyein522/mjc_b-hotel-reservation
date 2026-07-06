@@ -2,7 +2,9 @@ package com.mjc.hotel.room_images.dto;
 
 import com.mjc.hotel.common.dto.IBase;
 import com.mjc.hotel.rooms.dto.IRoom;
+import com.mjc.hotel.rooms.dto.RoomDto;
 
+@tools.jackson.databind.annotation.JsonDeserialize(as = RoomImageDto.class)
 public interface IRoomImage extends IBase {
 	Long getRoomImageId();
 	void setRoomImageId(Long roomImageId);
