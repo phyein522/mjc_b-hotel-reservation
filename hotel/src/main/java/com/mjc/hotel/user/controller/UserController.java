@@ -30,7 +30,7 @@ public class UserController {
     }
 
     // GET /api/users/{userId}
-    @GetMapping("/{userId}")
+    @GetMapping("/insert/{userId}")
     public ResponseEntity<UserDto> getUser(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.getUserById(userId));
     }
@@ -63,7 +63,7 @@ public class UserController {
     }
 
     // PUT /api/users/{userId} — 전체 수정 (null 필드는 기존값 유지)
-    @PutMapping("/{userId}")
+    @PutMapping("/update/{userId}")
     public ResponseEntity<UserDto> updateUser(
             @PathVariable Long userId,
             @RequestBody UserDto dto) {
@@ -73,7 +73,7 @@ public class UserController {
     // PATCH /api/users/{userId} — 부분 수정
     // 변경 가능 필드: email, name, phone, role, status, membership
     // password는 /password 엔드포인트 사용
-    @PatchMapping("/{userId}")
+    @PatchMapping("/update/{userId}")
     public ResponseEntity<UserDto> patchUser(
             @PathVariable Long userId,
             @RequestBody UserDto dto) {
@@ -81,7 +81,7 @@ public class UserController {
     }
 
     // PATCH /api/users/{userId}/password — 비밀번호 변경
-    @PatchMapping("/{userId}/password")
+    @PatchMapping("/update/{userId}/password")
     public ResponseEntity<Void> changePassword(
             @PathVariable Long userId,
             @Valid @RequestBody PasswordChangeRequest request) {
@@ -90,14 +90,14 @@ public class UserController {
     }
 
     // PATCH /api/users/{userId}/withdraw — 탈퇴 처리 (status = WITHDRAWN)
-    @PatchMapping("/{userId}/withdraw")
+    @PatchMapping("/update/{userId}/withdraw")
     public ResponseEntity<Void> withdrawUser(@PathVariable Long userId) {
         userService.withdrawUser(userId);
         return ResponseEntity.noContent().build();
     }
 
     // DELETE /api/users/{userId} — 하드 딜리트
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("/delete/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
         return ResponseEntity.noContent().build();
