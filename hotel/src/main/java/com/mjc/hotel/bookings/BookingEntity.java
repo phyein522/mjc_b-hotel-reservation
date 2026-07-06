@@ -1,0 +1,139 @@
+package com.mjc.hotel.bookings;
+
+import com.mjc.hotel.common.dto.BaseEntity;
+import com.mjc.hotel.hotels.HotelEntity;
+import com.mjc.hotel.rooms.dto.RoomEntity;
+import com.mjc.hotel.user.entity.User;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
+@Entity
+@Table(name = "bookings")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+public class BookingEntity extends BaseEntity implements IBooking {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long bookingId;
+
+    @Column(nullable = false, length = 17)
+    private String bookingNo;
+
+    @Column(nullable = false, length = 100)
+    private String guestName;
+
+    @Column(nullable = false)
+    private Nationality nationality;
+
+    @Column(nullable = false, length = 30)
+    private String guestPhone;
+
+    @Column(nullable = false)
+    private String guestEmail;
+
+    @Column(nullable = false)
+    private String specialRequest;
+
+    @Column(nullable = false)
+    private Integer nights;
+
+    @Column(nullable = false)
+    private Integer adultCount;
+
+    @Column(nullable = false)
+    private Integer childCount;
+
+    @Column(nullable = false)
+    private LocalDate checkinDate;
+
+    @Column(nullable = false)
+    private LocalDate checkoutDate;
+
+    @Column(nullable = false)
+    private LocalTime checkinTime;
+
+    @Column(nullable = false)
+    private LocalTime checkoutTime;
+
+    @Column(nullable = false)
+    private Integer point;
+
+    @Column(nullable = true)
+    private LocalDateTime cancelledAt;
+
+    @Column(nullable = false)
+    private Integer totalAmount;
+
+    @Transient
+    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Transient
+    private Long roomId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id", nullable = false)
+    private RoomEntity room;
+
+    @Transient
+    private Long hotelId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hotel_id", nullable = false)
+    private HotelEntity hotel;
+
+    @Override
+    public Long getUserId() {
+        if(this.user != null) {
+            return this.user.getUserId();
+        }
+        return this.userId;
+    }
+    @Override
+    public void setUserId(Long userId) {
+        this.userId = userId;
+        if(this.user == null) {
+            this.user = new User();
+        }
+        this.user.setUserId(this.userId);
+    }
+
+    @Override
+    public Long getRoomId() {
+        if(this.room != null) {
+            return this.room.getRoomId();
+        }
+        return this.roomId;
+    }
+    @Override
+    public void setRoomId(Long roomId) {
+        this.roomId = roomId;
+        if(this.room == null) {
+            this.room = new RoomEntity();
+        }
+        this.room.setRoomId(this.roomId);
+    }
+
+    @Override
+    public Long getHotelId() {
+        if(this.hotel != null) {
+            return this.hotel.getHotelId();
+        }
+        return this.hotelId;
+    }
+    @Override
+    public void setHotelId(Long hotelId) {
+        this.hotelId = hotelId;
+        if(this.hotel == null) {
+            this.hotel = new HotelEntity();
+        }
+        this.hotel.setHotelId(this.hotelId);
+    }
+}

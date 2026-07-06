@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mjc.hotel.student.mapper.BookingMapper">
+
+    <select id="getBookings" resultType="com.mjc.hotel.bookings.BookingDto">
+        SELECT *
+        FROM bookings
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="getRoom" resultType="com.mjc.hotel.rooms.dto.RoomDto">
+        SELECT *
+        FROM rooms
+        WHERE room_id = #{roomId}
+    </select>
+
+    <select id="getHotel" resultType="com.mjc.hotel.hotels.HotelDto">
+        SELECT *
+        FROM hotels
+        WHERE hotel_id = #{hotelId}
+    </select>
+
+    <select id="getHotelByRoomId" resultType="com.mjc.hotel.hotels.HotelDto">
+        SELECT hotels.*
+        FROM hotels
+        INNER JOIN rooms
+        ON hotels.hotel_id = rooms.hotel_id
+        WHERE rooms.room_id = #{roomId}
+    </select>
+
+</mapper>
