@@ -16,7 +16,11 @@ public record ReviewResponse(
         Long reviewId,
         Long reservationId,
         Long userId,
+        String userName,
         Long hotelId,
+        String hotelName,
+        Long roomId,
+        String roomName,
         ReviewTripType tripType,
         Short viewCount,
         String title,
@@ -32,13 +36,20 @@ public record ReviewResponse(
 ) {
     public static ReviewResponse from(
             Review review,
-            List<ReviewPhoto> photos
+            List<ReviewPhoto> photos,
+            String userName,
+            String hotelName,
+            String roomName
     ) {
         return new ReviewResponse(
                 review.getReviewId(),
                 review.getReservationId(),
                 review.getUserId(),
+                userName,
                 review.getHotelId(),
+                hotelName,
+                review.getRoomId(),
+                roomName,
                 review.getTripType(),
                 review.getViewCount(),
                 review.getTitle(),

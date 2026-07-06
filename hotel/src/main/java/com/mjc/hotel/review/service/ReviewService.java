@@ -1,15 +1,22 @@
 package com.mjc.hotel.review.service;
 
+import com.mjc.hotel.hotels.HotelEntity;
+import com.mjc.hotel.hotels.HotelRepository;
 import com.mjc.hotel.review.dto.ReviewPhotoRequest;
 import com.mjc.hotel.review.dto.ReviewRequest;
 import com.mjc.hotel.review.dto.ReviewResponse;
-import com.mjc.hotel.review.enums.ReviewRatingCategory;
 import com.mjc.hotel.review.entity.Review;
 import com.mjc.hotel.review.entity.ReviewPhoto;
+import com.mjc.hotel.review.enums.ReviewRatingCategory;
 import com.mjc.hotel.review.enums.ReviewTagType;
 import com.mjc.hotel.review.exception.ReviewNotFoundException;
+import com.mjc.hotel.review.exception.ReviewReferenceNotFoundException;
 import com.mjc.hotel.review.repository.ReviewPhotoRepository;
 import com.mjc.hotel.review.repository.ReviewRepository;
+import com.mjc.hotel.rooms.dto.RoomEntity;
+import com.mjc.hotel.rooms.service.RoomRepository;
+import com.mjc.hotel.user.entity.User;
+import com.mjc.hotel.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,9 +34,13 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final ReviewPhotoRepository reviewPhotoRepository;
+    private final UserRepository userRepository;
+    private final HotelRepository hotelRepository;
+    private final RoomRepository roomRepository;
 
     @Transactional
     public ReviewResponse createReview(ReviewRequest request) {
+        validateReferences(request);
         Review review = reviewRepository.save(toReview(request));
         saveDetails(review.getReviewId(), request);
         return getReview(review.getReviewId());
@@ -52,10 +63,12 @@ public class ReviewService {
     @Transactional
     public ReviewResponse updateReview(Long reviewId, ReviewRequest request) {
         Review review = findReview(reviewId);
+        validateReferences(request);
 
         review.setReservationId(request.reservationId());
         review.setUserId(request.userId());
         review.setHotelId(request.hotelId());
+        review.setRoomId(request.roomId());
         review.setTripType(request.tripType());
         review.setViewCount(defaultViewCount(request.viewCount()));
         review.setTitle(request.title());
@@ -88,9 +101,16 @@ public class ReviewService {
     }
 
     private ReviewResponse toResponse(Long reviewId, Review review) {
+        User user = findUser(review.getUserId());
+        HotelEntity hotel = findHotel(review.getHotelId());
+        RoomEntity room = findRoomIfPresent(review.getRoomId());
+
         return ReviewResponse.from(
                 review,
-                reviewPhotoRepository.findByReviewIdOrderByPhotoOrderAscIdAsc(reviewId)
+                reviewPhotoRepository.findByReviewIdOrderByPhotoOrderAscIdAsc(reviewId),
+                user.getName(),
+                hotel.getName(),
+                room == null ? null : room.getName()
         );
     }
 
@@ -99,6 +119,7 @@ public class ReviewService {
                 .reservationId(request.reservationId())
                 .userId(request.userId())
                 .hotelId(request.hotelId())
+                .roomId(request.roomId())
                 .tripType(request.tripType())
                 .viewCount(defaultViewCount(request.viewCount()))
                 .title(request.title())
@@ -109,6 +130,31 @@ public class ReviewService {
                 .likeCount(defaultCount(request.likeCount()))
                 .dislikeCount(defaultCount(request.dislikeCount()))
                 .build();
+    }
+
+    private void validateReferences(ReviewRequest request) {
+        findUser(request.userId());
+        findHotel(request.hotelId());
+        findRoomIfPresent(request.roomId());
+    }
+
+    private User findUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ReviewReferenceNotFoundException("User", userId));
+    }
+
+    private HotelEntity findHotel(Long hotelId) {
+        return hotelRepository.findById(hotelId)
+                .orElseThrow(() -> new ReviewReferenceNotFoundException("Hotel", hotelId));
+    }
+
+    private RoomEntity findRoomIfPresent(Long roomId) {
+        if (roomId == null) {
+            return null;
+        }
+
+        return roomRepository.findById(roomId)
+                .orElseThrow(() -> new ReviewReferenceNotFoundException("Room", roomId));
     }
 
     private void saveDetails(Long reviewId, ReviewRequest request) {
