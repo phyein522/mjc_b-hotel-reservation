@@ -1197,6 +1197,153 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "user insert",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "disabled": false
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"bAAA@naver.com\",\r\n    \"password\":\"1111\",\r\n    \"name\":\"서현\",\r\n    \"phone\":\"01043898888\",\r\n    \"membership\":\"SILVER\",\r\n    \"role\":\"CUSTOMER\",\r\n    \"status\":\"ACTIVE\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "users"
+              ]
+            },
+            "description": "Generated from cURL: curl -X POST http://localhost:8181/api/v1/user -H \"Content-Type: application/json\" -d '{\"email\": \"test@example.com\", \"password\": \"123456\", \"name\": \"홍길동\", \"phone\": \"010-1234-5678\", \"role\": \"USER\", \"status\": \"ACTIVE\", \"membership\": \"BASIC\"}'"
+          },
+          "response": []
+        },
+        {
+          "name": "user findAll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8181/api/v1/user/all",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8181",
+              "path": [
+                "api",
+                "v1",
+                "user",
+                "all"
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET http://localhost:8181/api/v1/user/all"
+          },
+          "response": []
+        },
+        {
+          "name": "user findById",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8181/api/v1/user/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8181",
+              "path": [
+                "api",
+                "v1",
+                "user",
+                "1"
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET http://localhost:8181/api/v1/user/1"
+          },
+          "response": []
+        },
+        {
+          "name": "user update",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "disabled": false
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"userId\": 1, \"name\": \"홍길동수정\", \"email\": \"updated@example.com\", \"phone\": \"010-9999-8888\", \"role\": \"USER\", \"status\": \"ACTIVE\", \"membership\": \"BASIC\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8181/api/v1/user",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8181",
+              "path": [
+                "api",
+                "v1",
+                "user"
+              ]
+            },
+            "description": "Generated from cURL: curl -X PATCH http://localhost:8181/api/v1/user -H \"Content-Type: application/json\" -d '{\"userId\": 1, \"name\": \"홍길동수정\", \"email\": \"updated@example.com\", \"phone\": \"010-9999-8888\", \"role\": \"USER\", \"status\": \"ACTIVE\", \"membership\": \"BASIC\"}'"
+          },
+          "response": []
+        },
+        {
+          "name": "user delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8181/api/v1/user/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8181",
+              "path": [
+                "api",
+                "v1",
+                "user",
+                "1"
+              ]
+            },
+            "description": "Generated from cURL: curl -X DELETE http://localhost:8181/api/v1/user/1"
+          },
+          "response": []
+        }
+      ]
     }
   ]
 }
