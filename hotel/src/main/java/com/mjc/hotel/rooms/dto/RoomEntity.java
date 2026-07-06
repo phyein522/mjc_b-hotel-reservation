@@ -22,6 +22,9 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @Table(name = "rooms", comment = "객실 정보")
+//@NamedEntityGraph(name="RoomEntity.fetchHotel", attributeNodes = {
+//		@NamedAttributeNode(value="hotel")
+//})
 public class RoomEntity extends BaseEntity implements IRoom {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
