@@ -1,25 +1,23 @@
 package com.mjc.hotel.user.entity;
 
 import com.mjc.hotel.common.dto.BaseEntity;
+import com.mjc.hotel.user.dto.IUser;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@EqualsAndHashCode(callSuper = false)
+@ToString
 @Builder
-public class User extends BaseEntity {
+public class User extends BaseEntity implements IUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_Id")
+    @Column(name = "user_id")
     private Long userId;
 
     @Column(nullable = false, unique = true, length = 255)
@@ -45,4 +43,10 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(length = 10)
     private Membership membership;
+
+    @Column(name = "social_login", length = 10)
+    private String socialLogin;
+
+    @Column(name = "social_login_id", length = 30)
+    private String socialLoginId;
 }

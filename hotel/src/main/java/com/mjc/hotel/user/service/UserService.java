@@ -1,6 +1,10 @@
 package com.mjc.hotel.user.service;
 
-import com.mjc.hotel.user.dto.*;
+import com.mjc.hotel.user.dto.IUser;
+import com.mjc.hotel.user.dto.PasswordChangeRequest;
+import com.mjc.hotel.user.dto.UserDto;
+import com.mjc.hotel.user.entity.Membership;
+import com.mjc.hotel.user.entity.Role;
 import com.mjc.hotel.user.entity.Status;
 import com.mjc.hotel.user.entity.User;
 import com.mjc.hotel.user.exception.DuplicateEmailException;
@@ -9,13 +13,11 @@ import com.mjc.hotel.user.repository.UserRepository;
 import com.mjc.hotel.user.repository.UserSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,81 +26,97 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    // 전체 조회
-    public List<UserResponse> getAllUsers() {
+    // ===== 조회 =====
+
+    public List<UserDto> getAllUsers() {
         return userRepository.findAll()
                 .stream()
-                .map(UserResponse::from)
-                .collect(Collectors.toList());
+                .map(e -> (UserDto) new UserDto().copyMembers(e, true))
+                .toList();
     }
 
-    // 단건 조회
-    public UserResponse getUserById(Long userId) {
-        return UserResponse.from(findUserOrThrow(userId));
+    public UserDto getUserById(Long userId) {
+        return (UserDto) new UserDto().copyMembers(findUserOrThrow(userId), true);
     }
 
-    // 이메일 중복 체크
     public boolean checkEmailAvailable(String email) {
         return !userRepository.existsByEmail(email);
     }
 
-    // 페이징 + 복합 검색
-    public Page<UserResponse> searchUsers(UserSearchRequest request) {
-        Sort sort = request.getSortDir().equalsIgnoreCase("desc")
-                ? Sort.by(request.getSortBy()).descending()
-                : Sort.by(request.getSortBy()).ascending();
-
-        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize(), sort);
-
-        return userRepository.findAll(
-                UserSpecification.buildSpec(request), pageRequest
-        ).map(UserResponse::from);
+    // 검색: UserDto의 name, email, role, status, membership 필드만 필터로 사용
+    // 페이징은 Controller에서 @PageableDefault로 주입
+    public Page<UserDto> searchUsers(UserDto filter, Pageable pageable) {
+        return userRepository.findAll(UserSpecification.buildSpec(filter), pageable)
+                .map(e -> (UserDto) new UserDto().copyMembers(e, true));
     }
 
-    // 생성
-    @Transactional
-    public UserResponse createUser(UserRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new DuplicateEmailException(request.getEmail());
-        }
-        return UserResponse.from(userRepository.save(request.toEntity()));
-    }
+    // ===== 생성 =====
 
-    // 전체 수정
     @Transactional
-    public UserResponse updateUser(Long userId, UserRequest request) {
-        User user = findUserOrThrow(userId);
-
-        if (!user.getEmail().equals(request.getEmail())
-                && userRepository.existsByEmail(request.getEmail())) {
-            throw new DuplicateEmailException(request.getEmail());
+    public UserDto createUser(IUser dto) {
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new DuplicateEmailException(dto.getEmail());
         }
 
-        user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword()); // 개발용 평문 저장
-        user.setName(request.getName());
-        user.setPhone(request.getPhone());
-        user.setRole(request.getRole());
-        user.setStatus(request.getStatus());
-        user.setMembership(request.getMembership());
+        User user = (User) new User().copyMembers(dto, true);
+        user.setUserId(null);
 
-        return UserResponse.from(user);
+        // create 시 기본값 강제 설정 (요청값 무시)
+        user.setRole(Role.CUSTOMER);
+        user.setStatus(Status.ACTIVE);
+        user.setMembership(Membership.BRONZE);
+
+        return (UserDto) new UserDto().copyMembers(userRepository.save(user), true);
     }
 
-    // 부분 수정
+    // ===== 전체 수정 (PUT) =====
+    // role, status, membership은 PUT에서도 변경 가능 (관리자용)
+
     @Transactional
-    public UserResponse patchUser(Long userId, UserPatchRequest request) {
+    public UserDto updateUser(Long userId, IUser dto) {
         User user = findUserOrThrow(userId);
 
-        if (request.getName() != null)       user.setName(request.getName());
-        if (request.getPhone() != null)      user.setPhone(request.getPhone());
-        if (request.getStatus() != null)     user.setStatus(request.getStatus());
-        if (request.getMembership() != null) user.setMembership(request.getMembership());
+        if (dto.getEmail() != null
+                && !user.getEmail().equals(dto.getEmail())
+                && userRepository.existsByEmail(dto.getEmail())) {
+            throw new DuplicateEmailException(dto.getEmail());
+        }
 
-        return UserResponse.from(user);
+        // forced=false: null 필드는 기존값 유지
+        user.copyMembers(dto, false);
+
+        return (UserDto) new UserDto().copyMembers(user, true);
     }
 
-    // 비밀번호 변경 (개발용 평문)
+    // ===== 부분 수정 (PATCH) =====
+    // 변경 가능 필드: email, name, phone, role, status, membership
+    // password는 /password 엔드포인트로 분리
+
+    @Transactional
+    public UserDto patchUser(Long userId, IUser dto) {
+        User user = findUserOrThrow(userId);
+
+        // 이메일 변경 시 중복 체크
+        if (dto.getEmail() != null
+                && !user.getEmail().equals(dto.getEmail())
+                && userRepository.existsByEmail(dto.getEmail())) {
+            throw new DuplicateEmailException(dto.getEmail());
+        }
+
+        // password는 PATCH에서 변경 불가 — 기존값으로 고정
+        String currentPassword = user.getPassword();
+
+        // forced=false: null 필드는 기존값 유지 (부분 수정)
+        user.copyMembers(dto, false);
+
+        // password 복원
+        user.setPassword(currentPassword);
+
+        return (UserDto) new UserDto().copyMembers(user, true);
+    }
+
+    // ===== 비밀번호 변경 =====
+
     @Transactional
     public void changePassword(Long userId, PasswordChangeRequest request) {
         User user = findUserOrThrow(userId);
@@ -110,18 +128,22 @@ public class UserService {
         user.setPassword(request.getNewPassword());
     }
 
-    // 소프트 딜리트 (탈퇴 처리)
+    // ===== 탈퇴 (소프트 딜리트) =====
+
     @Transactional
     public void withdrawUser(Long userId) {
         User user = findUserOrThrow(userId);
         user.setStatus(Status.WITHDRAWN);
     }
 
-    // 하드 딜리트
+    // ===== 하드 딜리트 =====
+
     @Transactional
     public void deleteUser(Long userId) {
         userRepository.delete(findUserOrThrow(userId));
     }
+
+    // ===== 내부 유틸 =====
 
     private User findUserOrThrow(Long userId) {
         return userRepository.findById(userId)
