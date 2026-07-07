@@ -1,7 +1,9 @@
 package com.mjc.hotel.hotelstrans;
 
 import com.mjc.hotel.common.dto.IBase;
+import com.mjc.hotel.promotionSale.PromotionSaleDto;
 
+@tools.jackson.databind.annotation.JsonDeserialize(as = PromotionSaleDto.class)
 public interface IHotelTrans extends IBase {
 
     Long getTransId();
