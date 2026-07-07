@@ -4,6 +4,9 @@ import com.mjc.hotel.common.dto.BaseDto;
 import com.mjc.hotel.rooms.dto.RoomDto;
 import lombok.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -13,12 +16,11 @@ public class PromotionDto extends BaseDto implements IPromotion {
     private Long proId;
     private String name;
     private String description;
-    private String disType;
-    private String disValue;
-    private String startDate;
-    private String endDate;
-    private String resCount;
-    private String conversionRate;
+    private DiscountTypeEnum disType;
+    private BigDecimal disValue;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    private Integer resCount;
     private String status;
 
     private Long roomId;
@@ -28,7 +30,7 @@ public class PromotionDto extends BaseDto implements IPromotion {
     public Long getRoomId() {
 
         if (room != null) {
-            return room.getHotelId();
+            return room.getRoomId();
         }
 
         return roomId;
@@ -43,6 +45,6 @@ public class PromotionDto extends BaseDto implements IPromotion {
             room = new RoomDto();
         }
 
-        room.setHotelId(roomId);
+        room.setRoomId(roomId);
     }
 }

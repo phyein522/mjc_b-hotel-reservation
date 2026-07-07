@@ -5,6 +5,10 @@ import com.mjc.hotel.rooms.dto.RoomEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name="promotion")
 @Getter
@@ -13,7 +17,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 
-public class  PromotionEntity extends BaseEntity implements IPromotion {
+public class PromotionEntity extends BaseEntity implements IPromotion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long proId;
@@ -25,17 +29,18 @@ public class  PromotionEntity extends BaseEntity implements IPromotion {
     private String description;
 
     @Column(nullable = false)
-    private String disType;
+    private DiscountTypeEnum disType;
 
     @Column(nullable = false)
-    private String disValue;
+    private BigDecimal disValue;
 
     @Column(nullable = false)
-    private String startDate;
-    private String endDate;
-    private String resCount;
-    private String conversionRate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    private Integer resCount;
     private String status;
+
+
 
     @Transient
     private Long roomId;
@@ -48,7 +53,7 @@ public class  PromotionEntity extends BaseEntity implements IPromotion {
     public Long getRoomId() {
 
         if (room != null) {
-            return room.getHotelId();
+            return room.getRoomId();
         }
 
         return roomId;
@@ -63,6 +68,6 @@ public class  PromotionEntity extends BaseEntity implements IPromotion {
             room = new RoomEntity();
         }
 
-        room.setHotelId(roomId);
+        room.setRoomId(roomId);
     }
 }

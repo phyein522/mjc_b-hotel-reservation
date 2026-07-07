@@ -2,6 +2,10 @@ package com.mjc.hotel.promotion;
 
 import com.mjc.hotel.common.dto.IBase;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.function.BiFunction;
+
 public interface IPromotion extends IBase {
     Long getProId();
     void setProId(Long proId);
@@ -12,23 +16,20 @@ public interface IPromotion extends IBase {
     String  getDescription();
     void setDescription(String description);
 
-    String getDisType();
-    void setDisType(String disType);
+    DiscountTypeEnum getDisType();
+    void setDisType(DiscountTypeEnum disType);
 
-    String getDisValue();
-    void setDisValue(String disValue);
+    BigDecimal getDisValue();
+    void setDisValue(BigDecimal disValue);
 
-    String getStartDate();
-    void setStartDate(String startDate);
+    LocalDateTime getStartDate();
+    void setStartDate(LocalDateTime startDate);
 
-    String getEndDate();
-    void setEndDate(String endDate);
+    LocalDateTime getEndDate();
+    void setEndDate(LocalDateTime endDate);
 
-    String getResCount();
-    void setResCount(String resCount);
-
-    String getConversionRate();
-    void setConversionRate(String conversionRate);
+    Integer getResCount();
+    void setResCount(Integer resCount);
 
     String getStatus();
     void setStatus(String status);
@@ -70,10 +71,6 @@ public interface IPromotion extends IBase {
 
         if (forced || source.getResCount() != null) {
             this.setResCount(source.getResCount());
-        }
-
-        if (forced || source.getConversionRate() != null) {
-            this.setConversionRate(source.getConversionRate());
         }
 
         if (forced || source.getStatus() != null) {
