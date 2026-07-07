@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -78,13 +77,7 @@ public class RoomRestController {
 
 	@GetMapping("/hotel/{hotelId}")
 	public ResponseEntity<ApiResponse<Page<RoomDto>>> page(@PathVariable Long hotelId
-//			, @PageableDefault(size=10, page=0, sort="roomId", direction= Sort.Direction.DESC) Pageable pageable)
-			, @PageableDefault(size = 10, page = 0)
-	           @SortDefault.SortDefaults({
-	                   @SortDefault(sort = "floor", direction = Sort.Direction.DESC),
-	                   @SortDefault(sort = "number", direction = Sort.Direction.ASC)
-	           }) Pageable pageable)
-	{
+			, @PageableDefault(size=10, page=0, sort="id", direction= Sort.Direction.DESC) Pageable pageable) {
 		Page<RoomDto> page = this.roomService.findAllByHotelIdEquals(hotelId, pageable);
 		return ResponseEntity.status(HttpStatus.OK).body(
 				ApiResponse.make(ResponseCode.SELECT_OK, "ok", page)

@@ -17,7 +17,7 @@ import lombok.experimental.SuperBuilder;
 public class RoomImageEntity extends BaseEntity implements IRoomImage {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "room_image_Id")
+	@Column(name = "room_Image_Id")
 	private Long roomImageId;
 
 	@Column(name = "file_name", nullable = false, length = 100)
