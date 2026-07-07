@@ -1,5 +1,6 @@
-package com.mjc.hotel.sales_analysis.entity;
+package com.mjc.hotel.payment.entity;
 
+import com.mjc.hotel.booking.entity.Booking;
 import lombok.*;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -13,21 +14,21 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @ToString(exclude = "booking")
-public class FakePayment {
+public class Payment {
     @Id
     @Column(name = "payment_id")
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_id", nullable = false)
-    private FakeBooking booking;
+    private Booking booking;
 
     @Column(name = "payment_method", nullable = false, length = 30)
     private String paymentMethod;
 
     @Column(name = "payment_status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private FakePaymentStatus paymentStatus;
+    private PaymentStatus paymentStatus;
 
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal amount;

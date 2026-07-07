@@ -4,8 +4,11 @@ import com.mjc.hotel.sales_analysis.dto.SalesDashboardResponse;
 import com.mjc.hotel.sales_analysis.dto.RoomTypeRevenueDto;
 import com.mjc.hotel.sales_analysis.dto.ChannelShareDto;
 import com.mjc.hotel.sales_analysis.dto.TopBookingDto;
-import com.mjc.hotel.sales_analysis.entity.*;
-import com.mjc.hotel.sales_analysis.repository.*;
+import com.mjc.hotel.booking.entity.Booking;
+import com.mjc.hotel.booking.repository.BookingRepository;
+import com.mjc.hotel.payment.entity.Payment;
+import com.mjc.hotel.payment.entity.PaymentStatus;
+import com.mjc.hotel.payment.repository.PaymentRepository;
 import com.mjc.hotel.sales_analysis.service.SalesAnalysisService;
 import com.mjc.hotel.user.entity.User;
 import com.mjc.hotel.user.repository.UserRepository;
@@ -50,10 +53,10 @@ public class SalesAnalysisServiceTest {
     private UserRepository userRepository;
 
     @Autowired
-    private FakeBookingRepository bookingRepository;
+    private BookingRepository bookingRepository;
 
     @Autowired
-    private FakePaymentRepository paymentRepository;
+    private PaymentRepository paymentRepository;
 
     @Autowired
     private EntityManager em;
@@ -164,7 +167,7 @@ public class SalesAnalysisServiceTest {
             Long id, User user, HotelEntity hotel, RoomEntity room, String bookingNo, int nights,
             LocalDate checkIn, LocalDate checkOut, BigDecimal amount, LocalDateTime paidAt, Long channelId
     ) {
-        FakeBooking booking = FakeBooking.builder()
+        Booking booking = Booking.builder()
                 .id(id)
                 .user(user)
                 .hotel(hotel)
@@ -184,11 +187,11 @@ public class SalesAnalysisServiceTest {
                 .checkOutTime(LocalTime.of(11, 0))
                 .build();
 
-        FakePayment payment = FakePayment.builder()
+        Payment payment = Payment.builder()
                 .id(id)
                 .booking(booking)
                 .paymentMethod("CARD")
-                .paymentStatus(FakePaymentStatus.PAID)
+                .paymentStatus(PaymentStatus.PAID)
                 .amount(amount)
                 .currency("KRW")
                 .paidAt(paidAt)

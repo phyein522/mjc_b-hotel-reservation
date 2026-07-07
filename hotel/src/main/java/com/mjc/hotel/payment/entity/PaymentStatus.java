@@ -1,6 +1,6 @@
-package com.mjc.hotel.sales_analysis.entity;
+package com.mjc.hotel.payment.entity;
 
-public enum FakePaymentStatus {
+public enum PaymentStatus {
     READY,
     PAID,
     FAILED,

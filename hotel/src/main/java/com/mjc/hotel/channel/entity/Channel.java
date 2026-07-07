@@ -1,4 +1,4 @@
-package com.mjc.hotel.sales_analysis.entity;
+package com.mjc.hotel.channel.entity;
 
 import lombok.*;
 import jakarta.persistence.*;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FakeChannel {
+public class Channel {
     @Id
     @Column(name = "채널ID")
     private Long id;

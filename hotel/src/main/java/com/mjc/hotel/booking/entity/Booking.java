@@ -1,8 +1,9 @@
-package com.mjc.hotel.sales_analysis.entity;
+package com.mjc.hotel.booking.entity;
 
 import com.mjc.hotel.user.entity.User;
 import com.mjc.hotel.hotels.HotelEntity;
 import com.mjc.hotel.rooms.dto.RoomEntity;
+import com.mjc.hotel.payment.entity.Payment;
 import lombok.*;
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -17,7 +18,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @Builder
 @ToString(exclude = "payment")
-public class FakeBooking {
+public class Booking {
     @Id
     @Column(name = "booking_id")
     private Long id;
@@ -73,7 +74,7 @@ public class FakeBooking {
     private LocalTime checkOutTime;
 
     @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private FakePayment payment;
+    private Payment payment;
 
     @Column(name = "cancelled_at")
     private LocalDateTime cancelledAt;
