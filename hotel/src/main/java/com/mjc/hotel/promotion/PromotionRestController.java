@@ -10,7 +10,9 @@ import java.util.List;
 @RequestMapping("/api/promotion")
 @RequiredArgsConstructor
 public class PromotionRestController {
+
     private final PromotionService promotionService;
+
     @GetMapping
     public List<PromotionDto> findAll() {
         return promotionService.findAll();

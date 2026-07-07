@@ -1,12 +1,10 @@
 package com.mjc.hotel.promotion;
 
 import com.mjc.hotel.common.dto.BaseEntity;
+import com.mjc.hotel.rooms.dto.IRoom;
 import com.mjc.hotel.rooms.dto.RoomEntity;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -32,7 +30,7 @@ public class PromotionEntity extends BaseEntity implements IPromotion {
     private DiscountTypeEnum disType;
 
     @Column(nullable = false)
-    private BigDecimal disValue;
+    private String disValue;
 
     @Column(nullable = false)
     private LocalDateTime startDate;
@@ -60,14 +58,28 @@ public class PromotionEntity extends BaseEntity implements IPromotion {
     }
 
     @Override
+    public void setRoom(IRoom room) {
+
+        if (room == null) {
+            return;
+        }
+
+        if (this.room == null) {
+            this.room = new RoomEntity();
+        }
+
+        this.room.copyMembers(room, true);
+        this.roomId = room.getRoomId();
+    }
+    @Override
     public void setRoomId(Long roomId) {
 
         this.roomId = roomId;
 
-        if (room == null) {
-            room = new RoomEntity();
+        if (this.room == null) {
+            this.room = new RoomEntity();
         }
 
-        room.setRoomId(roomId);
+        this.room.setRoomId(roomId);
     }
 }

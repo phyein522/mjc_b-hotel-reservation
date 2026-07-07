@@ -1,23 +1,23 @@
 package com.mjc.hotel.promotion;
 
 import com.mjc.hotel.common.dto.BaseDto;
+import com.mjc.hotel.rooms.dto.IRoom;
 import com.mjc.hotel.rooms.dto.RoomDto;
 import lombok.*;
-
-import java.math.BigDecimal;
+import lombok.experimental.SuperBuilder;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class PromotionDto extends BaseDto implements IPromotion {
     private Long proId;
     private String name;
     private String description;
     private DiscountTypeEnum disType;
-    private BigDecimal disValue;
+    private String disValue;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private Integer resCount;
@@ -37,14 +37,28 @@ public class PromotionDto extends BaseDto implements IPromotion {
     }
 
     @Override
+    public void setRoom(IRoom room) {
+
+        if (room == null) {
+            return;
+        }
+
+        if (this.room == null) {
+            this.room = new RoomDto();
+        }
+
+        this.room.copyMembers(room, true);
+        this.roomId = room.getRoomId();
+    }
+    @Override
     public void setRoomId(Long roomId) {
 
         this.roomId = roomId;
 
-        if (room == null) {
-            room = new RoomDto();
+        if (this.room == null) {
+            this.room = new RoomDto();
         }
 
-        room.setRoomId(roomId);
+        this.room.setRoomId(roomId);
     }
 }

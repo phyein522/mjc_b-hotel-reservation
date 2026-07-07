@@ -1,11 +1,11 @@
 package com.mjc.hotel.promotion;
 
 import com.mjc.hotel.common.dto.IBase;
-
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.function.BiFunction;
+import com.mjc.hotel.rooms.dto.IRoom;
+import org.hibernate.LazyInitializationException;
 
+@tools.jackson.databind.annotation.JsonDeserialize(as = PromotionDto.class)
 public interface IPromotion extends IBase {
     Long getProId();
     void setProId(Long proId);
@@ -19,8 +19,8 @@ public interface IPromotion extends IBase {
     DiscountTypeEnum getDisType();
     void setDisType(DiscountTypeEnum disType);
 
-    BigDecimal getDisValue();
-    void setDisValue(BigDecimal disValue);
+    String getDisValue();
+    void setDisValue(String disValue);
 
     LocalDateTime getStartDate();
     void setStartDate(LocalDateTime startDate);
@@ -36,6 +36,10 @@ public interface IPromotion extends IBase {
 
     Long getRoomId();
     void setRoomId(Long roomId);
+
+    IRoom getRoom();
+    void setRoom(IRoom room);
+
     default IPromotion copyMembers(IPromotion source, boolean forced) {
 
         if (source == null) {
@@ -79,6 +83,12 @@ public interface IPromotion extends IBase {
 
         if (forced || source.getRoomId() != null) {
             this.setRoomId(source.getRoomId());
+
+            try {
+                this.getRoom().copyMembers(source.getRoom(), forced);
+            } catch (LazyInitializationException e) {
+                System.err.println(e.getMessage());
+            }
         }
         return this;
     }
