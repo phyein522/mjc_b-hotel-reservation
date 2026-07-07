@@ -2,6 +2,7 @@ package com.mjc.hotel.hotelstrans;
 
 import com.mjc.hotel.common.dto.BaseDto;
 import com.mjc.hotel.hotels.HotelDto;
+import com.mjc.hotel.hotels.IHotel;
 import lombok.*;
 
 @Getter
@@ -38,5 +39,19 @@ public class HotelTransDto extends BaseDto implements IHotelTrans{
         }
 
         hotel.setHotelId(hotelId);
+    }
+    @Override
+    public void setHotel(IHotel hotel) {
+
+        if (hotel == null) {
+            return;
+        }
+
+        if (this.hotel == null) {
+            this.hotel = new HotelDto();
+        }
+
+        this.hotel.copyMembers(hotel, true);
+        this.hotelId = hotel.getHotelId();
     }
 }

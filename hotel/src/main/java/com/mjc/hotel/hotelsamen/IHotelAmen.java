@@ -1,7 +1,10 @@
 package com.mjc.hotel.hotelsamen;
 
 import com.mjc.hotel.common.dto.IBase;
+import com.mjc.hotel.hotels.IHotel;
+import org.hibernate.LazyInitializationException;
 
+@tools.jackson.databind.annotation.JsonDeserialize(as = HotelAmenDto.class)
 public interface IHotelAmen extends IBase {
     Long getAmenId();
     void setAmenId(Long amenId);
@@ -29,6 +32,10 @@ public interface IHotelAmen extends IBase {
 
     Long getHotelId();
     void setHotelId(Long hotelId);
+
+    IHotel getHotel();
+    void setHotel(IHotel hotel);
+
     default IHotelAmen copyMembers(IHotelAmen source, boolean forced) {
 
         if (source == null) {
@@ -68,6 +75,14 @@ public interface IHotelAmen extends IBase {
 
         if (forced || source.getHotelId() != null) {
             this.setHotelId(source.getHotelId());
+
+            try {
+                if (source.getHotel() != null) {
+                    this.setHotel(source.getHotel());
+                }
+            } catch (LazyInitializationException e) {
+                System.err.println(e.getMessage());
+            }
         }
 
         return this;

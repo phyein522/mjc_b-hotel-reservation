@@ -2,7 +2,9 @@ package com.mjc.hotel.hotelsimage;
 
 import com.mjc.hotel.common.dto.IBase;
 import com.mjc.hotel.hotels.IHotel;
+import org.hibernate.LazyInitializationException;
 
+@tools.jackson.databind.annotation.JsonDeserialize(as = HotelImageDto.class)
 public interface IHotelImage extends IBase {
 
     Long getHotelImageId();
@@ -61,12 +63,16 @@ public interface IHotelImage extends IBase {
             this.setPath(source.getPath());
         }
 
-        if(forced || source.getHotelId()!=null){
+        if (forced || source.getHotelId() != null) {
             this.setHotelId(source.getHotelId());
-        }
 
-        if (forced && source.getHotel() != null) {
-            this.setHotel(source.getHotel());
+            try {
+                if (source.getHotel() != null) {
+                    this.setHotel(source.getHotel());
+                }
+            } catch (LazyInitializationException e) {
+                System.err.println(e.getMessage());
+            }
         }
         return this;
     }
