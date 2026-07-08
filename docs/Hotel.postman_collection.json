@@ -150,7 +150,7 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8989/api/v1/room",
+              "raw": "http://localhost:8989/api/room",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -195,7 +195,7 @@
               ]
             },
             "url": {
-              "raw": "http://localhost:8989/api/v1/room/image",
+              "raw": "http://localhost:8989/api/room/image",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -217,7 +217,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/v1/room/1",
+              "raw": "http://localhost:8989/api/room/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -239,7 +239,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/v1/room/images/1",
+              "raw": "http://localhost:8989/api/room/images/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -271,7 +271,7 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8989/api/v1/room",
+              "raw": "http://localhost:8989/api/room",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -292,7 +292,7 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/v1/room/1",
+              "raw": "http://localhost:8989/api/room/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -314,7 +314,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/v1/room/hotel/1",
+              "raw": "http://localhost:8989/api/room/hotel/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -353,7 +353,7 @@
               ]
             },
             "url": {
-              "raw": "http://localhost:8989/api/v1/roomimage/room/1",
+              "raw": "http://localhost:8989/api/roomimage/room/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -387,7 +387,7 @@
               ]
             },
             "url": {
-              "raw": "http://localhost:8989/api/v1/roomimage/image/2",
+              "raw": "http://localhost:8989/api/roomimage/image/2",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -410,7 +410,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/v1/roomimage/6",
+              "raw": "http://localhost:8989/api/roomimage/6",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -432,7 +432,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/v1/roomimage/download/1",
+              "raw": "http://localhost:8989/api/roomimage/download/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -455,7 +455,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/v1/roomimage/image/1",
+              "raw": "http://localhost:8989/api/roomimage/image/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -478,7 +478,7 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/v1/roomimage/1",
+              "raw": "http://localhost:8989/api/roomimage/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -1383,7 +1383,7 @@
                 "users"
               ]
             },
-            "description": "Generated from cURL: curl -X POST http://localhost:8181/api/v1/user -H \"Content-Type: application/json\" -d '{\"email\": \"test@example.com\", \"password\": \"123456\", \"name\": \"홍길동\", \"phone\": \"010-1234-5678\", \"role\": \"USER\", \"status\": \"ACTIVE\", \"membership\": \"BASIC\"}'"
+            "description": "Generated from cURL: curl -X POST http://localhost:8181/api/user -H \"Content-Type: application/json\" -d '{\"email\": \"test@example.com\", \"password\": \"123456\", \"name\": \"홍길동\", \"phone\": \"010-1234-5678\", \"role\": \"USER\", \"status\": \"ACTIVE\", \"membership\": \"BASIC\"}'"
           },
           "response": []
         },
@@ -1393,7 +1393,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8181/api/v1/user/all",
+              "raw": "http://localhost:8181/api/user/all",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -1406,7 +1406,7 @@
                 "all"
               ]
             },
-            "description": "Generated from cURL: curl -X GET http://localhost:8181/api/v1/user/all"
+            "description": "Generated from cURL: curl -X GET http://localhost:8181/api/user/all"
           },
           "response": []
         },
@@ -1416,7 +1416,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8181/api/v1/user/1",
+              "raw": "http://localhost:8181/api/user/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -1429,7 +1429,7 @@
                 "1"
               ]
             },
-            "description": "Generated from cURL: curl -X GET http://localhost:8181/api/v1/user/1"
+            "description": "Generated from cURL: curl -X GET http://localhost:8181/api/user/1"
           },
           "response": []
         },
@@ -1453,7 +1453,7 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8181/api/v1/user",
+              "raw": "http://localhost:8181/api/user",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -1465,7 +1465,7 @@
                 "user"
               ]
             },
-            "description": "Generated from cURL: curl -X PATCH http://localhost:8181/api/v1/user -H \"Content-Type: application/json\" -d '{\"userId\": 1, \"name\": \"홍길동수정\", \"email\": \"updated@example.com\", \"phone\": \"010-9999-8888\", \"role\": \"USER\", \"status\": \"ACTIVE\", \"membership\": \"BASIC\"}'"
+            "description": "Generated from cURL: curl -X PATCH http://localhost:8181/api/user -H \"Content-Type: application/json\" -d '{\"userId\": 1, \"name\": \"홍길동수정\", \"email\": \"updated@example.com\", \"phone\": \"010-9999-8888\", \"role\": \"USER\", \"status\": \"ACTIVE\", \"membership\": \"BASIC\"}'"
           },
           "response": []
         },
@@ -1475,7 +1475,7 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8181/api/v1/user/1",
+              "raw": "http://localhost:8181/api/user/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -1488,7 +1488,7 @@
                 "1"
               ]
             },
-            "description": "Generated from cURL: curl -X DELETE http://localhost:8181/api/v1/user/1"
+            "description": "Generated from cURL: curl -X DELETE http://localhost:8181/api/user/1"
           },
           "response": []
         }
@@ -1683,6 +1683,141 @@
                 "bookings",
                 "cancel",
                 "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "sales_analysis",
+      "item": [
+        {
+          "name": "top-booking",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/sales/top-bookings?hotelId=1&targetMonth=2026-06",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "sales",
+                "top-bookings"
+              ],
+              "query": [
+                {
+                  "key": "hotelId",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "targetMonth",
+                  "value": "2026-06",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "rooms",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/sales/rooms?hotelId=1&targetMonth=2026-06",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "sales",
+                "rooms"
+              ],
+              "query": [
+                {
+                  "key": "hotelId",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "targetMonth",
+                  "value": "2026-06",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "monthly",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/sales/monthly?hotelId=1&startDate=2026-01-01",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "sales",
+                "monthly"
+              ],
+              "query": [
+                {
+                  "key": "hotelId",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "startDate",
+                  "value": "2026-01-01",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/sales/dashboard?hotelId=1&targetMonth=2026-0",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "sales",
+                "dashboard"
+              ],
+              "query": [
+                {
+                  "key": "hotelId",
+                  "value": "1"
+                },
+                {
+                  "key": "targetMonth",
+                  "value": "2026-0"
+                }
               ]
             }
           },
