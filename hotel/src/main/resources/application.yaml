@@ -35,5 +35,6 @@ hotel:
 
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: com.mjc.hotel
   configuration:
     map-underscore-to-camel-case: true
