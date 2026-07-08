@@ -1,0 +1,45 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>고객 관리 - StayNow Admin</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="feature-additions.css">
+</head>
+<body class="admin-page">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+  <div class="admin-brand"><span class="mark">S</span><div><strong>StayNow Admin</strong><small>다중 호텔 예약 플랫폼</small></div></div>
+  <div class="admin-hotel-switcher selectable"><span class="hotel-mark">ALL</span><select onchange="location.href=this.value"><option value="admin-dashboard.html" selected>전체 호텔</option><option value="hotel-admin-dashboard.html">그랜드 서울</option></select></div>
+  <nav class="admin-nav">
+    <div class="admin-nav-group">메인</div>
+    <a class="" href="admin-dashboard.html">대시보드</a>
+    <a class="" href="admin-reservations.html">예약 관리 <span class="nav-count">12</span></a>
+    <a class="" href="admin-checkins.html">체크인 현황 <span class="nav-count alert">3</span></a>
+    <a class="active" href="admin-customers.html">고객 관리</a>
+    <div class="admin-nav-group">객실</div>
+    <a class="" href="admin-inventory.html">객실 관리</a>
+    <a class="" href="admin-room-add.html">객실 추가</a>
+    <div class="admin-nav-group">플랫폼</div>
+    <a class="" href="admin-hotels.html">입점 호텔 관리</a>
+    <a class="" href="admin-hotel-add.html">호텔 추가</a>
+    <a class="" href="admin-promotions.html">프로모션</a>
+    <a class="" href="admin-settlement.html">정산 리포트</a>
+    <div class="admin-nav-group">시스템</div>
+    <a href="#">시스템 설정</a>
+  </nav>
+</aside>
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <div><h1>고객 관리</h1><p>플랫폼 전체 고객의 예약 이력, 등급, 문의 상태를 관리합니다.</p></div>
+        <div class="admin-actions"><button class="btn ghost">등급 필터</button><button class="btn primary">고객 내보내기</button></div>
+      </header>
+      <section class="grid-4"><div class="panel metric"><span>전체 고객</span><strong>18,420</strong><span>누적 회원</span></div><div class="panel metric"><span>VIP 고객</span><strong>842</strong><span>등급 할인 대상</span></div><div class="panel metric"><span>재방문율</span><strong>36%</strong><span>최근 90일</span></div><div class="panel metric"><span>문의 대기</span><strong>14</strong><span>고객센터 연결</span></div></section>
+<section class="panel" style="margin-top:14px"><h2>고객 목록</h2><table class="table"><thead><tr><th>고객</th><th>등급</th><th>최근 예약 호텔</th><th>누적 예약</th><th>누적 결제</th><th>상태</th></tr></thead><tbody><tr><td><div class="customer-profile"><span class="avatar">김</span><div><b>김민준</b><br><span class="muted">minjun@example.com</span></div></div></td><td><span class="segment">Gold</span></td><td>그랜드 서울</td><td>8</td><td>₩2,840,000</td><td><span class="status">정상</span></td></tr><tr><td><div class="customer-profile"><span class="avatar">이</span><div><b>이서연</b><br><span class="muted">seoyeon@example.com</span></div></div></td><td><span class="segment">VIP</span></td><td>해운대 오션</td><td>16</td><td>₩8,120,000</td><td><span class="status warn">환불 문의</span></td></tr><tr><td><div class="customer-profile"><span class="avatar">박</span><div><b>박도윤</b><br><span class="muted">doyoon@example.com</span></div></div></td><td><span class="segment">Silver</span></td><td>제주 포레스트</td><td>3</td><td>₩940,000</td><td><span class="status">정상</span></td></tr></tbody></table></section>
+<section class="grid-2" style="margin-top:14px"><div class="panel"><h2>고객 상세 메모</h2><p class="muted">예약 이력, 등급, 문의 상태, 호텔별 선호 태그를 고객 단위로 관리합니다.</p></div><div class="panel"><h2>등급 관리</h2><p class="muted">프로모션 화면의 회원 등급 할인과 연결되는 Gold, VIP 등급 고객을 확인합니다.</p></div></section>
+    </main>
+  </div>
+</body>
+</html>
+

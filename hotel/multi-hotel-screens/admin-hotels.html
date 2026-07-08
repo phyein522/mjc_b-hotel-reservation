@@ -1,0 +1,46 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>입점 호텔 관리 - StayNow Admin</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="feature-additions.css">
+</head>
+<body class="admin-page">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+  <div class="admin-brand"><span class="mark">S</span><div><strong>StayNow Admin</strong><small>다중 호텔 예약 플랫폼</small></div></div>
+  <div class="admin-hotel-switcher selectable"><span class="hotel-mark">ALL</span><select onchange="location.href=this.value"><option value="admin-dashboard.html" selected>전체 호텔</option><option value="hotel-admin-dashboard.html">그랜드 서울</option></select></div>
+  <nav class="admin-nav">
+    <div class="admin-nav-group">메인</div>
+    <a class="" href="admin-dashboard.html">대시보드</a>
+    <a class="" href="admin-reservations.html">예약 관리 <span class="nav-count">12</span></a>
+    <a class="" href="admin-checkins.html">체크인 현황 <span class="nav-count alert">3</span></a>
+    <a class="" href="admin-customers.html">고객 관리</a>
+    <div class="admin-nav-group">객실</div>
+    <a class="" href="admin-inventory.html">객실 관리</a>
+    <a class="" href="admin-room-add.html">객실 추가</a>
+    <div class="admin-nav-group">플랫폼</div>
+    <a class="active" href="admin-hotels.html">입점 호텔 관리</a>
+    <a class="" href="admin-hotel-add.html">호텔 추가</a>
+    <a class="" href="admin-promotions.html">프로모션</a>
+    <a class="" href="admin-settlement.html">정산 리포트</a>
+    <div class="admin-nav-group">시스템</div>
+    <a href="#">시스템 설정</a>
+  </nav>
+</aside>
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <div><h1>입점 호텔 관리</h1><p>플랫폼에 등록된 여러 호텔을 추가하고 호텔별 태그와 운영 상태를 관리합니다.</p></div>
+        <div class="admin-actions"><a class="btn primary" href="admin-hotel-add.html">호텔 추가</a></div>
+      </header>
+      <section class="panel"><h2>입점 호텔 목록</h2><table class="table"><thead><tr><th>호텔명</th><th>지역</th><th>호텔 태그</th><th>객실</th><th>오늘 예약</th><th>월 매출</th><th>상태</th><th>관리</th></tr></thead><tbody><tr><td>그랜드 서울</td><td>서울 중구</td><td><div class="hotel-tag-board"><span class="hotel-tag">비즈니스</span><span class="hotel-tag">역세권</span><span class="hotel-tag">시티뷰</span></div></td><td>128</td><td>42</td><td>₩328M</td><td><span class="status">운영중</span></td><td><a class="btn" href="hotel-admin-dashboard.html">개별 관리</a></td></tr><tr><td>해운대 오션</td><td>부산 해운대</td><td><div class="hotel-tag-board"><span class="hotel-tag">오션뷰</span><span class="hotel-tag">가족여행</span><span class="hotel-tag">수영장</span></div></td><td>96</td><td>31</td><td>₩214M</td><td><span class="status">운영중</span></td><td><a class="btn" href="hotel-admin-dashboard.html">개별 관리</a></td></tr><tr><td>제주 포레스트</td><td>제주 애월</td><td><div class="hotel-tag-board"><span class="hotel-tag">자연휴식</span><span class="hotel-tag">렌터카</span></div></td><td>72</td><td>18</td><td>₩142M</td><td><span class="status warn">검수중</span></td><td><a class="btn" href="hotel-admin-dashboard.html">개별 관리</a></td></tr></tbody></table></section>
+<section class="grid-2" style="margin-top:14px"><div class="panel"><h2>호텔 태그 관리</h2><div class="hotel-tag-board"><span class="hotel-tag">비즈니스 <button>x</button></span><span class="hotel-tag">오션뷰 <button>x</button></span><span class="hotel-tag">가족여행 <button>x</button></span><span class="hotel-tag">역세권 <button>x</button></span><span class="hotel-tag">수영장 <button>x</button></span></div><div class="tag-input-row"><input placeholder="호텔 검색/정렬에 사용할 태그 입력"><button class="btn primary">태그 추가</button></div></div><div class="panel"><h2>태그 사용 위치</h2><p class="muted">등록한 호텔 태그는 사용자 메인/검색 결과의 호텔 카드 필터와 호텔 상세 특징 표시용으로 사용합니다.</p></div></section>
+    </main>
+  </div>
+</body>
+</html>
+
+
+
