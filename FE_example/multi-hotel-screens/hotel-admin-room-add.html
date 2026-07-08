@@ -1,43 +1,43 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ko">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>그랜드 서울 객실 추가 - 그랜드 서울 관리자</title>
+  <title>그랜드 서울 호실 추가 - 그랜드 서울 관리자</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="feature-additions.css">
 </head>
 <body class="admin-page">
   <div class="admin-shell">
     <aside class="admin-sidebar">
-  <div class="admin-brand"><span class="mark">S</span><div><strong>StayNow Admin</strong><small>개별 호텔 관리자</small></div></div>
-  <div class="admin-hotel-switcher selectable"><span class="hotel-mark">GS</span><select onchange="location.href=this.value"><option value="admin-dashboard.html">전체 호텔</option><option value="hotel-admin-dashboard.html" selected>그랜드 서울</option></select></div>
-  <nav class="admin-nav">
-    <div class="admin-nav-group">호텔 운영</div>
-    <a class="" href="hotel-admin-dashboard.html">호텔 대시보드</a>
-    <a class="" href="hotel-admin-reservations.html">예약 관리 <span class="nav-count">42</span></a>
-    <a class="" href="hotel-admin-checkins.html">체크인 현황 <span class="nav-count alert">3</span></a>
-    <a class="" href="hotel-admin-customers.html">고객 관리</a>
-    <a class="" href="hotel-admin-room-reviews.html">객실 리뷰 <span class="nav-count">3</span></a>
-    <div class="admin-nav-group">객실</div>
-    <a class="" href="hotel-admin-inventory.html">객실 관리</a>
-    <a class="active" href="hotel-admin-room-add.html">객실 추가</a>
-    <div class="admin-nav-group">매출</div>
-    <a class="" href="hotel-admin-promotions.html">호텔 프로모션</a>
-    <a class="" href="hotel-admin-settlement.html">호텔 정산</a>
-  </nav>
-</aside>
+      <div class="admin-brand"><span class="mark">S</span><div><strong>StayNow Admin</strong><small>개별 호텔 관리자</small></div></div>
+      <div class="admin-hotel-switcher selectable"><span class="hotel-mark">GS</span><select onchange="location.href=this.value"><option value="admin-dashboard.html">전체 호텔</option><option value="hotel-admin-dashboard.html" selected>그랜드 서울</option></select></div>
+      <nav class="admin-nav"><div class="admin-nav-group">호텔 선택</div><a class="" href="admin-dashboard.html">전체 호텔로 이동</a><div class="admin-nav-group">그랜드 서울</div><a class="" href="hotel-admin-dashboard.html">호텔 대시보드</a><div class="admin-nav-group">객실 / 리뷰</div><a class="" href="hotel-admin-inventory.html">객실 관리</a><a class="active" href="hotel-admin-room-add.html">객실 추가</a><a class="" href="hotel-admin-room-reviews.html">객실 리뷰</a><a class="" href="hotel-admin-customers.html">회원 조회</a><div class="admin-nav-group">운영 기능</div><a class="" href="hotel-admin-promotions.html">프로모션</a><a class="" href="hotel-admin-promotion-sales.html">프로모션 적용</a><a class="" href="hotel-admin-sales.html">매출 분석</a><div class="admin-nav-group">목업 흐름</div><a class="" href="hotel-admin-reservations.html">예약 관리 목업</a></nav>
+    </aside>
     <main class="admin-main">
       <header class="admin-topbar">
-        <div><h1>그랜드 서울 객실 추가</h1><p>선택된 호텔에 새 객실과 요금을 등록합니다.</p></div>
-        <div class="admin-actions"><a class="btn" href="hotel-admin-inventory.html">객실 목록</a></div>
+        <div><h1>그랜드 서울 호실 추가</h1><p>그랜드 서울에 실제 운영할 호실 번호와 기본 정보를 등록합니다.</p></div>
+        <div class="admin-actions"><a class="btn" href="hotel-admin-inventory.html">호실 목록</a></div>
       </header>
-      <section class="panel"><h2>그랜드 서울 객실 추가</h2><div class="form-grid"><div class="field"><label>객실명</label><input value="비즈니스 더블"></div><div class="field"><label>객실 수</label><input value="12"></div><div class="field"><label>기본가</label><input value="210000"></div><div class="field"><label>주말가</label><input value="250000"></div><div class="field"><label>최대 인원</label><input value="2"></div><div class="field"><label>판매 상태</label><select><option>판매중</option><option>판매중지</option></select></div><div class="field full"><label>객실 편의시설</label><div class="amenity-tags"><span class="amenity-tag">무료 Wi-Fi <button>x</button></span><span class="amenity-tag">업무 데스크 <button>x</button></span><span class="amenity-tag">시티뷰 <button>x</button></span></div><div class="tag-input-row"><input placeholder="편의시설을 입력하고 태그로 추가"><button class="btn primary">태그 추가</button></div></div><div class="field full"><label>객실 설명</label><textarea>비즈니스 고객을 위한 업무 데스크와 도심 전망을 제공하는 객실입니다.</textarea></div></div></section>
-<section class="admin-actions" style="margin-top:14px"><a class="btn" href="hotel-admin-inventory.html">취소</a><button class="btn primary">객실 저장</button></section>
+      <section class="panel">
+        <h2>호실 기본 정보</h2>
+        <div class="form-grid">
+          <div class="field"><label>호실 번호</label><input value="1203"></div>
+          <div class="field"><label>객실 종류</label><input value="디럭스 더블"></div>
+          <div class="field"><label>층수</label><input value="12"></div>
+          <div class="field"><label>객실 크기</label><input value="32㎡"></div>
+          <div class="field"><label>기본가</label><input value="198000"></div>
+          <div class="field"><label>성인 최대</label><input value="2"></div>
+          <div class="field"><label>아동 최대</label><input value="1"></div>
+          <div class="field"><label>활성 여부</label><select><option>true</option><option>false</option></select></div>
+          <div class="field"><label>판매 상태</label><select><option>판매중</option><option>판매중지</option><option>점검중</option></select></div>
+          <div class="field"><label>전망 옵션</label><select><option>CITY</option><option>OCEAN</option><option>MOUNTAIN</option></select></div>
+          <div class="field"><label>침대 옵션</label><select><option>DOUBLE</option><option>TWIN</option><option>KING</option></select></div>
+          <div class="field full"><label>호실 이미지</label><div class="upload-box"><input type="file" accept="image/*" multiple><p class="muted">등록할 호실에 연결할 이미지를 선택합니다.</p><div class="upload-preview"><span class="upload-thumb"></span><span class="upload-thumb"></span></div></div></div>
+        </div>
+      </section>
+      <section class="admin-actions" style="margin-top:14px"><a class="btn" href="hotel-admin-inventory.html">취소</a><button class="btn primary">호실 저장</button></section>
     </main>
   </div>
 </body>
 </html>
-
-
-

@@ -1,53 +1,102 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ko">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>객실 관리 - StayNow Admin</title>
+  <title>호실 현황 - StayNow Admin</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="feature-additions.css">
 </head>
 <body class="admin-page">
   <div class="admin-shell">
     <aside class="admin-sidebar">
-  <div class="admin-brand"><span class="mark">S</span><div><strong>StayNow Admin</strong><small>다중 호텔 예약 플랫폼</small></div></div>
-  <div class="admin-hotel-switcher selectable"><span class="hotel-mark">ALL</span><select onchange="location.href=this.value"><option value="admin-dashboard.html" selected>전체 호텔</option><option value="hotel-admin-dashboard.html">그랜드 서울</option></select></div>
-  <nav class="admin-nav">
-    <div class="admin-nav-group">메인</div>
-    <a class="" href="admin-dashboard.html">대시보드</a>
-    <a class="" href="admin-reservations.html">예약 관리 <span class="nav-count">12</span></a>
-    <a class="" href="admin-checkins.html">체크인 현황 <span class="nav-count alert">3</span></a>
-    <a class="" href="admin-customers.html">고객 관리</a>
-    <a class="" href="admin-room-reviews.html">객실 리뷰 <span class="nav-count">8</span></a>
-    <div class="admin-nav-group">객실</div>
-    <a class="active" href="admin-inventory.html">객실 관리</a>
-    <a class="" href="admin-room-add.html">객실 추가</a>
-    <div class="admin-nav-group">플랫폼</div>
-    <a class="" href="admin-hotels.html">입점 호텔 관리</a>
-    <a class="" href="admin-hotel-add.html">호텔 추가</a>
-    <a class="" href="admin-promotions.html">프로모션</a>
-    <a class="" href="admin-settlement.html">정산 리포트</a>
-    <div class="admin-nav-group">시스템</div>
-    <a href="#">시스템 설정</a>
-  </nav>
-</aside>
+      <div class="admin-brand"><span class="mark">S</span><div><strong>StayNow Admin</strong><small>다중 호텔 예약 플랫폼</small></div></div>
+      <div class="admin-hotel-switcher selectable"><span class="hotel-mark">ALL</span><select onchange="location.href=this.value"><option value="admin-dashboard.html" selected>전체 호텔</option><option value="hotel-admin-dashboard.html">그랜드 서울</option></select></div>
+      <nav class="admin-nav"><div class="admin-nav-group">플랫폼</div><a class="" href="admin-dashboard.html">대시보드</a><a class="" href="admin-hotels.html">호텔 관리</a><a class="" href="admin-hotel-add.html">호텔 추가</a><a class="" href="admin-customers.html">회원 조회</a><div class="admin-nav-group">객실 / 리뷰</div><a class="active" href="admin-inventory.html">객실 관리</a><a class="" href="admin-room-add.html">객실 추가</a><a class="" href="admin-room-reviews.html">객실 리뷰</a><div class="admin-nav-group">운영 기능</div><a class="" href="admin-promotions.html">프로모션</a><a class="" href="admin-promotion-sales.html">프로모션 적용</a><a class="" href="admin-sales.html">매출 분석</a><div class="admin-nav-group">목업 흐름</div><a class="" href="admin-reservations.html">예약 관리 목업</a></nav>
+    </aside>
     <main class="admin-main">
       <header class="admin-topbar">
-        <div><h1>객실 관리</h1><p>여러 호텔의 방 재고와 객실별 요금을 호텔 단위로 관리합니다.</p></div>
-        <div class="admin-actions"><a class="btn primary" href="admin-room-add.html">객실 추가</a></div>
+        <div><h1>호실 현황</h1><p>목록 대신 층별 호실 현황판으로 판매중, 예약중, 점검중, 판매중지를 한눈에 확인합니다.</p></div>
+        <div class="admin-actions"><a class="btn primary" href="admin-room-add.html">호실 추가</a></div>
       </header>
-      <section class="panel"><h2>전체 호텔 객실 목록</h2><table class="table"><thead><tr><th>호텔</th><th>객실명</th><th>재고</th><th>기본가</th><th>주말가</th><th>판매상태</th><th>관리</th></tr></thead><tbody><tr><td>그랜드 서울</td><td>디럭스 더블</td><td>18 / 24</td><td>₩198,000</td><td>₩238,000</td><td><span class="status">판매중</span></td><td><div class="action-cell"><a class="btn small" href="#room-edit">수정</a><button class="btn small danger">삭제</button></div></td></tr><tr><td>그랜드 서울</td><td>프리미어 트윈</td><td>8 / 16</td><td>₩226,000</td><td>₩278,000</td><td><span class="status">판매중</span></td><td><div class="action-cell"><a class="btn small" href="#room-edit">수정</a><button class="btn small danger">삭제</button></div></td></tr><tr><td>해운대 오션</td><td>오션 스위트</td><td>3 / 10</td><td>₩280,000</td><td>₩360,000</td><td><span class="status warn">재고부족</span></td><td><div class="action-cell"><a class="btn small" href="#room-edit">수정</a><button class="btn small danger">삭제</button></div></td></tr></tbody></table></section>
-<section class="room-management-grid">
-  <div id="room-edit" class="panel room-edit-panel"><div class="panel-title-row"><div><h2>객실 정보 수정</h2><p class="muted">선택한 객실의 이름, 재고, 요금, 판매 상태, 편의시설 태그를 수정합니다.</p></div><span class="status warn">수정중</span></div><div class="form-grid"><div class="field"><label>호텔</label><select><option>그랜드 서울</option><option>해운대 오션</option><option>제주 포레스트</option></select></div><div class="field"><label>객실명</label><input value="디럭스 더블"></div><div class="field"><label>전체 객실 수</label><input value="24"></div><div class="field"><label>판매 가능 객실</label><input value="18"></div><div class="field"><label>기본가</label><input value="198000"></div><div class="field"><label>주말가</label><input value="238000"></div><div class="field"><label>판매 상태</label><select><option>판매중</option><option>판매중지</option><option>점검중</option></select></div><div class="field"><label>최대 인원</label><input value="2"></div><div class="field full"><label>객실 편의시설</label><div class="amenity-tags"><span class="amenity-tag">무료 Wi-Fi <button>x</button></span><span class="amenity-tag">시티뷰 <button>x</button></span><span class="amenity-tag">조식 가능 <button>x</button></span></div><div class="tag-input-row"><input placeholder="편의시설 태그 추가"><button class="btn primary">태그 추가</button></div></div><div class="field full"><label>객실 설명</label><textarea>도심 전망과 넓은 업무 테이블을 갖춘 2인 객실입니다.</textarea></div></div><div class="admin-actions" style="margin-top:14px"><button class="btn">초기화</button><button class="btn primary">수정 저장</button></div></div>
-  <aside class="panel"><h2>객실 삭제</h2><p class="muted">삭제 전 예약 연결 상태를 확인합니다. 예약이 남아 있는 객실은 판매중지 후 삭제 대기로 처리합니다.</p><div class="room-delete-box"><h3>디럭스 더블 삭제 확인</h3><p>진행 중 예약 4건이 있어 즉시 삭제 대신 판매중지 처리가 권장됩니다.</p><div class="action-cell"><button class="btn small">판매중지</button><button class="btn small danger">삭제 대기 등록</button></div></div><table class="table" style="margin-top:14px"><tbody><tr><td>진행 중 예약</td><td>4건</td></tr><tr><td>체크인 예정</td><td>2건</td></tr><tr><td>삭제 가능 여부</td><td><span class="status warn">확인 필요</span></td></tr></tbody></table></aside>
-</section>
+
+      <section class="grid-4">
+        <div class="panel metric"><span>전체 호실</span><strong>428</strong><span>등록된 room</span></div>
+        <div class="panel metric"><span>판매중</span><strong>312</strong><span>즉시 예약 가능</span></div>
+        <div class="panel metric"><span>예약중</span><strong>92</strong><span>오늘 배정 포함</span></div>
+        <div class="panel metric"><span>점검/중지</span><strong>24</strong><span>관리 필요</span></div>
+      </section>
+
+      <section class="panel room-board-panel">
+        <div class="room-board-head">
+          <div>
+            <h2>전체 호텔 호실 현황판</h2>
+            <p class="muted">층을 행처럼 나누고 각 호실을 셀처럼 배치했습니다. 호실을 누르면 아래 수정 패널에서 관리하는 흐름입니다.</p>
+          </div>
+          <div class="room-board-legend">
+            <span><i class="dot available"></i>판매중</span>
+            <span><i class="dot reserved"></i>예약중</span>
+            <span><i class="dot maintenance"></i>점검중</span>
+            <span><i class="dot inactive"></i>판매중지</span>
+          </div>
+        </div>
+
+        <div class="room-status-board">
+          <div class="floor-row">
+            <div class="floor-label"><strong>22F</strong><span>스위트</span></div>
+            <div class="room-cell available"><strong>2201호</strong><span>로열 스위트</span><em>₩460,000</em></div>
+            <div class="room-cell reserved"><strong>2202호</strong><span>로열 스위트</span><em>예약중</em></div>
+            <div class="room-cell maintenance"><strong>2203호</strong><span>로열 스위트</span><em>점검중</em></div>
+            <div class="room-cell available"><strong>2204호</strong><span>로열 스위트</span><em>₩460,000</em></div>
+          </div>
+          <div class="floor-row">
+            <div class="floor-label"><strong>21F</strong><span>오션</span></div>
+            <div class="room-cell available"><strong>2101호</strong><span>오션 스위트</span><em>₩280,000</em></div>
+            <div class="room-cell available"><strong>2102호</strong><span>오션 스위트</span><em>₩280,000</em></div>
+            <div class="room-cell reserved"><strong>2103호</strong><span>오션 스위트</span><em>예약중</em></div>
+            <div class="room-cell inactive"><strong>2104호</strong><span>오션 스위트</span><em>판매중지</em></div>
+          </div>
+          <div class="floor-row">
+            <div class="floor-label"><strong>12F</strong><span>디럭스</span></div>
+            <div class="room-cell selected available"><strong>1201호</strong><span>디럭스 더블</span><em>선택됨</em></div>
+            <div class="room-cell maintenance"><strong>1202호</strong><span>디럭스 더블</span><em>점검중</em></div>
+            <div class="room-cell available"><strong>1203호</strong><span>디럭스 더블</span><em>₩198,000</em></div>
+            <div class="room-cell reserved"><strong>1210호</strong><span>프리미어 트윈</span><em>예약중</em></div>
+          </div>
+          <div class="floor-row">
+            <div class="floor-label"><strong>11F</strong><span>스탠다드</span></div>
+            <div class="room-cell available"><strong>1101호</strong><span>스탠다드 더블</span><em>₩160,000</em></div>
+            <div class="room-cell available"><strong>1102호</strong><span>스탠다드 더블</span><em>₩160,000</em></div>
+            <div class="room-cell inactive"><strong>1103호</strong><span>스탠다드 트윈</span><em>판매중지</em></div>
+            <div class="room-cell available"><strong>1104호</strong><span>스탠다드 트윈</span><em>₩170,000</em></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="room-management-grid">
+        <div id="room-edit" class="panel room-edit-panel">
+          <div class="panel-title-row"><div><h2>1201호 정보 수정</h2><p class="muted">현황판에서 선택한 호실의 번호, 가격, 상태, 이미지 연결을 수정합니다.</p></div><span class="status warn">선택 호실</span></div>
+          <div class="form-grid">
+            <div class="field"><label>호텔</label><select><option>그랜드 서울</option><option>해운대 오션</option><option>제주 포레스트</option></select></div>
+            <div class="field"><label>호실 번호</label><input value="1201"></div>
+            <div class="field"><label>객실 종류</label><input value="디럭스 더블"></div>
+            <div class="field"><label>층수</label><input value="12"></div>
+            <div class="field"><label>객실 크기</label><input value="32㎡"></div>
+            <div class="field"><label>기본가</label><input value="198000"></div>
+            <div class="field"><label>판매 상태</label><select><option>판매중</option><option>예약중</option><option>점검중</option><option>판매중지</option></select></div>
+            <div class="field"><label>침대 옵션</label><select><option>DOUBLE</option><option>TWIN</option><option>KING</option></select></div>
+            <div class="field full"><label>호실 이미지</label><div class="upload-box"><input type="file" accept="image/*" multiple><p class="muted">1201호에 연결된 RoomImage를 추가하거나 교체합니다.</p><div class="upload-preview"><span class="upload-thumb"></span><span class="upload-thumb"></span></div></div></div>
+          </div>
+          <div class="admin-actions" style="margin-top:14px"><button class="btn">초기화</button><button class="btn primary">1201호 저장</button></div>
+        </div>
+        <aside class="panel">
+          <h2>호실 상태 요약</h2>
+          <p class="muted">현황판에서 선택한 호실의 운영 상태를 빠르게 변경합니다.</p>
+          <table class="table"><tbody><tr><td>호실 번호</td><td>1201호</td></tr><tr><td>객실 종류</td><td>디럭스 더블</td></tr><tr><td>현재 상태</td><td><span class="status">판매중</span></td></tr><tr><td>이미지</td><td>4장</td></tr></tbody></table>
+          <div class="action-cell" style="margin-top:14px"><button class="btn small">예약중 전환</button><button class="btn small">점검중 전환</button><button class="btn small danger">호실 삭제</button></div>
+        </aside>
+      </section>
     </main>
   </div>
 </body>
 </html>
-
-
-
-
-
-

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>프로모션 적용 - StayNow Admin</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="feature-additions.css">
+</head>
+<body class="admin-page">
+<div class="admin-shell">
+    <aside class="admin-sidebar">
+        <div class="admin-brand"><span class="mark">S</span>
+            <div><strong>StayNow Admin</strong><small>다중 호텔 예약 플랫폼</small></div>
+        </div>
+        <div class="admin-hotel-switcher selectable"><span class="hotel-mark">ALL</span><select
+                onchange="location.href=this.value">
+            <option value="admin-dashboard.html" selected>전체 호텔</option>
+            <option value="hotel-admin-dashboard.html">그랜드 서울</option>
+        </select></div>
+        <nav class="admin-nav"><div class="admin-nav-group">플랫폼</div><a class="" href="admin-dashboard.html">대시보드</a><a class="" href="admin-hotels.html">호텔 관리</a><a class="" href="admin-hotel-add.html">호텔 추가</a><a class="" href="admin-customers.html">회원 조회</a><div class="admin-nav-group">객실 / 리뷰</div><a class="" href="admin-inventory.html">객실 관리</a><a class="" href="admin-room-add.html">객실 추가</a><a class="" href="admin-room-reviews.html">객실 리뷰</a><div class="admin-nav-group">운영 기능</div><a class="" href="admin-promotions.html">프로모션</a><a class="active" href="admin-promotion-sales.html">프로모션 적용</a><a class="" href="admin-sales.html">매출 분석</a><div class="admin-nav-group">목업 흐름</div><a class="" href="admin-reservations.html">예약 관리 목업</a></nav>
+    </aside>
+    <main class="admin-main">
+        <header class="admin-topbar">
+            <div><h1>프로모션 적용</h1>
+                <p>PromotionSaleDto의 saleDes와 proId를 관리하는 화면입니다.</p></div>
+        </header>
+        <section class="panel"><h2>프로모션 적용 목록</h2>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>프로모션</th>
+                    <th>saleDes</th>
+                    <th>상태</th>
+                    <th>관리</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>PS-101</td>
+                    <td>디럭스 더블 장기 숙박 할인</td>
+                    <td>7박 이상 예약 시 자동 적용</td>
+                    <td><span class="status">사용</span></td>
+                    <td>
+                        <button class="btn small">수정</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>PS-102</td>
+                    <td>오션 스위트 여름 할인</td>
+                    <td>성수기 평일 예약에 적용</td>
+                    <td><span class="status warn">검토</span></td>
+                    <td>
+                        <button class="btn small">수정</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="panel" style="margin-top:14px"><h2>적용 설명 등록</h2>
+            <div class="form-grid">
+                <div class="field"><label>프로모션</label><select>
+                    <option>디럭스 더블 장기 숙박 할인</option>
+                    <option>오션 스위트 여름 할인</option>
+                </select></div>
+                <div class="field full">
+                    <label>saleDes</label><textarea>7박 이상 예약 시 자동 적용됩니다. 중복 프로모션과 함께 사용할 수 없습니다.</textarea></div>
+            </div>
+            <div class="admin-actions" style="margin-top:14px">
+                <button class="btn primary">적용 설명 저장</button>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

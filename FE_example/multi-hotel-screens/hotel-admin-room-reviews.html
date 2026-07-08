@@ -1,39 +1,103 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>그랜드 서울 객실 리뷰 - 그랜드 서울 관리자</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="feature-additions.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>그랜드 서울 객실 리뷰 - StayNow Admin</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="feature-additions.css">
 </head>
 <body class="admin-page">
-  <div class="admin-shell">
+<div class="admin-shell">
     <aside class="admin-sidebar">
-  <div class="admin-brand"><span class="mark">S</span><div><strong>StayNow Admin</strong><small>개별 호텔 관리자</small></div></div>
-  <div class="admin-hotel-switcher selectable"><span class="hotel-mark">GS</span><select onchange="location.href=this.value"><option value="admin-dashboard.html">전체 호텔</option><option value="hotel-admin-dashboard.html" selected>그랜드 서울</option></select></div>
-  <nav class="admin-nav">
-    <div class="admin-nav-group">호텔 운영</div>
-    <a class="" href="hotel-admin-dashboard.html">호텔 대시보드</a>
-    <a class="" href="hotel-admin-reservations.html">예약 관리 <span class="nav-count">42</span></a>
-    <a class="" href="hotel-admin-checkins.html">체크인 현황 <span class="nav-count alert">3</span></a>
-    <a class="" href="hotel-admin-customers.html">고객 관리</a>
-    <a class="active" href="hotel-admin-room-reviews.html">객실 리뷰 <span class="nav-count">3</span></a>
-    <div class="admin-nav-group">객실</div>
-    <a class="" href="hotel-admin-inventory.html">객실 관리</a>
-    <a class="" href="hotel-admin-room-add.html">객실 추가</a>
-    <div class="admin-nav-group">매출</div>
-    <a class="" href="hotel-admin-promotions.html">호텔 프로모션</a>
-    <a class="" href="hotel-admin-settlement.html">호텔 정산</a>
-  </nav>
-</aside>
+        <div class="admin-brand"><span class="mark">S</span>
+            <div><strong>StayNow Admin</strong><small>개별 호텔 관리자</small></div>
+        </div>
+        <div class="admin-hotel-switcher selectable"><span class="hotel-mark">GS</span><select
+                onchange="location.href=this.value">
+            <option value="admin-dashboard.html">전체 호텔</option>
+            <option value="hotel-admin-dashboard.html" selected>그랜드 서울</option>
+        </select></div>
+        <nav class="admin-nav"><div class="admin-nav-group">호텔 선택</div><a class="" href="admin-dashboard.html">전체 호텔로 이동</a><div class="admin-nav-group">그랜드 서울</div><a class="" href="hotel-admin-dashboard.html">호텔 대시보드</a><div class="admin-nav-group">객실 / 리뷰</div><a class="" href="hotel-admin-inventory.html">객실 관리</a><a class="" href="hotel-admin-room-add.html">객실 추가</a><a class="active" href="hotel-admin-room-reviews.html">객실 리뷰</a><a class="" href="hotel-admin-customers.html">회원 조회</a><div class="admin-nav-group">운영 기능</div><a class="" href="hotel-admin-promotions.html">프로모션</a><a class="" href="hotel-admin-promotion-sales.html">프로모션 적용</a><a class="" href="hotel-admin-sales.html">매출 분석</a><div class="admin-nav-group">목업 흐름</div><a class="" href="hotel-admin-reservations.html">예약 관리 목업</a></nav>
+    </aside>
     <main class="admin-main">
-      <header class="admin-topbar"><div><h1>그랜드 서울 객실 리뷰</h1><p>그랜드 서울 객실별 리뷰와 관리자 답변을 관리합니다.</p></div><div class="admin-actions"><button class="btn ghost">객실 필터</button><button class="btn primary">답변 대기 보기</button></div></header>
-      <section class="grid-4"><div class="panel metric"><span>호텔 리뷰</span><strong>328</strong><span>그랜드 서울</span></div><div class="panel metric"><span>평균 평점</span><strong>4.8</strong><span>객실 평균</span></div><div class="panel metric"><span>답변 대기</span><strong>3</strong><span>오늘 기준</span></div><div class="panel metric"><span>사진 리뷰</span><strong>126</strong><span>전체 리뷰 중</span></div></section>
-      <section class="review-admin-grid" style="margin-top:14px"><div class="panel"><h2>그랜드 서울 리뷰 목록</h2><table class="table"><thead><tr><th>객실</th><th>고객</th><th>예약번호</th><th>평점</th><th>리뷰 요약</th><th>사진</th><th>상태</th><th>관리</th></tr></thead><tbody><tr><td>디럭스 더블</td><td>김민준</td><td>RES-2024072</td><td>5.0</td><td>조용하고 침구가 깨끗함</td><td><span class="photo-count">2장</span></td><td><span class="status warn">답변 대기</span></td><td><button class="btn small">답변</button></td></tr><tr><td>프리미어 트윈</td><td>정아린</td><td>RES-2024068</td><td>4.5</td><td>가족 여행에 적합</td><td><span class="photo-count">3장</span></td><td><span class="status">답변 완료</span></td><td><button class="btn small">보기</button></td></tr><tr><td>로열 스위트</td><td>한지후</td><td>RES-2024059</td><td>4.8</td><td>라운지와 전망이 좋음</td><td><span class="photo-count">5장</span></td><td><span class="status warn">답변 대기</span></td><td><button class="btn small">답변</button></td></tr></tbody></table></div><aside class="panel"><h2>호텔 답변 작성</h2><div class="review-reply-box"><strong>김민준 · 디럭스 더블</strong><p class="muted">객실이 조용하고 침구가 깨끗했습니다.</p><div class="review-photos"><span class="review-photo"></span><span class="review-photo"></span></div></div><div class="field" style="margin-top:14px"><label>답변 내용</label><textarea>그랜드 서울을 이용해주셔서 감사합니다. 남겨주신 의견을 객실 운영에 반영하겠습니다.</textarea></div><div class="admin-actions" style="margin-top:14px"><button class="btn">취소</button><button class="btn primary">답변 등록</button></div></aside></section>
+        <header class="admin-topbar">
+            <div><h1>그랜드 서울 객실 리뷰</h1>
+                <p>그랜드 서울 리뷰, 사진, 태그, 평점을 관리합니다.</p></div>
+        </header>
+        <section class="grid-4">
+            <div class="panel metric"><span>전체 리뷰</span><strong>1,284</strong><span>Review API</span></div>
+            <div class="panel metric"><span>사진 리뷰</span><strong>318</strong><span>ReviewPhoto 포함</span></div>
+            <div class="panel metric"><span>평균 평점</span><strong>4.7</strong><span>overallRating</span></div>
+            <div class="panel metric"><span>검토 대상</span><strong>2</strong><span>운영 확인</span></div>
+        </section>
+        <section class="review-admin-grid">
+            <div class="panel"><h2>객실 리뷰 목록</h2>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>호텔</th>
+                        <th>객실</th>
+                        <th>회원</th>
+                        <th>평점</th>
+                        <th>사진</th>
+                        <th>태그</th>
+                        <th>관리</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>그랜드 서울</td>
+                        <td>디럭스 더블</td>
+                        <td>김민준</td>
+                        <td>5.0</td>
+                        <td><span class="photo-count">2장</span></td>
+                        <td>청결, 조용함</td>
+                        <td>
+                            <button class="btn small">상세</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>해운대 오션</td>
+                        <td>오션 스위트</td>
+                        <td>이서연</td>
+                        <td>4.0</td>
+                        <td><span class="photo-count">4장</span></td>
+                        <td>오션뷰</td>
+                        <td>
+                            <button class="btn small">상세</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <aside class="panel"><h2>리뷰 상세</h2>
+                <p class="muted">ReviewResponse의 photos, tags, ratings, likeCount, dislikeCount를 확인합니다.</p>
+                <div class="upload-preview" style="margin:14px 0"><span class="review-photo"></span><span
+                        class="review-photo"></span></div>
+                <table class="table">
+                    <tbody>
+                    <tr>
+                        <td>여행 유형</td>
+                        <td>BUSINESS</td>
+                    </tr>
+                    <tr>
+                        <td>좋아요/싫어요</td>
+                        <td>24 / 1</td>
+                    </tr>
+                    <tr>
+                        <td>카테고리 평점</td>
+                        <td>청결 5, 위치 4</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="admin-actions" style="margin-top:14px">
+                    <button class="btn">상세 보기</button>
+                    <button class="btn danger">리뷰 삭제</button>
+                </div>
+            </aside>
+        </section>
     </main>
-  </div>
+</div>
 </body>
 </html>
-
-
