@@ -78,12 +78,11 @@ public class RoomRestController {
 
 	@GetMapping("/hotel/{hotelId}")
 	public ResponseEntity<ApiResponse<Page<RoomDto>>> page(@PathVariable Long hotelId
-//			, @PageableDefault(size=10, page=0, sort="roomId", direction= Sort.Direction.DESC) Pageable pageable)
 			, @PageableDefault(size = 10, page = 0)
-	           @SortDefault.SortDefaults({
-	                   @SortDefault(sort = "floor", direction = Sort.Direction.DESC),
-	                   @SortDefault(sort = "number", direction = Sort.Direction.ASC)
-	           }) Pageable pageable)
+               @SortDefault.SortDefaults({
+                       @SortDefault(sort = "floor", direction = Sort.Direction.DESC),
+                       @SortDefault(sort = "number", direction = Sort.Direction.ASC)
+               }) Pageable pageable)
 	{
 		Page<RoomDto> page = this.roomService.findAllByHotelIdEquals(hotelId, pageable);
 		return ResponseEntity.status(HttpStatus.OK).body(

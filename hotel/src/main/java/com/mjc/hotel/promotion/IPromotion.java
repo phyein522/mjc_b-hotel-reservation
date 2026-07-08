@@ -1,7 +1,11 @@
 package com.mjc.hotel.promotion;
 
 import com.mjc.hotel.common.dto.IBase;
+import java.time.LocalDateTime;
+import com.mjc.hotel.rooms.dto.IRoom;
+import org.hibernate.LazyInitializationException;
 
+@tools.jackson.databind.annotation.JsonDeserialize(as = PromotionDto.class)
 public interface IPromotion extends IBase {
     Long getProId();
     void setProId(Long proId);
@@ -12,29 +16,30 @@ public interface IPromotion extends IBase {
     String  getDescription();
     void setDescription(String description);
 
-    String getDisType();
-    void setDisType(String disType);
+    DiscountTypeEnum getDisType();
+    void setDisType(DiscountTypeEnum disType);
 
     String getDisValue();
     void setDisValue(String disValue);
 
-    String getStartDate();
-    void setStartDate(String startDate);
+    LocalDateTime getStartDate();
+    void setStartDate(LocalDateTime startDate);
 
-    String getEndDate();
-    void setEndDate(String endDate);
+    LocalDateTime getEndDate();
+    void setEndDate(LocalDateTime endDate);
 
-    String getResCount();
-    void setResCount(String resCount);
-
-    String getConversionRate();
-    void setConversionRate(String conversionRate);
+    Integer getResCount();
+    void setResCount(Integer resCount);
 
     String getStatus();
     void setStatus(String status);
 
     Long getRoomId();
     void setRoomId(Long roomId);
+
+    IRoom getRoom();
+    void setRoom(IRoom room);
+
     default IPromotion copyMembers(IPromotion source, boolean forced) {
 
         if (source == null) {
@@ -72,16 +77,18 @@ public interface IPromotion extends IBase {
             this.setResCount(source.getResCount());
         }
 
-        if (forced || source.getConversionRate() != null) {
-            this.setConversionRate(source.getConversionRate());
-        }
-
         if (forced || source.getStatus() != null) {
             this.setStatus(source.getStatus());
         }
 
         if (forced || source.getRoomId() != null) {
             this.setRoomId(source.getRoomId());
+
+            try {
+                this.getRoom().copyMembers(source.getRoom(), forced);
+            } catch (LazyInitializationException e) {
+                System.err.println(e.getMessage());
+            }
         }
         return this;
     }

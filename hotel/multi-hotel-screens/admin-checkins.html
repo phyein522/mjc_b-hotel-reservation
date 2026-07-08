@@ -1,0 +1,53 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>체크인 현황 - StayNow Admin</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="feature-additions.css">
+</head>
+<body class="admin-page">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+  <div class="admin-brand"><span class="mark">S</span><div><strong>StayNow Admin</strong><small>다중 호텔 예약 플랫폼</small></div></div>
+  <div class="admin-hotel-switcher selectable"><span class="hotel-mark">ALL</span><select onchange="location.href=this.value"><option value="admin-dashboard.html" selected>전체 호텔</option><option value="hotel-admin-dashboard.html">그랜드 서울</option></select></div>
+  <nav class="admin-nav">
+    <div class="admin-nav-group">메인</div>
+    <a class="" href="admin-dashboard.html">대시보드</a>
+    <a class="" href="admin-reservations.html">예약 관리 <span class="nav-count">12</span></a>
+    <a class="active" href="admin-checkins.html">체크인 현황 <span class="nav-count alert">3</span></a>
+    <a class="" href="admin-customers.html">고객 관리</a>
+    <div class="admin-nav-group">객실</div>
+    <a class="" href="admin-inventory.html">객실 관리</a>
+    <a class="" href="admin-room-add.html">객실 추가</a>
+    <div class="admin-nav-group">플랫폼</div>
+    <a class="" href="admin-hotels.html">입점 호텔 관리</a>
+    <a class="" href="admin-hotel-add.html">호텔 추가</a>
+    <a class="" href="admin-promotions.html">프로모션</a>
+    <a class="" href="admin-settlement.html">정산 리포트</a>
+    <div class="admin-nav-group">시스템</div>
+    <a href="#">시스템 설정</a>
+  </nav>
+</aside>
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <div><h1>체크인 현황</h1><p>호텔별 체크인, 체크아웃, 객실 준비 상태를 분리된 화면에서 처리합니다.</p></div>
+        <div class="admin-actions"><button class="btn ghost">호텔 필터</button><button class="btn primary">체크인 처리</button></div>
+      </header>
+      <section class="grid-4">
+  <div class="panel metric"><span>오늘 체크인</span><strong>54</strong><span>3건 확인 필요</span></div>
+  <div class="panel metric"><span>체크아웃 예정</span><strong>39</strong><span>11:00 이전</span></div>
+  <div class="panel metric"><span>미도착</span><strong>8</strong><span>예약 확정 고객</span></div>
+  <div class="panel metric"><span>객실 준비중</span><strong>6</strong><span>하우스키핑 대기</span></div>
+</section>
+<section class="grid-2" style="margin-top:14px">
+  <div class="panel"><h2>체크인 대기</h2><div class="timeline-list"><div class="timeline-item"><strong>15:00</strong><div><b>김민준</b><br><span class="muted">그랜드 서울 · 디럭스 더블 · RSV-2401</span></div><span class="status warn">신분증 확인</span></div><div class="timeline-item"><strong>15:30</strong><div><b>최하린</b><br><span class="muted">해운대 오션 · 오션 스위트 · RSV-2407</span></div><span class="status">객실 준비완료</span></div><div class="timeline-item"><strong>16:10</strong><div><b>박도윤</b><br><span class="muted">제주 포레스트 · 가든 트윈 · RSV-2411</span></div><span class="status warn">결제 확인</span></div></div></div>
+  <div class="panel"><h2>호텔별 현황</h2><table class="table"><thead><tr><th>호텔</th><th>체크인</th><th>체크아웃</th><th>객실 준비</th></tr></thead><tbody><tr><td>그랜드 서울</td><td>22</td><td>14</td><td><span class="status">정상</span></td></tr><tr><td>해운대 오션</td><td>17</td><td>12</td><td><span class="status warn">2실 대기</span></td></tr><tr><td>제주 포레스트</td><td>15</td><td>13</td><td><span class="status">정상</span></td></tr></tbody></table></div>
+</section>
+<section class="panel" style="margin-top:14px"><h2>체크인 처리 목록</h2><table class="table"><thead><tr><th>예약번호</th><th>고객</th><th>호텔</th><th>객실</th><th>예정</th><th>처리상태</th></tr></thead><tbody><tr><td>RSV-2401</td><td>김민준</td><td>그랜드 서울</td><td>디럭스 더블</td><td>15:00</td><td><span class="status warn">확인 필요</span></td></tr><tr><td>RSV-2407</td><td>최하린</td><td>해운대 오션</td><td>오션 스위트</td><td>15:30</td><td><span class="status">입실 가능</span></td></tr><tr><td>RSV-2411</td><td>박도윤</td><td>제주 포레스트</td><td>가든 트윈</td><td>16:10</td><td><span class="status warn">결제 확인</span></td></tr></tbody></table></section>
+    </main>
+  </div>
+</body>
+</html>
+

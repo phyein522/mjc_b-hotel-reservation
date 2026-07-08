@@ -1,0 +1,48 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>그랜드 서울 대시보드 - 그랜드 서울 관리자</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="feature-additions.css">
+</head>
+<body class="admin-page">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+  <div class="admin-brand"><span class="mark">S</span><div><strong>StayNow Admin</strong><small>개별 호텔 관리자</small></div></div>
+  <div class="admin-hotel-switcher selectable"><span class="hotel-mark">GS</span><select onchange="location.href=this.value"><option value="admin-dashboard.html">전체 호텔</option><option value="hotel-admin-dashboard.html" selected>그랜드 서울</option></select></div>
+  <nav class="admin-nav">
+    <div class="admin-nav-group">호텔 운영</div>
+    <a class="active" href="hotel-admin-dashboard.html">호텔 대시보드</a>
+    <a class="" href="hotel-admin-reservations.html">예약 관리 <span class="nav-count">42</span></a>
+    <a class="" href="hotel-admin-checkins.html">체크인 현황 <span class="nav-count alert">3</span></a>
+    <a class="" href="hotel-admin-customers.html">고객 관리</a>
+    <div class="admin-nav-group">객실</div>
+    <a class="" href="hotel-admin-inventory.html">객실 관리</a>
+    <a class="" href="hotel-admin-room-add.html">객실 추가</a>
+    <div class="admin-nav-group">매출</div>
+    <a class="" href="hotel-admin-promotions.html">호텔 프로모션</a>
+    <a class="" href="hotel-admin-settlement.html">호텔 정산</a>
+  </nav>
+</aside>
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <div><h1>그랜드 서울 대시보드</h1><p>선택한 호텔 하나의 예약, 객실, 체크인, 매출 상태만 확인합니다.</p></div>
+        <div class="admin-actions"><a class="btn primary" href="hotel-admin-inventory.html">객실 관리</a></div>
+      </header>
+      <section class="grid-4">
+  <div class="panel metric"><span>오늘 예약</span><strong>42</strong><span>그랜드 서울 기준</span></div>
+  <div class="panel metric"><span>객실 점유율</span><strong>86%</strong><span>128실 중 110실 판매</span></div>
+  <div class="panel metric"><span>오늘 결제액</span><strong>₩12.4M</strong><span>환불 제외 실결제</span></div>
+  <div class="panel metric"><span>체크인 대기</span><strong>22</strong><span>확인 필요 3건</span></div>
+</section>
+<section class="grid-2" style="margin-top:14px">
+  <div class="panel"><h2>객실 타입별 현황</h2><table class="table"><thead><tr><th>객실</th><th>판매</th><th>재고</th><th>상태</th></tr></thead><tbody><tr><td>디럭스 더블</td><td>18</td><td>6</td><td><span class="status">정상</span></td></tr><tr><td>프리미어 트윈</td><td>14</td><td>2</td><td><span class="status warn">재고 낮음</span></td></tr><tr><td>로열 스위트</td><td>4</td><td>1</td><td><span class="status">정상</span></td></tr></tbody></table></div>
+  <div class="panel"><h2>오늘 처리 항목</h2><table class="table"><tbody><tr><td>신분증 확인 필요</td><td>2건</td><td><span class="status warn">확인</span></td></tr><tr><td>객실 정비 지연</td><td>1건</td><td><span class="status warn">대기</span></td></tr><tr><td>정산 검토</td><td>0건</td><td><span class="status">정상</span></td></tr></tbody></table></div>
+</section>
+    </main>
+  </div>
+</body>
+</html>
+

@@ -9,6 +9,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RoomRepository extends JpaRepository<RoomEntity, Long> {
-//	@EntityGraph(attributePaths = {"hotel"})
-	Page<RoomEntity> findAllByHotelEquals(HotelEntity hotelEntity, Pageable pageable);
+	Page<RoomEntity> findAllByHotelEquals(HotelEntity hotel, Pageable pageable);
 }
