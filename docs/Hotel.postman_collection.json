@@ -348,7 +348,7 @@
                   "key": "file",
                   "type": "file",
                   "uuid": "87ceaf46-7d07-405f-9ad6-b94dc74326ea",
-                  "src": "/C:/Users/gong-813-001/Downloads/호텔방1.jpg"
+                  "src": "/C:/Temp/hotel_test/room3.jpeg"
                 }
               ]
             },
@@ -675,15 +675,15 @@
               "mode": "formdata",
               "formdata": [
                 {
-                  "key": "",
+                  "key": "file",
                   "type": "file",
                   "uuid": "d95c0f7b-1783-490f-a70b-f3ae714d21d2",
-                  "src": "/Users/minsang/Desktop/hotel1.jpg"
+                  "src": "/C:/Temp/hotel_test/room2.jpeg"
                 }
               ]
             },
             "url": {
-              "raw": "http://localhost:8989/api/hotelimage",
+              "raw": "http://localhost:8989/api/hotelimage/hotel/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -691,7 +691,9 @@
               "port": "8989",
               "path": [
                 "api",
-                "hotelimage"
+                "hotelimage",
+                "hotel",
+                "1"
               ]
             }
           },
@@ -1357,8 +1359,7 @@
             "header": [
               {
                 "key": "Content-Type",
-                "value": "application/json",
-                "disabled": false
+                "value": "application/json"
               }
             ],
             "body": {
@@ -1439,8 +1440,7 @@
             "header": [
               {
                 "key": "Content-Type",
-                "value": "application/json",
-                "disabled": false
+                "value": "application/json"
               }
             ],
             "body": {
@@ -1604,6 +1604,84 @@
               "path": [
                 "api",
                 "promotion",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "booking insert",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"guestName\": \"홍길동\"\r\n    , \"nationality\": \"KOREA\"\r\n    , \"guestPhone\": \"010-1234-5678\"\r\n    , \"guestEmail\": \"test@example.com\"\r\n    , \"specialRequest\": \"고층 룸 요청\"\r\n    , \"adultCount\": 2\r\n    , \"childCount\": 0\r\n    , \"checkinDate\": \"2025-07-14\"\r\n    , \"checkoutDate\": \"2025-07-15\"\r\n    , \"totalAmount\": 186400\r\n    , \"userId\": 1\r\n    , \"roomId\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/bookings/insert",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "bookings",
+                "insert"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "booking findAll byUserId",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/bookings/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "bookings",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "boking cancel",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/bookings/cancel/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "bookings",
+                "cancel",
                 "1"
               ]
             }
