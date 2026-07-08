@@ -48,4 +48,7 @@ public interface SalesAnalysisMapper {
             @Param("hotelId") Long hotelId,
             @Param("startDate") String startDate,
             @Param("endDate") String endDate);
+
+    // 9. 호텔 이름 조회 (JPA 명명 규칙 에러 우회용)
+    String getHotelName(@Param("hotelId") Long hotelId);
 }

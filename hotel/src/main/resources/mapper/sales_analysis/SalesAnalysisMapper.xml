@@ -130,4 +130,9 @@
         LIMIT 5
     </select>
 
+    <!-- 9. 호텔 이름 조회 (JPA 명명 규칙 에러 우회용) -->
+    <select id="getHotelName" resultType="string">
+        SELECT name FROM hotels WHERE hotelId = #{hotelId}
+    </select>
+
 </mapper>
