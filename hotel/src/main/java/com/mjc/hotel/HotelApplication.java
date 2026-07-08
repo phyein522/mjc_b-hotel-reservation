@@ -2,9 +2,8 @@ package com.mjc.hotel;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-@EnableJpaAuditing
+// @EnableJpaAuditing  이 문장을 단위테스트 실행시 에러가 나서 별도의 JpaAuditingConfig 클래스로 분리함
 @SpringBootApplication
 public class HotelApplication {
 
