@@ -2,6 +2,7 @@ package com.mjc.hotel.hotelsattr;
 
 import com.mjc.hotel.common.dto.BaseEntity;
 import com.mjc.hotel.hotels.HotelEntity;
+import com.mjc.hotel.hotels.IHotel;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -47,5 +48,19 @@ public class HotelAttrEntity extends BaseEntity implements IHotelAttr {
         }
 
         hotel.setHotelId(hotelId);
+    }
+    @Override
+    public void setHotel(IHotel hotel) {
+
+        if (hotel == null) {
+            return;
+        }
+
+        if (this.hotel == null) {
+            this.hotel = new HotelEntity();
+        }
+
+        this.hotel.copyMembers(hotel, true);
+        this.hotelId = hotel.getHotelId();
     }
 }

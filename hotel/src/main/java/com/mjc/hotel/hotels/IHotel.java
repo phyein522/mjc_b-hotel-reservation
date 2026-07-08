@@ -1,6 +1,6 @@
 package com.mjc.hotel.hotels;
 
-import com.mjc.hotel.common.dto.BaseDto;
+
 import com.mjc.hotel.common.dto.IBase;
 import java.time.LocalTime;
 

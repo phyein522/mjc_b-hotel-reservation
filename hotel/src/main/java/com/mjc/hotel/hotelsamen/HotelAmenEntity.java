@@ -2,6 +2,7 @@ package com.mjc.hotel.hotelsamen;
 
 import com.mjc.hotel.common.dto.BaseEntity;
 import com.mjc.hotel.hotels.HotelEntity;
+import com.mjc.hotel.hotels.IHotel;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -58,5 +59,19 @@ public class HotelAmenEntity extends BaseEntity implements IHotelAmen {
         }
 
         hotel.setHotelId(hotelId);
+    }
+    @Override
+    public void setHotel(IHotel hotel) {
+
+        if (hotel == null) {
+            return;
+        }
+
+        if (this.hotel == null) {
+            this.hotel = new HotelEntity();
+        }
+
+        this.hotel.copyMembers(hotel, true);
+        this.hotelId = hotel.getHotelId();
     }
 }

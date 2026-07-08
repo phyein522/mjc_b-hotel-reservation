@@ -1,7 +1,10 @@
 package com.mjc.hotel.hotelstrans;
 
 import com.mjc.hotel.common.dto.IBase;
+import org.hibernate.LazyInitializationException;
+import com.mjc.hotel.hotels.IHotel;
 
+@tools.jackson.databind.annotation.JsonDeserialize(as = HotelTransDto.class)
 public interface IHotelTrans extends IBase {
 
     Long getTransId();
@@ -18,6 +21,9 @@ public interface IHotelTrans extends IBase {
 
     Long getHotelId();
     void setHotelId(Long hotelId);
+
+    IHotel getHotel();
+    void setHotel(IHotel hotel);
 
     default IHotelTrans copyMembers(IHotelTrans source, boolean forced) {
 
@@ -45,6 +51,14 @@ public interface IHotelTrans extends IBase {
 
         if (forced || source.getHotelId() != null) {
             this.setHotelId(source.getHotelId());
+
+            try {
+                if (source.getHotel() != null) {
+                    this.setHotel(source.getHotel());
+                }
+            } catch (LazyInitializationException e) {
+                System.err.println(e.getMessage());
+            }
         }
 
         return this;
