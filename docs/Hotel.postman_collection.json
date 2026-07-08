@@ -7,6 +7,132 @@
   },
   "item": [
     {
+      "name": "promotionsale",
+      "item": [
+        {
+          "name": "PromotionSale findAll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/promotionsale",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotionsale"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PromotionSale findbyid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/promotionsale/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotionsale",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PromotionSale insert",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"proId\": 1,\n    \"saleDes\": \"기본 15% + 얼리버드\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/promotionsale",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotionsale"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PromotionSale Update",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"proId\": 1,\n    \"saleDes\": \"1박당 차감\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/promotionsale/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotionsale",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PromotionSale deletebyid",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/promotionsale/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotionsale",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Rooms",
       "item": [
         {
@@ -176,6 +302,29 @@
                 "api",
                 "v1",
                 "room",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "room pageByHotelId",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/v1/room/hotel/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "v1",
+                "room",
+                "hotel",
                 "1"
               ]
             }
@@ -1340,6 +1489,124 @@
               ]
             },
             "description": "Generated from cURL: curl -X DELETE http://localhost:8181/api/v1/user/1"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "promotion",
+      "item": [
+        {
+          "name": "Promotion findAll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/promotion",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotion"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Promotion findbyid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/promotion/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotion",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Promotion insert",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"roomId\": 1,\n    \"name\": \"여름 성수기 특가\",\n    \"description\": \"얼리버드 예약 시 최대 30% 할인\",\n    \"disType\": \"RATE\",\n    \"disValue\": 30,\n    \"startDate\": \"2026-07-01T00:00:00\",\n    \"endDate\": \"2026-08-31T23:59:59\",\n    \"resCount\": 0,\n    \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/promotion/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotion",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Promotion Update",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/promotion/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotion",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Promotion deletebyid",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/promotion/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotion",
+                "1"
+              ]
+            }
           },
           "response": []
         }
