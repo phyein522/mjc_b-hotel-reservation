@@ -4,7 +4,13 @@
 
 <mapper namespace="com.mjc.hotel.student.mapper.BookingMapper">
 
-    <select id="getBookings" resultType="com.mjc.hotel.bookings.BookingDto">
+    <select id="getUser" resultType="com.mjc.hotel.user.dto.UserDto">
+        SELECT *
+        FROM users
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="getBookingsByUserId" resultType="com.mjc.hotel.bookings.BookingDto">
         SELECT *
         FROM bookings
         WHERE user_id = #{userId}
@@ -14,6 +20,14 @@
         SELECT *
         FROM rooms
         WHERE room_id = #{roomId}
+    </select>
+
+    <select id="getRoomImages" resultType="com.mjc.hotel.room_images.dto.RoomImageDto">
+        SELECT room_images.*
+        FROM room_images
+        INNER JOIN rooms
+        ON room_images.room_id = rooms.room_id
+        WHERE rooms.room_id = #{roomId}
     </select>
 
     <select id="getHotel" resultType="com.mjc.hotel.hotels.HotelDto">
@@ -28,6 +42,14 @@
         INNER JOIN rooms
         ON hotels.hotel_id = rooms.hotel_id
         WHERE rooms.room_id = #{roomId}
+    </select>
+
+    <select id="getHotelImages" resultType="com.mjc.hotel.hotelsimage.HotelImageDto">
+        SELECT hotel_images.*
+        FROM hotel_images
+        INNER JOIN hotels
+        ON hotel_images.hotel_id = hotels.hotel_id
+        WHERE hotels.hotel_id = #{hotelId}
     </select>
 
 </mapper>

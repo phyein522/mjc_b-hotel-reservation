@@ -1,12 +1,17 @@
 package com.mjc.hotel.bookings;
 
 import com.mjc.hotel.hotels.HotelDto;
+import com.mjc.hotel.hotelsimage.HotelImageDto;
+import com.mjc.hotel.room_images.dto.RoomImageDto;
+import com.mjc.hotel.rooms.dto.RoomDto;
+import com.mjc.hotel.user.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -26,8 +31,7 @@ public class BookingService {
                 , insertEntity.getCheckoutDate()
         ));
 
-        HotelDto findHotel = this.getHotelByRoomId(insertEntity.getRoomId());
-        insertEntity.setHotelId(findHotel.getHotelId());
+        HotelDto findHotel = this.bookingMapper.getHotelByRoomId(insertEntity.getRoomId());
         insertEntity.setCheckinTime(findHotel.getCheckIn());
         insertEntity.setCheckoutTime(findHotel.getCheckOut());
 
@@ -58,17 +62,23 @@ public class BookingService {
         return sb.toString();   //SN-yyyy-MMdd-0000
     }
 
-    public HotelDto getHotelByRoomId(Long roomId) {
-        HotelDto result = this.bookingMapper.getHotelByRoomId(roomId);
-        return result;
-    }
-
     public Integer calculateNights(LocalDate checkinDate, LocalDate checkoutDate) {
         return Math.toIntExact(ChronoUnit.DAYS.between(checkinDate, checkoutDate));
     }
 
-    public List<BookingDto> findAllByUserId(Long userId) {
-        List<BookingDto> result = this.bookingMapper.getBookings(userId);
+    public List<BookingResponseDto> findAllByUserId(Long userId) {
+        UserDto user = this.bookingMapper.getUser(userId);
+
+        List<BookingDto> bookings = this.bookingMapper.getBookingsByUserId(userId);
+        List<BookingResponseDto> result = new ArrayList<>();
+        for(BookingDto booking : bookings) {
+            RoomDto room = this.bookingMapper.getRoom(booking.getRoomId());
+            List<RoomImageDto> roomImages = this.bookingMapper.getRoomImages(room.getRoomId());
+            HotelDto hotel = this.bookingMapper.getHotelByRoomId(booking.getRoomId());
+            List<HotelImageDto> hotelImages = this.bookingMapper.getHotelImages(hotel.getHotelId());
+            result.add(new BookingResponseDto(booking, user, room, roomImages, hotel, hotelImages));
+        }
+
         return result;
     }
 

@@ -40,9 +40,6 @@ public class BookingDto extends BaseDto implements IBooking {
     private Long roomId;
     private RoomDto room;
 
-    private Long hotelId;
-    private HotelDto hotel;
-
     @Override
     public Long getUserId() {
         if(this.user != null) {
@@ -73,21 +70,5 @@ public class BookingDto extends BaseDto implements IBooking {
             this.room = new RoomDto();
         }
         this.room.setRoomId(this.roomId);
-    }
-
-    @Override
-    public Long getHotelId() {
-        if(this.hotel != null) {
-            return this.hotel.getHotelId();
-        }
-        return this.hotelId;
-    }
-    @Override
-    public void setHotelId(Long hotelId) {
-        this.hotelId = hotelId;
-        if(this.hotel == null) {
-            this.hotel = new HotelDto();
-        }
-        this.hotel.setHotelId(this.hotelId);
     }
 }

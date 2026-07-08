@@ -64,9 +64,6 @@ public interface IBooking extends IBase {
     Long getRoomId();
     void setRoomId(Long roomId);
 
-    Long getHotelId();
-    void setHotelId(Long hotelId);
-
     default IBooking copyMembers(IBooking src, boolean forced) {
         if(src == null) {
             return this;
@@ -127,9 +124,6 @@ public interface IBooking extends IBase {
         }
         if(forced || src.getRoomId() != null) {
             this.setRoomId(src.getRoomId());
-        }
-        if(forced || src.getHotelId() != null) {
-            this.setHotelId(src.getHotelId());
         }
         return this;
     }

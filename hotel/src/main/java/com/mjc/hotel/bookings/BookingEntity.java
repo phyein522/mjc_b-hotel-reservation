@@ -83,12 +83,6 @@ public class BookingEntity extends BaseEntity implements IBooking {
     @JoinColumn(name = "room_id", nullable = false)
     private RoomEntity room;
 
-    @Transient
-    private Long hotelId;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hotel_id", nullable = false)
-    private HotelEntity hotel;
-
     @Override
     public Long getUserId() {
         if(this.user != null) {
@@ -119,21 +113,5 @@ public class BookingEntity extends BaseEntity implements IBooking {
             this.room = new RoomEntity();
         }
         this.room.setRoomId(this.roomId);
-    }
-
-    @Override
-    public Long getHotelId() {
-        if(this.hotel != null) {
-            return this.hotel.getHotelId();
-        }
-        return this.hotelId;
-    }
-    @Override
-    public void setHotelId(Long hotelId) {
-        this.hotelId = hotelId;
-        if(this.hotel == null) {
-            this.hotel = new HotelEntity();
-        }
-        this.hotel.setHotelId(this.hotelId);
     }
 }

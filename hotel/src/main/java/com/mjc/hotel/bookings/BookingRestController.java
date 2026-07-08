@@ -22,8 +22,8 @@ public class BookingRestController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<ApiResponse<List<BookingDto>>> findAllByUserId(@PathVariable Long userId) {
-        List<BookingDto> result = this.bookingService.findAllByUserId(userId);
+    public ResponseEntity<ApiResponse<List<BookingResponseDto>>> findAllByUserId(@PathVariable Long userId) {
+        List<BookingResponseDto> result = this.bookingService.findAllByUserId(userId);
         return ResponseEntity.ok().body(
                 new ApiResponse<>(ResponseCode.SELECT_OK, "bookings select ok", result)
         );
