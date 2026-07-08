@@ -1,10 +1,11 @@
 package com.mjc.hotel.bookings;
 
 import com.mjc.hotel.hotels.HotelDto;
-import com.mjc.hotel.hotelsimage.HotelImageDto;
-import com.mjc.hotel.room_images.dto.RoomImageDto;
+import com.mjc.hotel.hotelsimage.HotelImageResponseDto;
+import com.mjc.hotel.room_images.dto.RoomImageResponseDto;
 import com.mjc.hotel.rooms.dto.RoomDto;
 import com.mjc.hotel.user.dto.UserDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +17,10 @@ import java.util.List;
 import java.util.Random;
 
 @Service
+@RequiredArgsConstructor
 public class BookingService {
     @Autowired private BookingRepository bookingRepository;
-    @Autowired private BookingMapper bookingMapper;
+    private final BookingMapper bookingMapper;
 
     public BookingDto insert(BookingDto insertDto) {
         BookingEntity insertEntity = (BookingEntity)new BookingEntity().copyMembers(insertDto, true);
@@ -73,12 +75,12 @@ public class BookingService {
         List<BookingResponseDto> result = new ArrayList<>();
         for(BookingDto booking : bookings) {
             RoomDto room = this.bookingMapper.getRoom(booking.getRoomId());
-            List<RoomImageDto> roomImages = this.bookingMapper.getRoomImages(room.getRoomId());
+            List<RoomImageResponseDto> roomImages = this.bookingMapper.getRoomImages(room.getRoomId());
             HotelDto hotel = this.bookingMapper.getHotelByRoomId(booking.getRoomId());
-            List<HotelImageDto> hotelImages = this.bookingMapper.getHotelImages(hotel.getHotelId());
+            List<HotelImageResponseDto> hotelImages = this.bookingMapper.getHotelImages(hotel.getHotelId());
             result.add(new BookingResponseDto(booking, user, room, roomImages, hotel, hotelImages));
         }
-
+        //TODO: url도 같이 넘어오는지 테스트 시 확인
         return result;
     }
 

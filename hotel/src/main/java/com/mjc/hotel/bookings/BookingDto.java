@@ -1,7 +1,6 @@
 package com.mjc.hotel.bookings;
 
 import com.mjc.hotel.common.dto.BaseDto;
-import com.mjc.hotel.hotels.HotelDto;
 import com.mjc.hotel.rooms.dto.RoomDto;
 import com.mjc.hotel.user.dto.UserDto;
 import lombok.*;

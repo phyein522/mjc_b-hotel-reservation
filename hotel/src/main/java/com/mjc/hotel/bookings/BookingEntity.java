@@ -1,7 +1,6 @@
 package com.mjc.hotel.bookings;
 
 import com.mjc.hotel.common.dto.BaseEntity;
-import com.mjc.hotel.hotels.HotelEntity;
 import com.mjc.hotel.rooms.dto.RoomEntity;
 import com.mjc.hotel.user.entity.User;
 import jakarta.persistence.*;
@@ -29,6 +28,7 @@ public class BookingEntity extends BaseEntity implements IBooking {
     @Column(nullable = false, length = 100)
     private String guestName;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Nationality nationality;
 

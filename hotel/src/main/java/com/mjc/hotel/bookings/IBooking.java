@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@tools.jackson.databind.annotation.JsonDeserialize(as = BookingDto.class)
 public interface IBooking extends IBase {
     Long getBookingId();
     void setBookingId(Long bookingId);
