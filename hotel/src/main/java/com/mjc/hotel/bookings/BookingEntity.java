@@ -28,7 +28,6 @@ public class BookingEntity extends BaseEntity implements IBooking {
     @Column(nullable = false, length = 100)
     private String guestName;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Nationality nationality;
 

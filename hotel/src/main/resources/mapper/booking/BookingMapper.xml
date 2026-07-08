@@ -2,28 +2,107 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.mjc.hotel.student.mapper.BookingMapper">
+<mapper namespace="com.mjc.hotel.bookings.BookingMapper">
 
     <select id="getUser" resultType="com.mjc.hotel.user.dto.UserDto">
-        SELECT *
+        SELECT
+            user_id AS userId,
+            email AS email,
+            password AS password,
+            name AS name,
+            phone AS phone,
+            role AS role,
+            status AS status,
+            membership AS membership,
+            social_login AS socialLogin,
+            social_login_id AS socialLoginId,
+            created_at AS createdAt,
+            modified_at AS modifiedAt
         FROM users
         WHERE user_id = #{userId}
     </select>
 
     <select id="getBookingsByUserId" resultType="com.mjc.hotel.bookings.BookingDto">
-        SELECT *
+        SELECT
+            booking_id AS bookingId,
+            booking_no AS bookingNo,
+            guest_name AS guestName,
+            CASE nationality
+                WHEN 0 THEN 'OTHER'
+                WHEN 1 THEN 'KOREA'
+                WHEN 2 THEN 'US'
+                WHEN 3 THEN 'CHINA'
+                WHEN 4 THEN 'JAPAN'
+                WHEN 5 THEN 'TAIWAN'
+                WHEN 6 THEN 'HONG_KONG'
+                WHEN 7 THEN 'PHILIPPINES'
+                WHEN 8 THEN 'VIETNAM'
+                WHEN 9 THEN 'SINGAPORE'
+            END AS nationality,
+            guest_phone AS guestPhone,
+            guest_email AS guestEmail,
+            special_request AS specialRequest,
+            nights AS nights,
+            adult_count AS adultCount,
+            child_count AS childCount,
+            checkin_date AS checkinDate,
+            checkout_date AS checkoutDate,
+            checkin_time AS checkinTime,
+            checkout_time AS checkoutTime,
+            point AS point,
+            cancelled_at AS cancelledAt,
+            total_amount AS totalAmount,
+            user_id AS userId,
+            room_id AS roomId
         FROM bookings
         WHERE user_id = #{userId}
     </select>
 
     <select id="getRoom" resultType="com.mjc.hotel.rooms.dto.RoomDto">
-        SELECT *
+        SELECT
+            room_id AS roomId,
+            name AS name,
+            number AS number,
+            floor AS floor,
+            size AS size,
+            base_price AS basePrice,
+            max_adult AS maxAdult,
+            max_child AS maxChild,
+            is_active AS isActive,
+            CASE room_type
+                WHEN 0 THEN 'Standard'
+                WHEN 1 THEN 'Sweet'
+                WHEN 2 THEN 'Deluxe'
+            END AS roomType,
+            CASE room_status
+                WHEN 0 THEN 'EnableReservation'
+                WHEN 1 THEN 'DisableReservation'
+            END AS roomStatus,
+            CASE room_view_option
+                WHEN 0 THEN 'CityView'
+                WHEN 1 THEN 'RiverView'
+                WHEN 2 THEN 'MountainView'
+                WHEN 3 THEN 'OceanView'
+            END AS roomViewOption,
+            CASE room_bed_option
+                WHEN 0 THEN 'Floor'
+                WHEN 1 THEN 'DoubleBed'
+                WHEN 2 THEN 'QueenBed'
+            END AS roomBedOption,
+            hotel_id AS hotelId
         FROM rooms
         WHERE room_id = #{roomId}
     </select>
 
-    <select id="getRoomImages" resultType="com.mjc.hotel.room_images.dto.RoomImageDto">
-        SELECT room_images.*
+    <select id="getRoomImages" resultType="com.mjc.hotel.room_images.dto.RoomImageResponseDto">
+        SELECT
+            room_images.room_image_id AS roomImageId,
+            room_images.file_name AS fileName,
+            room_images.size AS size,
+            room_images.ext AS ext,
+            room_images.store_name AS storeName,
+            room_images.path AS path,
+            room_images.room_id AS roomId
         FROM room_images
         INNER JOIN rooms
         ON room_images.room_id = rooms.room_id
@@ -31,21 +110,69 @@
     </select>
 
     <select id="getHotel" resultType="com.mjc.hotel.hotels.HotelDto">
-        SELECT *
+        SELECT
+            hotel_id AS hotelId,
+            name AS name,
+            description AS description,
+            address AS address,
+            city AS city,
+            zip_code AS zipCode,
+            phone AS phone,
+            email AS email,
+            check_in AS checkIn,
+            check_out AS checkOut,
+            star_rate AS starRate,
+            is_active AS isActive,
+            latitude AS latitude,
+            longitude AS longitude,
+            CASE type
+                WHEN 0 THEN 'HOTEL'
+                WHEN 1 THEN 'RESORT'
+                WHEN 2 THEN 'PENSION_GUESTHOUSE'
+            END AS type,
+            created_at AS createdAt,
+            modified_at AS modifiedAt
         FROM hotels
         WHERE hotel_id = #{hotelId}
     </select>
 
     <select id="getHotelByRoomId" resultType="com.mjc.hotel.hotels.HotelDto">
-        SELECT hotels.*
+        SELECT
+            hotels.hotel_id AS hotelId,
+            hotels.name AS name,
+            hotels.description AS description,
+            hotels.address AS address,
+            hotels.city AS city,
+            hotels.zip_code AS zipCode,
+            hotels.phone AS phone,
+            hotels.email AS email,
+            hotels.check_in AS checkIn,
+            hotels.check_out AS checkOut,
+            hotels.star_rate AS starRate,
+            hotels.is_active AS isActive,
+            hotels.latitude AS latitude,
+            hotels.longitude AS longitude,
+            CASE hotels.type
+                WHEN 0 THEN 'HOTEL'
+                WHEN 1 THEN 'RESORT'
+                WHEN 2 THEN 'PENSION_GUESTHOUSE'
+            END AS type,
+            hotels.created_at AS createdAt,
+            hotels.modified_at AS modifiedAt
         FROM hotels
         INNER JOIN rooms
         ON hotels.hotel_id = rooms.hotel_id
         WHERE rooms.room_id = #{roomId}
     </select>
 
-    <select id="getHotelImages" resultType="com.mjc.hotel.hotelsimage.HotelImageDto">
-        SELECT hotel_images.*
+    <select id="getHotelImages" resultType="com.mjc.hotel.hotelsimage.HotelImageResponseDto">
+        SELECT
+            hotel_images.image_id AS hotelImageId,
+            hotel_images.file_name AS fileName,
+            hotel_images.size AS size,
+            hotel_images.ext AS ext,
+            hotel_images.store_name AS storeName,
+            hotel_images.hotel_id AS hotelId
         FROM hotel_images
         INNER JOIN hotels
         ON hotel_images.hotel_id = hotels.hotel_id

@@ -1,6 +1,6 @@
 package com.mjc.hotel.payment.entity;
 
-import com.mjc.hotel.booking.entity.Booking;
+import com.mjc.hotel.bookings.BookingEntity;
 import lombok.*;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -21,7 +21,7 @@ public class Payment {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_id", nullable = false)
-    private Booking booking;
+    private BookingEntity booking;
 
     @Column(name = "payment_method", nullable = false, length = 30)
     private String paymentMethod;
