@@ -111,32 +111,6 @@
         GROUP BY r.room_type
     </select>
 
-    <!-- 7. 채널별 예약 및 매출 비중 조회 -->
-    <select id="getChannelShares" resultType="com.mjc.hotel.sales_analysis.dto.ChannelShareDto">
-        SELECT 
-            b.channel_id as channelId,
-            COALESCE(c.채널명, '기타') as channelName,
-            COUNT(b.booking_id) as bookingCount,
-            ROUND(
-                (COUNT(b.booking_id) * 100.0) / 
-                NULLIF(SUM(COUNT(b.booking_id)) OVER(), 0), 
-                2
-            ) as bookingShareRate,
-            SUM(p.amount) as revenue,
-            ROUND(
-                (SUM(p.amount) * 100.0) / 
-                NULLIF(SUM(SUM(p.amount)) OVER(), 0), 
-                2
-            ) as revenueShareRate
-        FROM bookings b
-        JOIN payments p ON b.booking_id = p.booking_id
-        LEFT JOIN channels c ON b.channel_id = c.채널ID
-        WHERE b.hotel_id = #{hotelId}
-          AND p.payment_status = 'PAID'
-          AND p.paid_at BETWEEN #{startDate} AND #{endDate}
-        GROUP BY b.channel_id, c.채널명
-        ORDER BY revenue DESC
-    </select>
 
     <!-- 8. 매출 상위 1~5위 예약 조회 -->
     <select id="getTopBookings" resultType="com.mjc.hotel.sales_analysis.dto.TopBookingDto">
