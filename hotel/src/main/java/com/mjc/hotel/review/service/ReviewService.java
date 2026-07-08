@@ -135,6 +135,17 @@ public class ReviewService {
         this.deletePhotos(reviewId);
         this.reviewRepository.deleteById(reviewId);
     }
+    @Transactional(readOnly = true)
+    public Page<ReviewDto> search(String keyword, Pageable pageable) {
+        Page<Review> page = hasText(keyword)
+                ? this.reviewRepository.findAllByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(keyword.trim(), keyword.trim(), pageable)
+                : this.reviewRepository.findAll(pageable);
+        List<ReviewDto> list = page.getContent()
+                .stream()
+                .map(this::toDtoWithDetails)
+                .toList();
+        return new PageImpl<>(list, pageable, page.getTotalElements());
+    }
 
     private Review findReview(Long reviewId) {
         return this.reviewRepository.findById(reviewId)
@@ -371,5 +382,9 @@ public class ReviewService {
 
     private Long defaultCount(Long count) {
         return count == null ? 0L : count;
+    }
+
+    private boolean hasText(String value) {
+        return value != null && !value.trim().isEmpty();
     }
 }

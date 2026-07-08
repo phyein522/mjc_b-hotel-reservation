@@ -27,6 +27,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.EnumMap;
 import java.util.LinkedHashSet;
@@ -157,6 +160,37 @@ class ReviewServiceTest {
         assertThat(captor.getValue().getViewCount()).isZero();
         assertThat(captor.getValue().getLikeCount()).isZero();
         assertThat(captor.getValue().getDislikeCount()).isZero();
+    }
+
+    @Test
+    void searchReturnsAllReviewsWhenKeywordIsBlank() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Review review = savedReview(10L);
+        stubReferences();
+
+        when(reviewRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(review), pageable, 1));
+        when(reviewPhotoRepository.findByReviewIdOrderByPhotoOrderAscIdAsc(10L)).thenReturn(List.of());
+
+        assertThat(reviewService.search(" ", pageable).getContent())
+                .hasSize(1)
+                .extracting("title")
+                .containsExactly("Good stay");
+    }
+
+    @Test
+    void searchFindsReviewsByTitleOrContentKeyword() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Review review = savedReview(10L);
+        stubReferences();
+
+        when(reviewRepository.findAllByTitleContainingIgnoreCaseOrContentContainingIgnoreCase("clean", "clean", pageable))
+                .thenReturn(new PageImpl<>(List.of(review), pageable, 1));
+        when(reviewPhotoRepository.findByReviewIdOrderByPhotoOrderAscIdAsc(10L)).thenReturn(List.of());
+
+        assertThat(reviewService.search(" clean ", pageable).getContent())
+                .hasSize(1)
+                .extracting("title")
+                .containsExactly("Good stay");
     }
 
     private void stubReferences() {

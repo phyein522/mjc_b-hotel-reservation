@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -41,6 +42,15 @@ public class ReviewRestController {
         ReviewDto resultDto = this.reviewService.update(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.make(ResponseCode.UPDATE_OK, "ok", resultDto)
+        );
+    }
+    @GetMapping
+    public ResponseEntity<ApiResponse<Page<ReviewDto>>> search(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @PageableDefault(size = 10, page = 0, sort = "reviewId", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<ReviewDto> page = this.reviewService.search(keyword, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ApiResponse.make(ResponseCode.SELECT_OK, "ok", page)
         );
     }
 
