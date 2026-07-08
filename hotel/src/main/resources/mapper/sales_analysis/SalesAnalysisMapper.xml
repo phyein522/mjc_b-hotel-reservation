@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mjc.hotel.sales_analysis.mapper.SalesAnalysisMapper">
+
+    <!-- 1. 기본 매출, 예약건수, 총 판매 박수 집계 -->
+    <select id="getBasicMetrics" resultType="com.mjc.hotel.sales_analysis.dto.SalesDashboardQueryDto">
+        SELECT 
+            (SELECT COALESCE(SUM(p.amount), 0)
+             FROM bookings b
+             JOIN payments p ON b.booking_id = p.booking_id
+             WHERE b.hotel_id = #{hotelId}
+               AND p.payment_status = 'PAID'
+               AND p.paid_at BETWEEN #{startDate} AND #{endDate}) AS totalRevenue,
+               
+            (SELECT COUNT(*)
+             FROM bookings b
+             WHERE b.hotel_id = #{hotelId}
+               AND b.cancelled_at IS NULL
+               AND b.check_in_date BETWEEN #{startDate} AND #{endDate}) AS bookingCount,
+               
+            (SELECT COALESCE(SUM(b.nights), 0)
+             FROM bookings b
+             WHERE b.hotel_id = #{hotelId}
+               AND b.cancelled_at IS NULL
+               AND b.check_in_date BETWEEN #{startDate} AND #{endDate}) AS totalNights
+    </select>
+
+    <!-- 2. 오늘 점유된 객실 수 조회 -->
+    <select id="getTodayOccupiedRooms" resultType="long">
+        SELECT COUNT(DISTINCT b.room_id)
+        FROM bookings b
+        WHERE b.hotel_id = #{hotelId}
+          AND b.cancelled_at IS NULL
+          AND b.check_in_date &lt;= #{today}
+          AND b.check_out_date &gt; #{today}
+    </select>
+
+    <!-- 3. 고객 재방문율 산출 -->
+    <select id="getReturningGuestRate" resultType="double">
+        SELECT 
+            CASE 
+                WHEN COUNT(DISTINCT b.user_id) = 0 THEN 0.0
+                ELSE (COUNT(DISTINCT CASE WHEN prev.booking_id IS NOT NULL THEN b.user_id END) * 100.0) / COUNT(DISTINCT b.user_id)
+            END as returningRate
+        FROM bookings b
+        LEFT JOIN bookings prev ON b.user_id = prev.user_id 
+          AND b.hotel_id = prev.hotel_id
+          AND prev.check_out_date &lt;= b.check_in_date
+          AND prev.cancelled_at IS NULL
+        WHERE b.hotel_id = #{hotelId}
+          AND b.cancelled_at IS NULL
+          AND b.check_in_date BETWEEN #{startDate} AND #{endDate}
+    </select>
+
+    <!-- 4. VIP 고객 재방문율 산출 -->
+    <select id="getVipReturningGuestRate" resultType="double">
+        SELECT 
+            CASE 
+                WHEN COUNT(DISTINCT b.user_id) = 0 THEN 0.0
+                ELSE (COUNT(DISTINCT CASE WHEN prev.booking_id IS NOT NULL THEN b.user_id END) * 100.0) / COUNT(DISTINCT b.user_id)
+            END as vipReturningRate
+        FROM bookings b
+        JOIN users u ON b.user_id = u.user_id
+        LEFT JOIN bookings prev ON b.user_id = prev.user_id 
+          AND b.hotel_id = prev.hotel_id
+          AND prev.check_out_date &lt;= b.check_in_date
+          AND prev.cancelled_at IS NULL
+        WHERE b.hotel_id = #{hotelId}
+          AND b.cancelled_at IS NULL
+          AND u.Membership = 'VIP'
+          AND b.check_in_date BETWEEN #{startDate} AND #{endDate}
+    </select>
+
+    <!-- 5. 최근 7개월 월 매출액 추이 조회 -->
+    <select id="getMonthlyRevenueTrend" resultType="com.mjc.hotel.sales_analysis.dto.MonthlyRevenueDto">
+        SELECT 
+            DATE_FORMAT(p.paid_at, '%Y-%m') as yearMonth,
+            SUM(p.amount) as revenue
+        FROM bookings b
+        JOIN payments p ON b.booking_id = p.booking_id
+        WHERE b.hotel_id = #{hotelId}
+          AND p.payment_status = 'PAID'
+          AND p.paid_at &gt;= #{startDate}
+        GROUP BY DATE_FORMAT(p.paid_at, '%Y-%m')
+        ORDER BY yearMonth ASC
+    </select>
+
+    <!-- 6. 객실 유형별 보유 개수 및 매출액 조회 -->
+    <select id="getRoomTypeRevenue" resultType="com.mjc.hotel.sales_analysis.dto.RoomTypeRevenueDto">
+        SELECT 
+            CASE r.room_type
+                WHEN 0 THEN 'STANDARD'
+                WHEN 1 THEN 'SUITE'
+                WHEN 2 THEN 'DELUXE'
+                ELSE CAST(r.room_type AS CHAR)
+            END as roomTypeId,
+            CASE r.room_type
+                WHEN 0 THEN '스탠다드'
+                WHEN 1 THEN '스위트'
+                WHEN 2 THEN '디럭스'
+                ELSE '기타'
+            END as roomTypeName,
+            COUNT(DISTINCT r.room_id) as roomCount,
+            COALESCE(SUM(p.amount), 0) as revenue
+        FROM rooms r
+        LEFT JOIN bookings b ON r.room_id = b.room_id AND b.cancelled_at IS NULL AND b.check_in_date BETWEEN #{startDate} AND #{endDate}
+        LEFT JOIN payments p ON b.booking_id = p.booking_id AND p.payment_status = 'PAID'
+        WHERE r.hotel_id = #{hotelId}
+          AND r.is_active = TRUE
+        GROUP BY r.room_type
+    </select>
+
+    <!-- 7. 채널별 예약 및 매출 비중 조회 -->
+    <select id="getChannelShares" resultType="com.mjc.hotel.sales_analysis.dto.ChannelShareDto">
+        SELECT 
+            b.channel_id as channelId,
+            COALESCE(c.채널명, '기타') as channelName,
+            COUNT(b.booking_id) as bookingCount,
+            ROUND(
+                (COUNT(b.booking_id) * 100.0) / 
+                NULLIF(SUM(COUNT(b.booking_id)) OVER(), 0), 
+                2
+            ) as bookingShareRate,
+            SUM(p.amount) as revenue,
+            ROUND(
+                (SUM(p.amount) * 100.0) / 
+                NULLIF(SUM(SUM(p.amount)) OVER(), 0), 
+                2
+            ) as revenueShareRate
+        FROM bookings b
+        JOIN payments p ON b.booking_id = p.booking_id
+        LEFT JOIN channels c ON b.channel_id = c.채널ID
+        WHERE b.hotel_id = #{hotelId}
+          AND p.payment_status = 'PAID'
+          AND p.paid_at BETWEEN #{startDate} AND #{endDate}
+        GROUP BY b.channel_id, c.채널명
+        ORDER BY revenue DESC
+    </select>
+
+    <!-- 8. 매출 상위 1~5위 예약 조회 -->
+    <select id="getTopBookings" resultType="com.mjc.hotel.sales_analysis.dto.TopBookingDto">
+        SELECT 
+            ROW_NUMBER() OVER(ORDER BY p.amount DESC, b.nights DESC) as `rank`,
+            CONCAT(b.guest_last_name, b.guest_first_name) as guestName,
+            CONCAT(r.number, '호 (', r.name, ')') as roomName,
+            p.amount as amount,
+            b.nights as nights
+        FROM bookings b
+        JOIN payments p ON b.booking_id = p.booking_id
+        JOIN rooms r ON b.room_id = r.room_id
+        WHERE b.hotel_id = #{hotelId}
+          AND p.payment_status = 'PAID'
+          AND p.paid_at BETWEEN #{startDate} AND #{endDate}
+        ORDER BY p.amount DESC, b.nights DESC
+        LIMIT 5
+    </select>
+
+</mapper>
