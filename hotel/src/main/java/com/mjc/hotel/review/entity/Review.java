@@ -45,6 +45,9 @@ public class Review {
     @Column(name = "hotel_id")
     private Long hotelId;
 
+    @Column(name = "room_id")
+    private Long roomId;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "trip_type", length = 30)
     private ReviewTripType tripType;

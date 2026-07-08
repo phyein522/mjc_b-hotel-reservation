@@ -8,6 +8,7 @@ public record ReviewRequest(
         Long reservationId,
         Long userId,
         Long hotelId,
+        Long roomId,
         ReviewTripType tripType,
         Short viewCount,
         String title,
