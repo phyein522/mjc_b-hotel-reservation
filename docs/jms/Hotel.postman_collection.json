@@ -1,6 +1,6 @@
 {
   "info": {
-    "_postman_id": "dd0ccc35-d754-43eb-8a10-c53089485fc2",
+    "_postman_id": "94cd871b-da83-4705-9181-72d284c5eb95",
     "name": "Hotel",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "53674091"
@@ -307,6 +307,29 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "room pageByHotelId",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/v1/room/hotel/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "v1",
+                "room",
+                "hotel",
+                "1"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -603,26 +626,6 @@
       "name": "hotelsimage",
       "item": [
         {
-          "name": "Image findAll",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8989/api/hotelimage",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotelimage"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "Image findbyid",
           "request": {
             "method": "GET",
@@ -652,7 +655,7 @@
               "mode": "formdata",
               "formdata": [
                 {
-                  "key": "",
+                  "key": "file",
                   "type": "file",
                   "uuid": "d95c0f7b-1783-490f-a70b-f3ae714d21d2",
                   "src": "/Users/minsang/Desktop/hotel1.jpg"
@@ -660,38 +663,7 @@
               ]
             },
             "url": {
-              "raw": "http://localhost:8989/api/hotelimage",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotelimage"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Image Update",
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "body": {
-              "mode": "formdata",
-              "formdata": [
-                {
-                  "key": "",
-                  "type": "file",
-                  "uuid": "978339d6-114e-4f21-9b31-7ea6b61eb3bf",
-                  "src": "/Users/minsang/Desktop/hotel2.jpg"
-                }
-              ]
-            },
-            "url": {
-              "raw": "http://localhost:8989/api/hotelimage/1",
+              "raw": "http://localhost:8989/api/hotelimage/hotel/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -700,6 +672,40 @@
               "path": [
                 "api",
                 "hotelimage",
+                "hotel",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Image Update",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "978339d6-114e-4f21-9b31-7ea6b61eb3bf",
+                  "src": "/Users/minsang/Desktop/hotel1.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/hotelimage/image/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelimage",
+                "image",
                 "1"
               ]
             }
