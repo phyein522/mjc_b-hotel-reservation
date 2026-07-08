@@ -1,6 +1,7 @@
 package com.mjc.hotel.rooms.service;
 
 import com.mjc.hotel.common.FileUtil;
+import com.mjc.hotel.hotels.HotelEntity;
 import com.mjc.hotel.room_images.dto.RoomImageResponseDto;
 import com.mjc.hotel.room_images.service.RoomImageService;
 import com.mjc.hotel.rooms.dto.IRoom;
@@ -101,7 +102,9 @@ public class RoomService {
 	}
 
 	public Page<RoomDto> findAllByHotelIdEquals(Long hotelId, Pageable pageable) {
-		Page<RoomEntity> page = this.roomRepository.findAllByHotelIdEquals(hotelId, pageable);
+//		Page<RoomEntity> page = this.roomRepository.findAllByHotelIdEquals(hotelId, pageable);
+		HotelEntity hotelEntity = HotelEntity.builder().hotelId(hotelId).build();
+		Page<RoomEntity> page = this.roomRepository.findAllByHotelEquals(hotelEntity, pageable);
 		List<RoomDto> list = this.getListRoomDto(page.getContent());
 		return new PageImpl<>(list, pageable, page.getTotalElements());
 	}
