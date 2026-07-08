@@ -27,4 +27,7 @@ public class User extends BaseEntity {
     private String phone;
     private String socialLogin;
     private String socialLoginId;
+    private Status  status;
+    private Role role;
+    private Membership membership;
 }

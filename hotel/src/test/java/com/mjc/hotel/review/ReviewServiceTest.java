@@ -208,7 +208,7 @@ class ReviewServiceTest {
 
     private User user() {
         return User.builder()
-                .userId(2L)
+                .id(2L)
                 .name("Alice")
                 .email("alice@example.com")
                 .password("password")
