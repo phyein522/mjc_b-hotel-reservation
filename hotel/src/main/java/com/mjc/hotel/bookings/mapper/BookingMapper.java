@@ -1,5 +1,6 @@
-package com.mjc.hotel.bookings;
+package com.mjc.hotel.bookings.mapper;
 
+import com.mjc.hotel.bookings.BookingDto;
 import com.mjc.hotel.hotels.HotelDto;
 import com.mjc.hotel.hotelsimage.HotelImageResponseDto;
 import com.mjc.hotel.room_images.dto.RoomImageResponseDto;

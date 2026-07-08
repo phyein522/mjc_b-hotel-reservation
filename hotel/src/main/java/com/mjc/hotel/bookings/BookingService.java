@@ -1,11 +1,11 @@
 package com.mjc.hotel.bookings;
 
+import com.mjc.hotel.bookings.mapper.BookingMapper;
 import com.mjc.hotel.hotels.HotelDto;
 import com.mjc.hotel.hotelsimage.HotelImageResponseDto;
 import com.mjc.hotel.room_images.dto.RoomImageResponseDto;
 import com.mjc.hotel.rooms.dto.RoomDto;
 import com.mjc.hotel.user.dto.UserDto;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +17,11 @@ import java.util.List;
 import java.util.Random;
 
 @Service
-@RequiredArgsConstructor
 public class BookingService {
-    @Autowired private BookingRepository bookingRepository;
-    private final BookingMapper bookingMapper;
+    @Autowired
+    private BookingRepository bookingRepository;
+    @Autowired
+    private BookingMapper bookingMapper;
 
     public BookingDto insert(BookingDto insertDto) {
         BookingEntity insertEntity = (BookingEntity)new BookingEntity().copyMembers(insertDto, true);
