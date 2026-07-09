@@ -4,7 +4,7 @@ import com.mjc.hotel.common.dto.IBase;
 import com.mjc.hotel.hotels.IHotel;
 import org.hibernate.LazyInitializationException;
 
-@tools.jackson.databind.annotation.JsonDeserialize(as = HotelImageDto.class)
+@tools.jackson.databind.annotation.JsonDeserialize(as = HotelImageRequestDto.class)
 public interface IHotelImage extends IBase {
 
     Long getHotelImageId();
