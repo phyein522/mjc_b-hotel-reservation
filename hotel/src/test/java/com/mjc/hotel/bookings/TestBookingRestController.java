@@ -79,9 +79,7 @@ public class TestBookingRestController {
         sampleBookingDto.setCheckinTime(LocalTime.of(15, 0));
         sampleBookingDto.setCheckoutTime(LocalTime.of(11, 0));
 
-        sampleBookingDto.setPoint(3000);
         sampleBookingDto.setCancelledAt(null);
-        sampleBookingDto.setTotalAmount(300000);
 
         sampleBookingDto.setUserId(10L);
         sampleBookingDto.setRoomId(100L);
@@ -116,10 +114,10 @@ public class TestBookingRestController {
 
                 .andExpect(jsonPath("$.responseData.checkinDate").value(sampleBookingDto.getCheckinDate().toString()))
                 .andExpect(jsonPath("$.responseData.checkoutDate").value(sampleBookingDto.getCheckoutDate().toString()))
+                .andExpect(jsonPath("$.responseData.checkinTime").value(sampleBookingDto.getCheckinTime().toString()+":00"))
+                .andExpect(jsonPath("$.responseData.checkoutTime").value(sampleBookingDto.getCheckoutTime().toString()+":00"))
 
-                .andExpect(jsonPath("$.responseData.point").value(sampleBookingDto.getPoint()))
                 .andExpect(jsonPath("$.responseData.cancelledAt").doesNotExist())
-                .andExpect(jsonPath("$.responseData.totalAmount").value(sampleBookingDto.getTotalAmount()))
 
                 .andExpect(jsonPath("$.responseData.userId").value(sampleBookingDto.getUserId()))
                 .andExpect(jsonPath("$.responseData.roomId").value(sampleBookingDto.getRoomId()));
@@ -137,8 +135,10 @@ public class TestBookingRestController {
          * BookingResponseDto 는 booking, user, room, roomImages, hotel, hotelImages 등
          * 여러 DTO를 포함하는 응답 DTO이다.
          *
-         * 여기서는 BookingRestController 가 Service 결과를 ApiResponse 로 감싸서
-         * 정상 반환하는지만 확인하기 위해 빈 리스트를 사용한다.
+         * Controller 단위 테스트에서는 Service가 반환한 결과를
+         * ApiResponse 형태로 정상 반환하는지 확인하면 된다.
+         *
+         * 따라서 여기서는 빈 리스트를 사용한다.
          */
         List<BookingResponseDto> responseList = List.of();
 
@@ -181,9 +181,7 @@ public class TestBookingRestController {
         cancelBookingDto.setCheckinTime(sampleBookingDto.getCheckinTime());
         cancelBookingDto.setCheckoutTime(sampleBookingDto.getCheckoutTime());
 
-        cancelBookingDto.setPoint(sampleBookingDto.getPoint());
         cancelBookingDto.setCancelledAt(LocalDateTime.of(2026, 7, 9, 10, 30));
-        cancelBookingDto.setTotalAmount(sampleBookingDto.getTotalAmount());
 
         cancelBookingDto.setUserId(sampleBookingDto.getUserId());
         cancelBookingDto.setRoomId(sampleBookingDto.getRoomId());
@@ -211,10 +209,10 @@ public class TestBookingRestController {
 
                 .andExpect(jsonPath("$.responseData.checkinDate").value(cancelBookingDto.getCheckinDate().toString()))
                 .andExpect(jsonPath("$.responseData.checkoutDate").value(cancelBookingDto.getCheckoutDate().toString()))
+                .andExpect(jsonPath("$.responseData.checkinTime").value(cancelBookingDto.getCheckinTime().toString()+":00"))
+                .andExpect(jsonPath("$.responseData.checkoutTime").value(cancelBookingDto.getCheckoutTime().toString()+":00"))
 
-                .andExpect(jsonPath("$.responseData.point").value(cancelBookingDto.getPoint()))
                 .andExpect(jsonPath("$.responseData.cancelledAt").exists())
-                .andExpect(jsonPath("$.responseData.totalAmount").value(cancelBookingDto.getTotalAmount()))
 
                 .andExpect(jsonPath("$.responseData.userId").value(cancelBookingDto.getUserId()))
                 .andExpect(jsonPath("$.responseData.roomId").value(cancelBookingDto.getRoomId()));

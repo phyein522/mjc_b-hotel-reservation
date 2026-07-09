@@ -85,7 +85,7 @@
             is_active AS isActive,
             CASE room_type
                 WHEN 0 THEN 'Standard'
-                WHEN 1 THEN 'Sweet'
+                WHEN 1 THEN 'Suite'
                 WHEN 2 THEN 'Deluxe'
             END AS roomType,
             CASE room_status
