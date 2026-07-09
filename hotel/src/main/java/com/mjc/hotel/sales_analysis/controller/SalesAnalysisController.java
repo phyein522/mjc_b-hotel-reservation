@@ -38,14 +38,6 @@ public class SalesAnalysisController {
         return ResponseEntity.ok(ApiResponse.make(ResponseCode.SELECT_OK, "ok", response));
     }
 
-    @GetMapping("/channels")
-    public ResponseEntity<ApiResponse<List<ChannelShareDto>>> getChannelShares(
-            @RequestParam Long hotelId,
-            @RequestParam String targetMonth) {
-        log.info("[매출 분석 API] 채널별 매출 비중 조회 - hotelId: {}, targetMonth: {}", hotelId, targetMonth);
-        List<ChannelShareDto> response = salesAnalysisService.getChannelShares(hotelId, targetMonth);
-        return ResponseEntity.ok(ApiResponse.make(ResponseCode.SELECT_OK, "ok", response));
-    }
 
     @GetMapping("/top-bookings")
     public ResponseEntity<ApiResponse<List<TopBookingDto>>> getTopBookings(

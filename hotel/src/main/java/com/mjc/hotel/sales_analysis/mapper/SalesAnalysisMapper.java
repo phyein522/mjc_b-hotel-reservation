@@ -43,15 +43,12 @@ public interface SalesAnalysisMapper {
             @Param("startDate") String startDate,
             @Param("endDate") String endDate);
 
-    // 7. 채널별 예약 및 매출 비중 조회
-    List<ChannelShareDto> getChannelShares(
-            @Param("hotelId") Long hotelId,
-            @Param("startDate") String startDate,
-            @Param("endDate") String endDate);
-
     // 8. 매출 상위 1~5위 예약 조회
     List<TopBookingDto> getTopBookings(
             @Param("hotelId") Long hotelId,
             @Param("startDate") String startDate,
             @Param("endDate") String endDate);
+
+    // 9. 호텔 이름 조회 (JPA 명명 규칙 에러 우회용)
+    String getHotelName(@Param("hotelId") Long hotelId);
 }
