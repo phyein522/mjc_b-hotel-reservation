@@ -2,6 +2,8 @@ package com.mjc.hotel.hotels;
 
 
 import com.mjc.hotel.common.dto.IBase;
+import com.mjc.hotel.hotelsimage.HotelImageRequestDto;
+
 import java.time.LocalTime;
 
 @tools.jackson.databind.annotation.JsonDeserialize(as = HotelDto.class)
@@ -36,8 +38,8 @@ public interface IHotel extends IBase {
     LocalTime getCheckOut();
     void setCheckOut(LocalTime checkOut);
 
-    Short getStarRate();
-    void setStarRate(Short starRate);
+    int getStarRate();
+    void setStarRate(int starRate);
 
     Boolean getIsActive();
     void setIsActive(Boolean isActive);
@@ -86,7 +88,7 @@ public interface IHotel extends IBase {
         if ( forced || source.getCheckOut() != null ) {
             this.setCheckOut(source.getCheckOut());
         }
-        if ( forced || source.getStarRate() != null ) {
+        if ( forced || source.getStarRate() != 0 ) {
             this.setStarRate(source.getStarRate());
         }
         if ( forced || source.getIsActive() != null ) {

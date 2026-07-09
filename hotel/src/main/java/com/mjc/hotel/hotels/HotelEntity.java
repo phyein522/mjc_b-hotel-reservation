@@ -47,7 +47,7 @@ public class HotelEntity extends BaseEntity implements IHotel {
     private LocalTime checkOut;
 
     @Column(comment = "별 등급")
-    private Short starRate;
+    private int starRate;
 
     @Column(nullable = false, comment = "운영 여부")
     private Boolean isActive;

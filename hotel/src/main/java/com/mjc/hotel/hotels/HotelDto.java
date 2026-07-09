@@ -24,7 +24,7 @@ public class HotelDto extends BaseDto implements IHotel{
     private String email;
     private LocalTime checkIn;
     private LocalTime checkOut;
-    private Short starRate;
+    private int starRate;
     private Boolean isActive;
     private String latitude;
     private String longitude;
