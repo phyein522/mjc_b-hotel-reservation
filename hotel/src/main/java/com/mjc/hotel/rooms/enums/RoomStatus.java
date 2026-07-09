@@ -15,6 +15,10 @@ public enum RoomStatus {
 	 * 예약불가
 	 */
 	, DisableReservation(20)
+	/**
+	 * 공사중
+	 */
+	, Construct(30)
 	;
 
 	private final int value;

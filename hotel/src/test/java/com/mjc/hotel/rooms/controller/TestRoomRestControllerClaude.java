@@ -1,5 +1,6 @@
 package com.mjc.hotel.rooms.controller;
 
+import com.mjc.hotel.common.Utils;
 import com.mjc.hotel.rooms.dto.RoomDto;
 import com.mjc.hotel.rooms.dto.RoomResponseWithImagesDto;
 import com.mjc.hotel.rooms.enums.RoomBedOption;
@@ -21,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -77,6 +79,8 @@ public class TestRoomRestControllerClaude {
 				.roomViewOption(RoomViewOption.CityView)
 				.roomBedOption(RoomBedOption.QueenBed)
 				.hotelId(10L)
+				.blockStartDate(LocalDate.of(2026,1,1))
+				.blockEndDate(LocalDate.of(2026,1,5))
 				.build();
 	}
 
@@ -105,6 +109,8 @@ public class TestRoomRestControllerClaude {
 				.andExpect(jsonPath("$.responseData.roomViewOption").value(SampleRoomDto.getRoomViewOption().toString()))
 				.andExpect(jsonPath("$.responseData.roomBedOption").value(SampleRoomDto.getRoomBedOption().toString()))
 				.andExpect(jsonPath("$.responseData.hotelId").value(SampleRoomDto.getHotelId()))
+				.andExpect(jsonPath("$.responseData.blockStartDate").value(Utils.getStringFormatFromLocalDate(SampleRoomDto.getBlockStartDate(), "yyyy-MM-dd")))
+				.andExpect(jsonPath("$.responseData.blockEndDate").value(Utils.getStringFormatFromLocalDate(SampleRoomDto.getBlockEndDate(), "yyyy-MM-dd")))
 		;
 
 		verify(roomService, times(1)).insert(any(RoomDto.class));
@@ -155,6 +161,8 @@ public class TestRoomRestControllerClaude {
 				.andExpect(jsonPath("$.responseData.roomDto.roomViewOption").value(SampleRoomDto.getRoomViewOption().toString()))
 				.andExpect(jsonPath("$.responseData.roomDto.roomBedOption").value(SampleRoomDto.getRoomBedOption().toString()))
 				.andExpect(jsonPath("$.responseData.roomDto.hotelId").value(SampleRoomDto.getHotelId()))
+				.andExpect(jsonPath("$.responseData.roomDto.blockStartDate").value(Utils.getStringFormatFromLocalDate(SampleRoomDto.getBlockStartDate(), "yyyy-MM-dd")))
+				.andExpect(jsonPath("$.responseData.roomDto.blockEndDate").value(Utils.getStringFormatFromLocalDate(SampleRoomDto.getBlockEndDate(), "yyyy-MM-dd")))
 		;
 
 		verify(roomService, times(1)).insertWithImages(any(RoomDto.class), anyList());
@@ -186,6 +194,8 @@ public class TestRoomRestControllerClaude {
 				.andExpect(jsonPath("$.responseData.roomViewOption").value(SampleRoomDto.getRoomViewOption().toString()))
 				.andExpect(jsonPath("$.responseData.roomBedOption").value(SampleRoomDto.getRoomBedOption().toString()))
 				.andExpect(jsonPath("$.responseData.hotelId").value(SampleRoomDto.getHotelId()))
+				.andExpect(jsonPath("$.responseData.blockStartDate").value(Utils.getStringFormatFromLocalDate(SampleRoomDto.getBlockStartDate(), "yyyy-MM-dd")))
+				.andExpect(jsonPath("$.responseData.blockEndDate").value(Utils.getStringFormatFromLocalDate(SampleRoomDto.getBlockEndDate(), "yyyy-MM-dd")))
 		;
 
 		verify(roomService, times(1)).update(any(RoomDto.class));
@@ -214,6 +224,8 @@ public class TestRoomRestControllerClaude {
 				.andExpect(jsonPath("$.responseData.roomViewOption").value(SampleRoomDto.getRoomViewOption().toString()))
 				.andExpect(jsonPath("$.responseData.roomBedOption").value(SampleRoomDto.getRoomBedOption().toString()))
 				.andExpect(jsonPath("$.responseData.hotelId").value(SampleRoomDto.getHotelId()))
+				.andExpect(jsonPath("$.responseData.blockStartDate").value(Utils.getStringFormatFromLocalDate(SampleRoomDto.getBlockStartDate(), "yyyy-MM-dd")))
+				.andExpect(jsonPath("$.responseData.blockEndDate").value(Utils.getStringFormatFromLocalDate(SampleRoomDto.getBlockEndDate(), "yyyy-MM-dd")))
 		;
 
 		verify(roomService, times(1)).findById(1L);
@@ -249,6 +261,8 @@ public class TestRoomRestControllerClaude {
 				.andExpect(jsonPath("$.responseData.roomDto.roomViewOption").value(SampleRoomDto.getRoomViewOption().toString()))
 				.andExpect(jsonPath("$.responseData.roomDto.roomBedOption").value(SampleRoomDto.getRoomBedOption().toString()))
 				.andExpect(jsonPath("$.responseData.roomDto.hotelId").value(SampleRoomDto.getHotelId()))
+				.andExpect(jsonPath("$.responseData.roomDto.blockStartDate").value(Utils.getStringFormatFromLocalDate(SampleRoomDto.getBlockStartDate(), "yyyy-MM-dd")))
+				.andExpect(jsonPath("$.responseData.roomDto.blockEndDate").value(Utils.getStringFormatFromLocalDate(SampleRoomDto.getBlockEndDate(), "yyyy-MM-dd")))
 		;
 
 		verify(roomService, times(1)).findByIdWithImages(eq(1L), any());
@@ -277,6 +291,8 @@ public class TestRoomRestControllerClaude {
 				.andExpect(jsonPath("$.responseData.roomViewOption").value(SampleRoomDto.getRoomViewOption().toString()))
 				.andExpect(jsonPath("$.responseData.roomBedOption").value(SampleRoomDto.getRoomBedOption().toString()))
 				.andExpect(jsonPath("$.responseData.hotelId").value(SampleRoomDto.getHotelId()))
+				.andExpect(jsonPath("$.responseData.blockStartDate").value(Utils.getStringFormatFromLocalDate(SampleRoomDto.getBlockStartDate(), "yyyy-MM-dd")))
+				.andExpect(jsonPath("$.responseData.blockEndDate").value(Utils.getStringFormatFromLocalDate(SampleRoomDto.getBlockEndDate(), "yyyy-MM-dd")))
 		;
 
 		verify(roomService, times(1)).deleteById(1L);
@@ -312,7 +328,10 @@ public class TestRoomRestControllerClaude {
 				.andExpect(jsonPath("$.responseData.content[0].roomViewOption").value(SampleRoomDto.getRoomViewOption().toString()))
 				.andExpect(jsonPath("$.responseData.content[0].roomBedOption").value(SampleRoomDto.getRoomBedOption().toString()))
 				.andExpect(jsonPath("$.responseData.content[0].hotelId").value(SampleRoomDto.getHotelId()))
-				.andExpect(jsonPath("$.responseData.totalElements").value(1));
+				.andExpect(jsonPath("$.responseData.content[0].blockStartDate").value(Utils.getStringFormatFromLocalDate(SampleRoomDto.getBlockStartDate(), "yyyy-MM-dd")))
+				.andExpect(jsonPath("$.responseData.content[0].blockEndDate").value(Utils.getStringFormatFromLocalDate(SampleRoomDto.getBlockEndDate(), "yyyy-MM-dd")))
+				.andExpect(jsonPath("$.responseData.totalElements").value(1))
+		;
 
 		verify(roomService, times(1)).findAllByHotelIdEquals(eq(10L), any());
 	}

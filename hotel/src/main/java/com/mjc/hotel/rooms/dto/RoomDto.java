@@ -10,6 +10,7 @@ import com.mjc.hotel.rooms.enums.RoomViewOption;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -33,6 +34,8 @@ public class RoomDto extends BaseDto implements IRoom {
 	private RoomBedOption roomBedOption;
 	private Long hotelId;
 	private HotelDto hotel;
+	private LocalDate blockStartDate;
+	private LocalDate blockEndDate;
 
 	@Override
 	public Long getHotelId() {
