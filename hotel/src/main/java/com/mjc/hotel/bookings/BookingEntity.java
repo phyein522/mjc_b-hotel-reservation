@@ -61,14 +61,8 @@ public class BookingEntity extends BaseEntity implements IBooking {
     @Column(nullable = false)
     private LocalTime checkoutTime;
 
-    @Column(nullable = false)
-    private Integer point;
-
     @Column(nullable = true)
     private LocalDateTime cancelledAt;
-
-    @Column(nullable = false)
-    private Integer totalAmount;
 
     @Transient
     private Long userId;
