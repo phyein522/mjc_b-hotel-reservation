@@ -1,12 +1,138 @@
 {
   "info": {
-    "_postman_id": "5f120b14-4d9e-409a-9349-a1206490dd48",
+    "_postman_id": "c43272f2-7963-40bb-845b-c17211c44ba1",
     "name": "Hotel",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "53671691",
-    "_collection_link": "https://go.postman.co/collection/53671691-5f120b14-4d9e-409a-9349-a1206490dd48?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/53671691-c43272f2-7963-40bb-845b-c17211c44ba1?source=collection_link"
   },
   "item": [
+    {
+      "name": "promotionsale",
+      "item": [
+        {
+          "name": "PromotionSale findAll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/promotionsale",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotionsale"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PromotionSale findbyid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/promotionsale/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotionsale",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PromotionSale insert",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"proId\": 1,\n    \"saleDes\": \"기본 15% + 얼리버드\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/promotionsale",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotionsale"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PromotionSale Update",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"proId\": 1,\n    \"saleDes\": \"1박당 차감\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/promotionsale/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotionsale",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PromotionSale deletebyid",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/promotionsale/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotionsale",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
     {
       "name": "Rooms",
       "item": [
@@ -25,7 +151,7 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8989/api/v1/room",
+              "raw": "http://localhost:8989/api/room",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -33,7 +159,6 @@
               "port": "8989",
               "path": [
                 "api",
-                "v1",
                 "room"
               ]
             }
@@ -70,7 +195,7 @@
               ]
             },
             "url": {
-              "raw": "http://localhost:8989/api/v1/room/image",
+              "raw": "http://localhost:8989/api/room/image",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -78,7 +203,6 @@
               "port": "8989",
               "path": [
                 "api",
-                "v1",
                 "room",
                 "image"
               ]
@@ -92,7 +216,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/v1/room/1",
+              "raw": "http://localhost:8989/api/room/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -100,7 +224,6 @@
               "port": "8989",
               "path": [
                 "api",
-                "v1",
                 "room",
                 "1"
               ]
@@ -114,7 +237,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/v1/room/images/1",
+              "raw": "http://localhost:8989/api/room/images/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -122,7 +245,6 @@
               "port": "8989",
               "path": [
                 "api",
-                "v1",
                 "room",
                 "images",
                 "1"
@@ -146,7 +268,7 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8989/api/v1/room",
+              "raw": "http://localhost:8989/api/room",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -154,7 +276,6 @@
               "port": "8989",
               "path": [
                 "api",
-                "v1",
                 "room"
               ]
             }
@@ -167,7 +288,7 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/v1/room/1",
+              "raw": "http://localhost:8989/api/room/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -175,7 +296,6 @@
               "port": "8989",
               "path": [
                 "api",
-                "v1",
                 "room",
                 "1"
               ]
@@ -189,7 +309,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/v1/room/hotel/1",
+              "raw": "http://localhost:8989/api/room/hotel/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -197,7 +317,6 @@
               "port": "8989",
               "path": [
                 "api",
-                "v1",
                 "room",
                 "hotel",
                 "1"
@@ -228,7 +347,7 @@
               ]
             },
             "url": {
-              "raw": "http://localhost:8989/api/v1/roomimage/room/1",
+              "raw": "http://localhost:8989/api/roomimage/room/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -236,7 +355,6 @@
               "port": "8989",
               "path": [
                 "api",
-                "v1",
                 "roomimage",
                 "room",
                 "1"
@@ -262,7 +380,7 @@
               ]
             },
             "url": {
-              "raw": "http://localhost:8989/api/v1/roomimage/image/2",
+              "raw": "http://localhost:8989/api/roomimage/image/2",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -270,7 +388,6 @@
               "port": "8989",
               "path": [
                 "api",
-                "v1",
                 "roomimage",
                 "image",
                 "2"
@@ -285,7 +402,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/v1/roomimage/6",
+              "raw": "http://localhost:8989/api/roomimage/6",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -293,7 +410,6 @@
               "port": "8989",
               "path": [
                 "api",
-                "v1",
                 "roomimage",
                 "6"
               ]
@@ -307,7 +423,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/v1/roomimage/download/1",
+              "raw": "http://localhost:8989/api/roomimage/download/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -315,7 +431,6 @@
               "port": "8989",
               "path": [
                 "api",
-                "v1",
                 "roomimage",
                 "download",
                 "1"
@@ -330,7 +445,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/v1/roomimage/image/1",
+              "raw": "http://localhost:8989/api/roomimage/image/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -338,7 +453,6 @@
               "port": "8989",
               "path": [
                 "api",
-                "v1",
                 "roomimage",
                 "image",
                 "1"
@@ -353,7 +467,7 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/v1/roomimage/1",
+              "raw": "http://localhost:8989/api/roomimage/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -361,7 +475,6 @@
               "port": "8989",
               "path": [
                 "api",
-                "v1",
                 "roomimage",
                 "1"
               ]
@@ -1225,29 +1338,15 @@
       ]
     },
     {
-      "name": "User",
+      "name": "promotion",
       "item": [
         {
-          "name": "user insert",
+          "name": "Promotion findAll",
           "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"email\":\"bAAA@naver.com\",\r\n    \"password\":\"1111\",\r\n    \"name\":\"서현\",\r\n    \"phone\":\"01043898888\",\r\n    \"membership\":\"SILVER\",\r\n    \"role\":\"CUSTOMER\",\r\n    \"status\":\"ACTIVE\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
+            "method": "GET",
+            "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/users",
+              "raw": "http://localhost:8989/api/promotion",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -1255,72 +1354,41 @@
               "port": "8989",
               "path": [
                 "api",
-                "users"
+                "promotion"
               ]
-            },
-            "description": "Generated from cURL: curl -X POST http://localhost:8181/api/v1/user -H \"Content-Type: application/json\" -d '{\"email\": \"test@example.com\", \"password\": \"123456\", \"name\": \"홍길동\", \"phone\": \"010-1234-5678\", \"role\": \"USER\", \"status\": \"ACTIVE\", \"membership\": \"BASIC\"}'"
+            }
           },
           "response": []
         },
         {
-          "name": "user findAll",
+          "name": "Promotion findbyid",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8181/api/v1/user/all",
+              "raw": "http://localhost:8989/api/promotion/1",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
-              "port": "8181",
+              "port": "8989",
               "path": [
                 "api",
-                "v1",
-                "user",
-                "all"
-              ]
-            },
-            "description": "Generated from cURL: curl -X GET http://localhost:8181/api/v1/user/all"
-          },
-          "response": []
-        },
-        {
-          "name": "user findById",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8181/api/v1/user/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8181",
-              "path": [
-                "api",
-                "v1",
-                "user",
+                "promotion",
                 "1"
               ]
-            },
-            "description": "Generated from cURL: curl -X GET http://localhost:8181/api/v1/user/1"
+            }
           },
           "response": []
         },
         {
-          "name": "user update",
+          "name": "Promotion insert",
           "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "method": "POST",
+            "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\"userId\": 1, \"name\": \"홍길동수정\", \"email\": \"updated@example.com\", \"phone\": \"010-9999-8888\", \"role\": \"USER\", \"status\": \"ACTIVE\", \"membership\": \"BASIC\"}",
+              "raw": "{\n    \"roomId\": 1,\n    \"name\": \"여름 성수기 특가\",\n    \"description\": \"얼리버드 예약 시 최대 30% 할인\",\n    \"disType\": \"RATE\",\n    \"disValue\": 30,\n    \"startDate\": \"2026-07-01T00:00:00\",\n    \"endDate\": \"2026-08-31T23:59:59\",\n    \"resCount\": 0,\n    \"status\": \"ACTIVE\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1328,42 +1396,60 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8181/api/v1/user",
+              "raw": "http://localhost:8989/api/promotion/1",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
-              "port": "8181",
+              "port": "8989",
               "path": [
                 "api",
-                "v1",
-                "user"
+                "promotion",
+                "1"
               ]
-            },
-            "description": "Generated from cURL: curl -X PATCH http://localhost:8181/api/v1/user -H \"Content-Type: application/json\" -d '{\"userId\": 1, \"name\": \"홍길동수정\", \"email\": \"updated@example.com\", \"phone\": \"010-9999-8888\", \"role\": \"USER\", \"status\": \"ACTIVE\", \"membership\": \"BASIC\"}'"
+            }
           },
           "response": []
         },
         {
-          "name": "user delete",
+          "name": "Promotion Update",
           "request": {
-            "method": "DELETE",
+            "method": "PUT",
             "header": [],
             "url": {
-              "raw": "http://localhost:8181/api/v1/user/1",
+              "raw": "http://localhost:8989/api/promotion/1",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
-              "port": "8181",
+              "port": "8989",
               "path": [
                 "api",
-                "v1",
-                "user",
+                "promotion",
                 "1"
               ]
-            },
-            "description": "Generated from cURL: curl -X DELETE http://localhost:8181/api/v1/user/1"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Promotion deletebyid",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/promotion/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotion",
+                "1"
+              ]
+            }
           },
           "response": []
         }
@@ -1442,6 +1528,263 @@
                 "1"
               ]
             }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "sales_analysis",
+      "item": [
+        {
+          "name": "top-booking",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/sales/top-bookings?hotelId=1&targetMonth=2026-06",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "sales",
+                "top-bookings"
+              ],
+              "query": [
+                {
+                  "key": "hotelId",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "targetMonth",
+                  "value": "2026-06",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "rooms",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/sales/rooms?hotelId=1&targetMonth=2026-06",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "sales",
+                "rooms"
+              ],
+              "query": [
+                {
+                  "key": "hotelId",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "targetMonth",
+                  "value": "2026-06",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "monthly",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/sales/monthly?hotelId=1&startDate=2026-01-01",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "sales",
+                "monthly"
+              ],
+              "query": [
+                {
+                  "key": "hotelId",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "startDate",
+                  "value": "2026-01-01",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/sales/dashboard?hotelId=1&targetMonth=2026-0",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "sales",
+                "dashboard"
+              ],
+              "query": [
+                {
+                  "key": "hotelId",
+                  "value": "1"
+                },
+                {
+                  "key": "targetMonth",
+                  "value": "2026-0"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "user insert",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"abc@example.com\"\r\n    , \"password\":\"1234\"\r\n    , \"name\":\"가나다\"\r\n    ,\"phone\":\"010-1234-5678\"\r\n    , \"marketingAgreed\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/users/signup",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "users",
+                "signup"
+              ]
+            },
+            "description": "Generated from cURL: curl -X POST http://localhost:8181/api/v1/user -H \"Content-Type: application/json\" -d '{\"email\": \"test@example.com\", \"password\": \"123456\", \"name\": \"홍길동\", \"phone\": \"010-1234-5678\", \"role\": \"USER\", \"status\": \"ACTIVE\", \"membership\": \"BASIC\"}'"
+          },
+          "response": []
+        },
+        {
+          "name": "user findById",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/users/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "users",
+                "1"
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET http://localhost:8181/api/v1/user/1"
+          },
+          "response": []
+        },
+        {
+          "name": "user update",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"userId\":1\r\n    , \"email\":\"test@example.com\"\r\n    , \"password\":\"abc123\"\r\n    , \"name\":\"ABC\"\r\n    , \"phone\":\"010-9876-4321\"\r\n    , \"role\":\"HOTEL_MANAGER\"\r\n    , \"status\":\"DORMANT\"\r\n    , \"membership\":\"GOLD\"\r\n    , \"marketingAgreed\":true\r\n    , \"point\":1000\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/users/update",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "users",
+                "update"
+              ]
+            },
+            "description": "Generated from cURL: curl -X PATCH http://localhost:8181/api/v1/user -H \"Content-Type: application/json\" -d '{\"userId\": 1, \"name\": \"홍길동수정\", \"email\": \"updated@example.com\", \"phone\": \"010-9999-8888\", \"role\": \"USER\", \"status\": \"ACTIVE\", \"membership\": \"BASIC\"}'"
+          },
+          "response": []
+        },
+        {
+          "name": "user delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/users/delete/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "users",
+                "delete",
+                "1"
+              ]
+            },
+            "description": "Generated from cURL: curl -X DELETE http://localhost:8181/api/v1/user/1"
           },
           "response": []
         }
