@@ -16,6 +16,5 @@ public class SalesDashboardResponse {
     private Integer month;
     private DashboardMetricsDto metrics;
     private List<RoomTypeRevenueDto> roomTypeRevenue;
-    private List<ChannelShareDto> channelShares;
     private List<TopBookingDto> topBookings;
 }
