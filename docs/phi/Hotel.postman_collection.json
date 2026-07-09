@@ -1465,7 +1465,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"guestName\": \"홍길동\"\r\n    , \"nationality\": \"KOREA\"\r\n    , \"guestPhone\": \"010-1234-5678\"\r\n    , \"guestEmail\": \"test@example.com\"\r\n    , \"specialRequest\": \"고층 룸 요청\"\r\n    , \"adultCount\": 2\r\n    , \"childCount\": 0\r\n    , \"checkinDate\": \"2025-07-14\"\r\n    , \"checkoutDate\": \"2025-07-15\"\r\n    , \"totalAmount\": 186400\r\n    , \"userId\": 1\r\n    , \"roomId\": 1\r\n}",
+              "raw": "{\r\n    \"guestName\": \"홍길동\"\r\n    , \"nationality\": \"KOREA\"\r\n    , \"guestPhone\": \"010-1234-5678\"\r\n    , \"guestEmail\": \"test@example.com\"\r\n    , \"specialRequest\": \"고층 룸 요청\"\r\n    , \"adultCount\": 2\r\n    , \"childCount\": 0\r\n    , \"checkinDate\": \"2025-07-14\"\r\n    , \"checkoutDate\": \"2025-07-15\"\r\n    , \"userId\": 1\r\n    , \"roomId\": 1\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
