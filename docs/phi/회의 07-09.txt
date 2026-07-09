@@ -1,11 +1,4 @@
-진행 중
-- room: block_start_date, block_start_date -> 추가 예정 (객실 점검 일정)
-- 호텔 편의시설 수정
-- 결제: 이재현 - 최종 금액 (예약->객실의 base_price)
-- 예약: 최종 금액 컬럼 제거
-- 매출 분석: 결제 테이블 이용해 계산
-- 리뷰: 결제 테이블을 관계형으로 엮음, entity 이름 수정
-- chanel 삭제
+Jira: https://mjcreservation.atlassian.net/jira/software/projects/KAN/boards/1
 
 ---
 검토 중
