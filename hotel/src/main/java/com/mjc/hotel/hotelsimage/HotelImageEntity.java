@@ -16,7 +16,7 @@ import lombok.*;
 public class HotelImageEntity extends BaseEntity implements IHotelImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "image_id")
+    @Column(name = "hotel_image_id")
     private Long hotelImageId;
 
     @Column(nullable = false, length = 100)
