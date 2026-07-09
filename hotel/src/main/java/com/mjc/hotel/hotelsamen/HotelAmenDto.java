@@ -14,11 +14,21 @@ public class HotelAmenDto extends BaseDto implements IHotelAmen {
     private Long amenId;
     private Boolean wifi;
     private Boolean pool;
-    private Boolean gym;
+    private Boolean fitnessCenter;
     private Boolean spa;
     private Boolean restaurant;
     private Boolean valetParking;
+    private Boolean freeParking;
+    private Boolean concierge;
     private Boolean bar;
+    private Boolean breakfast;
+    private Boolean airportShuttle;
+    private Boolean roomService;
+    private Boolean laundry;
+    private Boolean lounge;
+    private Boolean sauna;
+    private Boolean freeCancel;
+    private Boolean petFriendly;
 
     private Long hotelId;
     private HotelDto hotel;
