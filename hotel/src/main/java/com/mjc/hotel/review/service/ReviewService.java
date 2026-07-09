@@ -22,7 +22,7 @@ import com.mjc.hotel.review.repository.ReviewPhotoRepository;
 import com.mjc.hotel.review.repository.ReviewRepository;
 import com.mjc.hotel.rooms.dto.RoomEntity;
 import com.mjc.hotel.rooms.service.RoomRepository;
-import com.mjc.hotel.user.entity.User;
+import com.mjc.hotel.user.entity.UserEntity;
 import com.mjc.hotel.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -177,7 +177,7 @@ public class ReviewService {
 
     private ReviewDto toDtoWithDetails(Review review) {
         ReviewDto dto = this.toDto(review);
-        User user = findUser(review.getUserId());
+        UserEntity user = findUser(review.getUserId());
         HotelEntity hotel = findHotel(review.getHotelId());
         RoomEntity room = findRoomIfPresent(review.getRoomId());
         dto.setUserName(user.getName());
@@ -252,7 +252,7 @@ public class ReviewService {
         findRoomIfPresent(dto.getRoomId());
     }
 
-    private User findUser(Long userId) {
+    private UserEntity findUser(Long userId) {
         return this.userRepository.findById(userId)
                 .orElseThrow(() -> new ReviewReferenceNotFoundException("User", userId));
     }

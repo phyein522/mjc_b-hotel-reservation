@@ -2,7 +2,7 @@ package com.mjc.hotel.bookings;
 
 import com.mjc.hotel.common.dto.BaseEntity;
 import com.mjc.hotel.rooms.dto.RoomEntity;
-import com.mjc.hotel.user.entity.User;
+import com.mjc.hotel.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -74,7 +74,7 @@ public class BookingEntity extends BaseEntity implements IBooking {
     private Long userId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UserEntity user;
 
     @Transient
     private Long roomId;
@@ -93,7 +93,7 @@ public class BookingEntity extends BaseEntity implements IBooking {
     public void setUserId(Long userId) {
         this.userId = userId;
         if(this.user == null) {
-            this.user = new User();
+            this.user = new UserEntity();
         }
         this.user.setUserId(this.userId);
     }

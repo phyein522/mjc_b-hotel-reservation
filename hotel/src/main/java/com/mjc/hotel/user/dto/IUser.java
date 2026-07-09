@@ -7,7 +7,6 @@ import com.mjc.hotel.user.entity.Status;
 
 @tools.jackson.databind.annotation.JsonDeserialize(as = UserDto.class)
 public interface IUser extends IBase {
-
     Long getUserId();
     void setUserId(Long userId);
 
@@ -32,37 +31,47 @@ public interface IUser extends IBase {
     Membership getMembership();
     void setMembership(Membership membership);
 
-    String getSocialLogin();
-    void setSocialLogin(String socialLogin);
+    Boolean getMarketingAgreed();
+    void setMarketingAgreed(Boolean marketingAgreed);
 
-    String getSocialLoginId();
-    void setSocialLoginId(String socialLoginId);
+    Integer getPoint();
+    void setPoint(Integer point);
 
-    default IUser copyMembers(IUser source, boolean forced) {
-        if (source == null) return this;
-        IBase.super.copyMembers(source, forced);
-
-        if (forced || source.getUserId() != null)
-            this.setUserId(source.getUserId());
-        if (forced || source.getEmail() != null)
-            this.setEmail(source.getEmail());
-        if (forced || source.getPassword() != null)
-            this.setPassword(source.getPassword());
-        if (forced || source.getName() != null)
-            this.setName(source.getName());
-        if (forced || source.getPhone() != null)
-            this.setPhone(source.getPhone());
-        if (forced || source.getRole() != null)
-            this.setRole(source.getRole());
-        if (forced || source.getStatus() != null)
-            this.setStatus(source.getStatus());
-        if (forced || source.getMembership() != null)
-            this.setMembership(source.getMembership());
-        if (forced || source.getSocialLogin() != null)
-            this.setSocialLogin(source.getSocialLogin());
-        if (forced || source.getSocialLoginId() != null)
-            this.setSocialLoginId(source.getSocialLoginId());
-
+    default IUser copyMembers(IUser src, boolean forced) {
+        if(src == null) {
+            return this;
+        }
+        IBase.super.copyMembers(src, forced);
+        if(forced || src.getUserId() != null) {
+            this.setUserId(src.getUserId());
+        }
+        if(forced || src.getEmail() != null) {
+            this.setEmail(src.getEmail());
+        }
+        if(forced || src.getPassword() != null) {
+            this.setPassword(src.getPassword());
+        }
+        if(forced || src.getName() != null) {
+            this.setName(src.getName());
+        }
+        if(forced || src.getPhone() != null) {
+            this.setPhone(src.getPhone());
+        }
+        if(forced || src.getRole() != null) {
+            this.setRole(src.getRole());
+        }
+        if(forced || src.getStatus() != null) {
+            this.setStatus(src.getStatus());
+        }
+        if(forced || src.getMembership() != null) {
+            this.setMembership(src.getMembership());
+        }
+        if(forced || src.getMarketingAgreed() != null) {
+            this.setMarketingAgreed(src.getMarketingAgreed());
+        }
+        if(forced || src.getPoint() != null) {
+            this.setPoint(src.getPoint());
+        }
         return this;
     }
 }
