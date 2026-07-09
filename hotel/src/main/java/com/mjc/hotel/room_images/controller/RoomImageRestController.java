@@ -23,7 +23,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 @RestController
-@RequestMapping("/api/v1/roomimage")
+@RequestMapping("/api/roomimage")
 public class RoomImageRestController {
 	@Autowired
 	private RoomImageService roomImageService;

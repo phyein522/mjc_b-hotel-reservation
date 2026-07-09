@@ -81,13 +81,13 @@ public class TestRoomRestControllerClaude {
 	}
 
 	@Test
-	@DisplayName("POST /api/v1/room - 객실 등록 성공")
+	@DisplayName("POST /api/room - 객실 등록 성공")
 	void insert_shouldReturnCreated() throws Exception {
 		// given
 		when(roomService.insert(any(RoomDto.class))).thenReturn(SampleRoomDto);
 
 		// when & then
-		mockMvc.perform(post("/api/v1/room")
+		mockMvc.perform(post("/api/room")
 						.contentType("application/json")
 						.content(objectMapper.writeValueAsString(SampleRoomDto)))
 				.andExpect(status().isCreated())
@@ -111,7 +111,7 @@ public class TestRoomRestControllerClaude {
 	}
 
 	@Test
-	@DisplayName("POST /api/v1/room/image - 이미지 포함 객실 등록 성공")
+	@DisplayName("POST /api/room/image - 이미지 포함 객실 등록 성공")
 	void insertWithImages_shouldReturnCreated() throws Exception {
 		// given
 		RoomResponseWithImagesDto responseDto = RoomResponseWithImagesDto.builder()
@@ -137,7 +137,7 @@ public class TestRoomRestControllerClaude {
 		);
 
 		// when & then
-		mockMvc.perform(multipart("/api/v1/room/image")
+		mockMvc.perform(multipart("/api/room/image")
 						.file(requestDtoPart)
 						.file(filePart))
 				.andExpect(status().isCreated())
@@ -161,14 +161,14 @@ public class TestRoomRestControllerClaude {
 	}
 
 	@Test
-	@DisplayName("PATCH /api/v1/room - 객실 수정 성공")
+	@DisplayName("PATCH /api/room - 객실 수정 성공")
 	void update_shouldReturnOk() throws Exception {
 		// given
 		SampleRoomDto.setName("수정된 객실명");
 		when(roomService.update(any(RoomDto.class))).thenReturn(SampleRoomDto);
 
 		// when & then
-		mockMvc.perform(patch("/api/v1/room")
+		mockMvc.perform(patch("/api/room")
 						.contentType("application/json")
 						.content(objectMapper.writeValueAsString(SampleRoomDto)))
 				.andExpect(status().isOk())
@@ -192,13 +192,13 @@ public class TestRoomRestControllerClaude {
 	}
 
 	@Test
-	@DisplayName("GET /api/v1/room/{roomId} - 단건 조회 성공")
+	@DisplayName("GET /api/room/{roomId} - 단건 조회 성공")
 	void findById_shouldReturnOk() throws Exception {
 		// given
 		when(roomService.findById(1L)).thenReturn(SampleRoomDto);
 
 		// when & then
-		mockMvc.perform(get("/api/v1/room/{roomId}", 1L))
+		mockMvc.perform(get("/api/room/{roomId}", 1L))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.responseData.roomId").value(SampleRoomDto.getRoomId()))
 				.andExpect(jsonPath("$.responseData.name").value(SampleRoomDto.getName()))
@@ -220,7 +220,7 @@ public class TestRoomRestControllerClaude {
 	}
 
 	@Test
-	@DisplayName("GET /api/v1/room/images/{roomId} - 이미지 포함 단건 조회 성공")
+	@DisplayName("GET /api/room/images/{roomId} - 이미지 포함 단건 조회 성공")
 	void findByIdWithImages_shouldReturnOk() throws Exception {
 		// given
 		RoomResponseWithImagesDto responseDto = RoomResponseWithImagesDto.builder()
@@ -231,7 +231,7 @@ public class TestRoomRestControllerClaude {
 		when(roomService.findByIdWithImages(eq(1L), any())).thenReturn(responseDto);
 
 		// when & then
-		mockMvc.perform(get("/api/v1/room/images/{roomId}", 1L)
+		mockMvc.perform(get("/api/room/images/{roomId}", 1L)
 						.param("page", "0")
 						.param("size", "10"))
 				.andExpect(status().isOk())
@@ -255,13 +255,13 @@ public class TestRoomRestControllerClaude {
 	}
 
 	@Test
-	@DisplayName("DELETE /api/v1/room/{roomId} - 삭제 성공")
+	@DisplayName("DELETE /api/room/{roomId} - 삭제 성공")
 	void deleteById_shouldReturnOk() throws Exception {
 		// given
 		when(roomService.deleteById(1L)).thenReturn(SampleRoomDto);
 
 		// when & then
-		mockMvc.perform(delete("/api/v1/room/{roomId}", 1L))
+		mockMvc.perform(delete("/api/room/{roomId}", 1L))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.responseData.roomId").value(SampleRoomDto.getRoomId()))
 				.andExpect(jsonPath("$.responseData.name").value(SampleRoomDto.getName()))
@@ -283,7 +283,7 @@ public class TestRoomRestControllerClaude {
 	}
 
 	@Test
-	@DisplayName("GET /api/v1/room/hotel/{hotelId} - 호텔별 객실 페이징 조회 성공")
+	@DisplayName("GET /api/room/hotel/{hotelId} - 호텔별 객실 페이징 조회 성공")
 	void page_shouldReturnOk() throws Exception {
 		// given
 		Page<RoomDto> pageResult = new PageImpl<>(
@@ -294,7 +294,7 @@ public class TestRoomRestControllerClaude {
 		when(roomService.findAllByHotelIdEquals(eq(10L), any())).thenReturn(pageResult);
 
 		// when & then
-		mockMvc.perform(get("/api/v1/room/hotel/{hotelId}", 10L)
+		mockMvc.perform(get("/api/room/hotel/{hotelId}", 10L)
 						.param("page", "0")
 						.param("size", "10"))
 				.andExpect(status().isOk())
