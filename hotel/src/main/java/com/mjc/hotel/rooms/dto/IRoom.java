@@ -10,6 +10,7 @@ import com.mjc.hotel.rooms.enums.RoomViewOption;
 import org.hibernate.LazyInitializationException;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 
 @tools.jackson.databind.annotation.JsonDeserialize(as = RoomDto.class)
@@ -58,6 +59,12 @@ public interface IRoom extends IBase {
 
 	IHotel getHotel();
 	void setHotel(IHotel room);
+
+	LocalDate getBlockStartDate();
+	void setBlockStartDate(LocalDate blockStartDate);
+
+	LocalDate getBlockEndDate();
+	void setBlockEndDate(LocalDate blockEndDate);
 
 	default IRoom copyMembers(IRoom source, boolean forced) {
 		if ( source == null ) {
@@ -110,6 +117,12 @@ public interface IRoom extends IBase {
 			} catch (LazyInitializationException e) {
 				System.err.println(e.getMessage());
 			}
+		}
+		if ( forced || source.getBlockStartDate() != null ) {
+			this.setBlockStartDate(source.getBlockStartDate());
+		}
+		if ( forced || source.getBlockEndDate() != null ) {
+			this.setBlockEndDate(source.getBlockEndDate());
 		}
 		return this;
 	}
