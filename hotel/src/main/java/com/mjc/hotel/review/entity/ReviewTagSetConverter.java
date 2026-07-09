@@ -19,7 +19,8 @@ public class ReviewTagSetConverter implements AttributeConverter<Set<ReviewTagTy
         }
 
         return attribute.stream()
-                .map(Enum::name)
+                .map(ReviewTagType::getCode)
+                .map(String::valueOf)
                 .collect(Collectors.joining(","));
     }
 
@@ -32,7 +33,8 @@ public class ReviewTagSetConverter implements AttributeConverter<Set<ReviewTagTy
         return Arrays.stream(dbData.split(","))
                 .map(String::trim)
                 .filter(value -> !value.isBlank())
-                .map(ReviewTagType::valueOf)
+                .map(Integer::valueOf)
+                .map(ReviewTagType::fromCode)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

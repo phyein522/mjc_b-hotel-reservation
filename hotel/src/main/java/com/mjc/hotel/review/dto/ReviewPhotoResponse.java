@@ -6,7 +6,7 @@ public record ReviewPhotoResponse(
         Long id,
         Long reviewId,
         String photoPath,
-        Long photoOrder
+        Integer photoOrder
 ) {
     public static ReviewPhotoResponse from(ReviewPhoto photo) {
         return new ReviewPhotoResponse(

@@ -18,7 +18,7 @@ public class ReviewPhotoDto {
     private Long id;
     private Long reviewId;
     private String photoPath;
-    private Long photoOrder;
+    private Integer photoOrder;
 
     public static ReviewPhotoDto from(ReviewPhoto photo) {
         if (photo == null) {
