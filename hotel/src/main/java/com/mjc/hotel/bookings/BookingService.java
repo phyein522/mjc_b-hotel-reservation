@@ -28,7 +28,6 @@ public class BookingService {
         insertEntity.setBookingId(null);
         insertEntity.setBookingNo(generateBookingNo());
         insertEntity.setCancelledAt(null);
-        insertEntity.setPoint(insertEntity.getTotalAmount() / 100);
         insertEntity.setNights(this.calculateNights(
                 insertEntity.getCheckinDate()
                 , insertEntity.getCheckoutDate()
@@ -81,7 +80,6 @@ public class BookingService {
             List<HotelImageResponseDto> hotelImages = this.bookingMapper.getHotelImages(hotel.getHotelId());
             result.add(new BookingResponseDto(booking, user, room, roomImages, hotel, hotelImages));
         }
-        //TODO: url도 같이 넘어오는지 테스트 시 확인
         return result;
     }
 

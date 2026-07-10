@@ -14,7 +14,7 @@ public enum RoomType {
 	/**
 	 * 스위트
 	 */
-	, Sweet(2)
+	, Suite(2)
 	/**
 	 * 디럭스
 	 */

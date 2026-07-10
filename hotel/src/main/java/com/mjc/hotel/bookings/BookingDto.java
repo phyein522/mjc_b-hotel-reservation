@@ -29,9 +29,7 @@ public class BookingDto extends BaseDto implements IBooking {
     private LocalDate checkoutDate;
     private LocalTime checkinTime;
     private LocalTime checkoutTime;
-    private Integer point;
     private LocalDateTime cancelledAt;
-    private Integer totalAmount;
 
     private Long userId;
     private UserDto user;
