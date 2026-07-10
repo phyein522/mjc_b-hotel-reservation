@@ -19,6 +19,11 @@ public enum RoomType {
 	 * 디럭스
 	 */
 	, Deluxe(3)
+	/**
+	 * 프리미엄
+	 */
+	, Premium(4)
+	;
 	;
 
 	private final int value;
