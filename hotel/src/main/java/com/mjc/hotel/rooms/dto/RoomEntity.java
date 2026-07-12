@@ -12,6 +12,7 @@ import lombok.*;
 import org.hibernate.annotations.Comment;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -66,6 +67,12 @@ public class RoomEntity extends BaseEntity implements IRoom {
 
 	@Column(name = "room_bed_option", nullable = false, comment = "침대(Floor/DoubleBed/QueenBed)")
 	private RoomBedOption roomBedOption;
+
+	@Column(name = "block_start_date", nullable = true, comment = "중지시작일")
+	private LocalDate blockStartDate;
+
+	@Column(name = "block_end_date", nullable = true, comment = "중지종료일")
+	private LocalDate blockEndDate;
 
 	@Transient
 	private Long hotelId;

@@ -22,7 +22,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/room")
+@RequestMapping("/api/room")
 public class RoomRestController {
 	@Autowired
 	private RoomService roomService;

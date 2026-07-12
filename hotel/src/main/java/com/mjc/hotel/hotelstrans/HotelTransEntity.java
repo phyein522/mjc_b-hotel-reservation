@@ -16,15 +16,16 @@ import lombok.*;
 public class HotelTransEntity extends BaseEntity implements IHotelTrans {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "trans_id", comment = "기본키")
     private Long transId;
 
-    @Column(name = "trans_name")
+    @Column(comment = "교통수단")
     private String name;
 
-    @Column(name = "trans_time")
+    @Column(comment = "시간")
     private String time;
 
-    @Column(name = "trans_depart")
+    @Column(comment = "출발지")
     private String depart;
 
     @Transient

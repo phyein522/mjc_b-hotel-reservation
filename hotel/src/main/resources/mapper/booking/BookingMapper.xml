@@ -11,11 +11,27 @@
             password AS password,
             name AS name,
             phone AS phone,
-            role AS role,
-            status AS status,
-            membership AS membership,
-            social_login AS socialLogin,
-            social_login_id AS socialLoginId,
+            CASE role
+                WHEN 0 THEN 'CUSTOMER'
+                WHEN 1 THEN 'HOTEL_MANAGER'
+                WHEN 2 THEN 'ADMIN'
+                WHEN 3 THEN 'SUPER_ADMIN'
+            END AS role,
+            CASE status
+                WHEN 0 THEN 'ACTIVE'
+                WHEN 1 THEN 'DORMANT'
+                WHEN 2 THEN 'LOCKED'
+                WHEN 3 THEN 'WITHDRAW'
+            END AS status,
+            CASE membership
+                WHEN 0 THEN 'NEW_MEMBER'
+                WHEN 1 THEN 'STANDARD'
+                WHEN 2 THEN 'GOLD'
+                WHEN 3 THEN 'VIP'
+                WHEN 4 THEN 'VVIP'
+            END AS membership,
+            marketing_agreed AS marketingAgreed,
+            point AS point,
             created_at AS createdAt,
             modified_at AS modifiedAt
         FROM users
@@ -49,9 +65,7 @@
             checkout_date AS checkoutDate,
             checkin_time AS checkinTime,
             checkout_time AS checkoutTime,
-            point AS point,
             cancelled_at AS cancelledAt,
-            total_amount AS totalAmount,
             user_id AS userId,
             room_id AS roomId
         FROM bookings
@@ -71,7 +85,7 @@
             is_active AS isActive,
             CASE room_type
                 WHEN 0 THEN 'Standard'
-                WHEN 1 THEN 'Sweet'
+                WHEN 1 THEN 'Suite'
                 WHEN 2 THEN 'Deluxe'
             END AS roomType,
             CASE room_status
@@ -90,6 +104,8 @@
                 WHEN 2 THEN 'QueenBed'
             END AS roomBedOption,
             hotel_id AS hotelId
+            block_start_date AS blockStartDate,
+            block_end_date AS blockEndDate
         FROM rooms
         WHERE room_id = #{roomId}
     </select>
@@ -172,6 +188,7 @@
             hotel_images.size AS size,
             hotel_images.ext AS ext,
             hotel_images.store_name AS storeName,
+            hotel_images.path AS path,
             hotel_images.hotel_id AS hotelId
         FROM hotel_images
         INNER JOIN hotels

@@ -50,14 +50,8 @@ public interface IBooking extends IBase {
     LocalTime getCheckoutTime();
     void setCheckoutTime(LocalTime checkoutTime);
 
-    Integer getPoint();
-    void setPoint(Integer point);
-
     LocalDateTime getCancelledAt();
     void setCancelledAt(LocalDateTime cancelledAt);
-
-    Integer getTotalAmount();
-    void setTotalAmount(Integer totalAmount);
 
     Long getUserId();
     void setUserId(Long userId);
@@ -111,14 +105,8 @@ public interface IBooking extends IBase {
         if(forced || src.getCheckoutTime() != null) {
             this.setCheckoutTime(src.getCheckoutTime());
         }
-        if(forced || src.getPoint() != null) {
-            this.setPoint(src.getPoint());
-        }
         if(forced || src.getCancelledAt() != null) {
             this.setCancelledAt(src.getCancelledAt());
-        }
-        if(forced || src.getTotalAmount() != null) {
-            this.setTotalAmount(src.getTotalAmount());
         }
         if(forced || src.getUserId() != null) {
             this.setUserId(src.getUserId());

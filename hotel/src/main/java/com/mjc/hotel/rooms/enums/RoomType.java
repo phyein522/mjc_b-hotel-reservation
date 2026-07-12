@@ -14,11 +14,16 @@ public enum RoomType {
 	/**
 	 * 스위트
 	 */
-	, Sweet(2)
+	, Suite(2)
 	/**
 	 * 디럭스
 	 */
 	, Deluxe(3)
+	/**
+	 * 프리미엄
+	 */
+	, Premium(4)
+	;
 	;
 
 	private final int value;

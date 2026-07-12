@@ -1,9 +1,7 @@
 package com.mjc.hotel.sales_analysis.service;
 
 import com.mjc.hotel.sales_analysis.dto.*;
-import com.mjc.hotel.hotels.HotelEntity;
 import com.mjc.hotel.sales_analysis.mapper.SalesAnalysisMapper;
-import com.mjc.hotel.hotels.HotelRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -19,16 +17,16 @@ import java.util.List;
 public class SalesAnalysisServiceImpl implements SalesAnalysisService {
 
     private final SalesAnalysisMapper salesAnalysisMapper;
-    private final HotelRepository hotelRepository;
 
     @Override
     public SalesDashboardResponse getDashboardData(Long hotelId, String targetMonth) {
         validateTargetMonth(targetMonth);
 
         // 1. 호텔 이름 조회
-        String hotelName = hotelRepository.findById(hotelId)
-                .map(HotelEntity::getName)
-                .orElse("알 수 없는 호텔");
+        String hotelName = salesAnalysisMapper.getHotelName(hotelId);
+        if (hotelName == null) {
+            hotelName = "알 수 없는 호텔";
+        }
 
         // 2. 날짜 계산
         YearMonth currentYearMonth = YearMonth.parse(targetMonth);
@@ -118,8 +116,7 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
                 .vipReturningGuestRate(calculateDoubleMetric(currentVipReturningRate, prevVipReturningRate))
                 .build();
 
-        // 9. 채널 및 탑 예약 데이터 조회
-        List<ChannelShareDto> channelShares = salesAnalysisMapper.getChannelShares(hotelId, startDate, endDate);
+        // 9. 탑 예약 데이터 조회
         List<TopBookingDto> topBookings = salesAnalysisMapper.getTopBookings(hotelId, startDate, endDate);
 
         return SalesDashboardResponse.builder()
@@ -129,7 +126,6 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
                 .month(month)
                 .metrics(metrics)
                 .roomTypeRevenue(roomTypeRevenue)
-                .channelShares(channelShares)
                 .topBookings(topBookings)
                 .build();
     }
@@ -140,15 +136,6 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
             throw new IllegalArgumentException("유효하지 않은 시작일 날짜 형식입니다. (YYYY-MM-DD 형식 필요)");
         }
         return salesAnalysisMapper.getMonthlyRevenueTrend(hotelId, startDate);
-    }
-
-    @Override
-    public List<ChannelShareDto> getChannelShares(Long hotelId, String targetMonth) {
-        validateTargetMonth(targetMonth);
-        YearMonth currentYearMonth = YearMonth.parse(targetMonth);
-        String startDate = currentYearMonth.atDay(1).toString();
-        String endDate = currentYearMonth.atEndOfMonth().toString();
-        return salesAnalysisMapper.getChannelShares(hotelId, startDate, endDate);
     }
 
     @Override

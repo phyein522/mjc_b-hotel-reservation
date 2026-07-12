@@ -86,7 +86,7 @@ public class TestRoomImageRestController {
 	}
 
 	@Test
-	@DisplayName("POST /api/v1/roomimage - 객실 이미지 등록 성공")
+	@DisplayName("POST /api/roomimage - 객실 이미지 등록 성공")
 	void insert_shouldReturnCreated() throws Exception {
 		// given
 		when(roomImageService.insert(any(RoomImageRequestDto.class))).thenReturn(SampleRoomImageResponseDto);
@@ -106,7 +106,7 @@ public class TestRoomImageRestController {
 		);
 
 		// when & then
-		mockMvc.perform(multipart("/api/v1/roomimage")
+		mockMvc.perform(multipart("/api/roomimage")
 						.file(requestDtoPart)
 						.file(filePart))
 				.andExpect(status().isCreated())
@@ -123,7 +123,7 @@ public class TestRoomImageRestController {
 	}
 
 	@Test
-	@DisplayName("POST /api/v1/roomimage/room/{roomId} - 업로드 후 등록 성공")
+	@DisplayName("POST /api/roomimage/room/{roomId} - 업로드 후 등록 성공")
 	void uploadAndInsert_shouldReturnCreated() throws Exception {
 		// given
 		when(roomImageService.uploadAndInsert(eq(10L), any())).thenReturn(SampleRoomImageResponseDto);
@@ -136,7 +136,7 @@ public class TestRoomImageRestController {
 		);
 
 		// when & then
-		mockMvc.perform(multipart("/api/v1/roomimage/room/{roomId}", 10L)
+		mockMvc.perform(multipart("/api/roomimage/room/{roomId}", 10L)
 						.file(filePart))
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.responseData.roomImageId").value(SampleRoomImageDto.getRoomImageId()))
@@ -152,7 +152,7 @@ public class TestRoomImageRestController {
 	}
 
 	@Test
-	@DisplayName("PATCH /api/v1/roomimage - 객실 이미지 수정 성공")
+	@DisplayName("PATCH /api/roomimage - 객실 이미지 수정 성공")
 	void update_shouldReturnOk() throws Exception {
 		// given
 		SampleRoomImageDto.setFileName("수정된파일명.jpg");
@@ -170,7 +170,7 @@ public class TestRoomImageRestController {
 				.build();
 
 		// when & then
-		mockMvc.perform(patch("/api/v1/roomimage")
+		mockMvc.perform(patch("/api/roomimage")
 						.contentType("application/json")
 						.content(objectMapper.writeValueAsString(requestDto)))
 				.andExpect(status().isOk())
@@ -187,7 +187,7 @@ public class TestRoomImageRestController {
 	}
 
 	@Test
-	@DisplayName("PATCH /api/v1/roomimage/image/{roomImageId} - 업로드 후 수정 성공")
+	@DisplayName("PATCH /api/roomimage/image/{roomImageId} - 업로드 후 수정 성공")
 	void uploadAndUpdate_shouldReturnCreated() throws Exception {
 		// given
 		when(roomImageService.uploadAndUpdate(eq(1L), any())).thenReturn(SampleRoomImageResponseDto);
@@ -200,7 +200,7 @@ public class TestRoomImageRestController {
 		);
 
 		// when & then
-		mockMvc.perform(multipart(HttpMethod.PATCH, "/api/v1/roomimage/image/{roomImageId}", 1L)
+		mockMvc.perform(multipart(HttpMethod.PATCH, "/api/roomimage/image/{roomImageId}", 1L)
 						.file(filePart))
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.responseData.roomImageId").value(SampleRoomImageDto.getRoomImageId()))
@@ -216,13 +216,13 @@ public class TestRoomImageRestController {
 	}
 
 	@Test
-	@DisplayName("GET /api/v1/roomimage/{roomImageId} - 단건 조회 성공")
+	@DisplayName("GET /api/roomimage/{roomImageId} - 단건 조회 성공")
 	void findById_shouldReturnOk() throws Exception {
 		// given
 		when(roomImageService.findById(1L)).thenReturn(SampleRoomImageResponseDto);
 
 		// when & then
-		mockMvc.perform(get("/api/v1/roomimage/{roomImageId}", 1L))
+		mockMvc.perform(get("/api/roomimage/{roomImageId}", 1L))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.responseData.roomImageId").value(SampleRoomImageResponseDto.getRoomImageId()))
 				.andExpect(jsonPath("$.responseData.fileName").value(SampleRoomImageResponseDto.getFileName()))
@@ -238,7 +238,7 @@ public class TestRoomImageRestController {
 	}
 
 	@Test
-	@DisplayName("GET /api/v1/roomimage/download/{roomImageId} - 이미지 다운로드 성공")
+	@DisplayName("GET /api/roomimage/download/{roomImageId} - 이미지 다운로드 성공")
 	void downloadImageById_shouldReturnOk() throws Exception {
 		// given
 		byte[] imageBytes = "dummy-image-content".getBytes(StandardCharsets.UTF_8);
@@ -248,7 +248,7 @@ public class TestRoomImageRestController {
 		String expectedFileName = URLEncoder.encode(SampleRoomImageResponseDto.getFileName(), StandardCharsets.UTF_8);
 
 		// when & then
-		mockMvc.perform(get("/api/v1/roomimage/download/{roomImageId}", 1L))
+		mockMvc.perform(get("/api/roomimage/download/{roomImageId}", 1L))
 				.andExpect(status().isOk())
 				.andExpect(header().string("Content-type", "application/octet-stream"))
 				.andExpect(header().string("Content-disposition", "attachment; filename=\"" + expectedFileName + "\""))
@@ -259,7 +259,7 @@ public class TestRoomImageRestController {
 	}
 
 	@Test
-	@DisplayName("GET /api/v1/roomimage/image/{roomImageId} - 이미지 리소스 조회 성공")
+	@DisplayName("GET /api/roomimage/image/{roomImageId} - 이미지 리소스 조회 성공")
 	void resourceImageById_shouldReturnOk() throws Exception {
 		// given
 		Resource imageResource = new ByteArrayResource("dummy-image-content".getBytes(StandardCharsets.UTF_8));
@@ -267,7 +267,7 @@ public class TestRoomImageRestController {
 		when(roomImageService.getImageResourceById(any(RoomImageDto.class))).thenReturn(imageResource);
 
 		// when & then
-		mockMvc.perform(get("/api/v1/roomimage/image/{roomImageId}", 1L))
+		mockMvc.perform(get("/api/roomimage/image/{roomImageId}", 1L))
 				.andExpect(status().isOk())
 				.andExpect(header().string("Content-type", "image/" + SampleRoomImageResponseDto.getExt()))
 		;
@@ -277,13 +277,13 @@ public class TestRoomImageRestController {
 	}
 
 	@Test
-	@DisplayName("DELETE /api/v1/roomimage/{roomImageId} - 삭제 성공")
+	@DisplayName("DELETE /api/roomimage/{roomImageId} - 삭제 성공")
 	void deleteById_shouldReturnOk() throws Exception {
 		// given
 		when(roomImageService.deleteById(1L)).thenReturn(SampleRoomImageDto);
 
 		// when & then
-		mockMvc.perform(delete("/api/v1/roomimage/{roomImageId}", 1L))
+		mockMvc.perform(delete("/api/roomimage/{roomImageId}", 1L))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.responseData.roomImageId").value(SampleRoomImageDto.getRoomImageId()))
 				.andExpect(jsonPath("$.responseData.fileName").value(SampleRoomImageDto.getFileName()))
@@ -298,7 +298,7 @@ public class TestRoomImageRestController {
 	}
 
 	@Test
-	@DisplayName("GET /api/v1/roomimage/hotel/{roomId} - 객실별 이미지 페이징 조회 성공")
+	@DisplayName("GET /api/roomimage/hotel/{roomId} - 객실별 이미지 페이징 조회 성공")
 	void page_shouldReturnOk() throws Exception {
 		// given
 		Page<RoomImageResponseDto> pageResult = new PageImpl<>(
@@ -309,7 +309,7 @@ public class TestRoomImageRestController {
 		when(roomImageService.findAllByRoomIdEquals(eq(10L), any())).thenReturn(pageResult);
 
 		// when & then
-		mockMvc.perform(get("/api/v1/roomimage/hotel/{roomId}", 10L)
+		mockMvc.perform(get("/api/roomimage/hotel/{roomId}", 10L)
 						.param("page", "0")
 						.param("size", "10"))
 				.andExpect(status().isOk())

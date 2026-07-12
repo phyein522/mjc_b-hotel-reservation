@@ -33,11 +33,11 @@ public class ApiResponseAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public @Nullable Object beforeBodyWrite(@Nullable Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
-        if (body instanceof ApiResponse<?>) {
+//        if (body instanceof ApiResponse<?>) {
             return body;
-        }
-        return new ApiResponse<>(
-                ResponseCode.SUCCESS, "success", body
-        );
+//        }
+//        return new ApiResponse<>(
+//                ResponseCode.SUCCESS, "success", body
+//        );
     }
 }

@@ -15,8 +15,8 @@ public interface IHotelAmen extends IBase {
     Boolean getPool();
     void setPool(Boolean swimPool);
 
-    Boolean getGym();
-    void setGym(Boolean gym);
+    Boolean getFitnessCenter();
+    void setFitnessCenter(Boolean fitnessCenter);
 
     Boolean getSpa();
     void setSpa(Boolean spa);
@@ -27,8 +27,38 @@ public interface IHotelAmen extends IBase {
     Boolean getValetParking();
     void setValetParking(Boolean valetParking);
 
+    Boolean getFreeParking();
+    void setFreeParking(Boolean freeParking);
+
+    Boolean getConcierge();
+    void setConcierge(Boolean concierge);
+
     Boolean getBar();
     void setBar(Boolean bar);
+
+    Boolean getBreakfast();
+    void setBreakfast(Boolean breakfast);
+
+    Boolean getAirportShuttle();
+    void setAirportShuttle(Boolean airportShuttle);
+
+    Boolean getRoomService();
+    void setRoomService(Boolean roomService);
+
+    Boolean getLaundry();
+    void setLaundry(Boolean laundry);
+
+    Boolean getLounge();
+    void setLounge(Boolean lounge);
+
+    Boolean getSauna();
+    void setSauna(Boolean sauna);
+
+    Boolean getFreeCancel();
+    void setFreeCancel(Boolean freeCancel);
+
+    Boolean getPetFriendly();
+    void setPetFriendly(Boolean petFriendly);
 
     Long getHotelId();
     void setHotelId(Long hotelId);
@@ -54,8 +84,8 @@ public interface IHotelAmen extends IBase {
         if (forced || source.getPool() != null) {
             this.setPool(source.getPool());
         }
-        if (forced || source.getGym() != null) {
-            this.setGym(source.getGym());
+        if (forced || source.getFitnessCenter() != null) {
+            this.setFitnessCenter(source.getFitnessCenter());
         }
         if (forced || source.getSpa() != null) {
             this.setSpa(source.getSpa());
@@ -68,9 +98,39 @@ public interface IHotelAmen extends IBase {
         if (forced || source.getValetParking() != null) {
             this.setValetParking(source.getValetParking());
         }
+        if (forced || source.getFreeParking() != null) {
+            this.setFreeParking(source.getFreeParking());
+        }
+        if (forced || source.getConcierge() != null) {
+            this.setConcierge(source.getConcierge());
+        }
 
         if (forced || source.getBar() != null) {
             this.setBar(source.getBar());
+        }
+        if (forced || source.getBreakfast() != null) {
+            this.setBreakfast(source.getBreakfast());
+        }
+        if (forced || source.getAirportShuttle() != null) {
+            this.setAirportShuttle(source.getAirportShuttle());
+        }
+        if (forced || source.getRoomService() != null) {
+            this.setRoomService(source.getRoomService());
+        }
+        if (forced || source.getLaundry() != null) {
+            this.setLaundry(source.getLaundry());
+        }
+        if (forced || source.getLounge() != null) {
+            this.setLounge(source.getLounge());
+        }
+        if (forced || source.getSauna() != null) {
+            this.setSauna(source.getSauna());
+        }
+        if (forced || source.getFreeCancel() != null) {
+            this.setFreeCancel(source.getFreeCancel());
+        }
+        if (forced || source.getPetFriendly() != null) {
+            this.setPetFriendly(source.getPetFriendly());
         }
 
         if (forced || source.getHotelId() != null) {
