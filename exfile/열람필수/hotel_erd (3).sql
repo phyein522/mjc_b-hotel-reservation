@@ -8,8 +8,7 @@
 	`paid_at`	TIMESTAMP	NOT NULL,
 	`cancelled_at`	TIMESTAMP	NULL,
 	`card_company`	VARCHAR(100)	NULL,
-	`card_last4`	VARCHAR(4)	NULL,
-	`point`	INT	NOT NULL	COMMENT 'total_amount의 1%'
+	`card_last4`	VARCHAR(4)	NULL
 );
 
 CREATE TABLE `check_trip_type` (
@@ -279,9 +278,8 @@ CREATE TABLE `point_transactions` (
 	`point_id`	BIGINT	NOT NULL,
 	`user_id`	BIGINT	NOT NULL,
 	`payment_id`	BIGINT	NOT NULL,
-	`booking_id`	BIGINT	NOT NULL,
 	`type`	ENUM('EARN', 'USE', 'CANCEL_EARN', 'ADMIN_ADJUST')	NULL	COMMENT '적립, 사용, 적립 취소, 관리자가 추가',
-	`point_amount`	INT	NOT NULL,
+	`point_amount`	INT	NOT NULL	COMMENT 'earn: payment.total_amount의 1%',
 	`balance_after`	INT	NOT NULL
 );
 
