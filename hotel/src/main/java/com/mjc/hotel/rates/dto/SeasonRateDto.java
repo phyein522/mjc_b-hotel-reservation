@@ -15,6 +15,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @ToString
 @SuperBuilder
+@tools.jackson.databind.annotation.JsonDeserialize(as = SeasonRateDto.class)
 public class SeasonRateDto extends BaseDto {
     private Long seasonRateId;
     private String seasonName;

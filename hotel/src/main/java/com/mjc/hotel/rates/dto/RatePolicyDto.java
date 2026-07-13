@@ -14,6 +14,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @ToString
 @SuperBuilder
+@tools.jackson.databind.annotation.JsonDeserialize(as = RatePolicyDto.class)
 public class RatePolicyDto extends BaseDto {
     private Long policyId;
     private Integer minStayNights;
