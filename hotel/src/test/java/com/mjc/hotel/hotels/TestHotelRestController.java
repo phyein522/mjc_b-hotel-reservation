@@ -5,6 +5,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -16,14 +19,13 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -73,28 +75,36 @@ public class TestHotelRestController {
 	@DisplayName("GET /api/hotels - 호텔 목록 조회 성공")
 	void getHotels_shouldReturnOk() throws Exception {
 		// given
-		when(hotelService.findAll()).thenReturn(List.of(SampleHotelDto));
+		Page<HotelDto> pageResult = new PageImpl<>(
+				List.of(SampleHotelDto),
+				PageRequest.of(0, 10),
+				1
+		);
+		when(hotelService.findAll(any())).thenReturn(pageResult);
 
 		// when & then
-		mockMvc.perform(get("/api/hotels"))
+		mockMvc.perform(get("/api/hotels")
+						.param("page", "0")
+						.param("size", "10"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$[0].hotelId").value(SampleHotelDto.getHotelId()))
-				.andExpect(jsonPath("$[0].name").value(SampleHotelDto.getName()))
-				.andExpect(jsonPath("$[0].description").value(SampleHotelDto.getDescription()))
-				.andExpect(jsonPath("$[0].address").value(SampleHotelDto.getAddress()))
-				.andExpect(jsonPath("$[0].city").value(SampleHotelDto.getCity()))
-				.andExpect(jsonPath("$[0].zipCode").value(SampleHotelDto.getZipCode()))
-				.andExpect(jsonPath("$[0].phone").value(SampleHotelDto.getPhone()))
-				.andExpect(jsonPath("$[0].email").value(SampleHotelDto.getEmail()))
-				.andExpect(jsonPath("$[0].checkIn").value(SampleHotelDto.getCheckIn().format(TIME_FORMATTER)))
-				.andExpect(jsonPath("$[0].checkOut").value(SampleHotelDto.getCheckOut().format(TIME_FORMATTER)))
-				.andExpect(jsonPath("$[0].starRate").value(SampleHotelDto.getStarRate()))
-				.andExpect(jsonPath("$[0].isActive").value(SampleHotelDto.getIsActive()))
-				.andExpect(jsonPath("$[0].latitude").value(SampleHotelDto.getLatitude()))
-				.andExpect(jsonPath("$[0].longitude").value(SampleHotelDto.getLongitude()))
-				.andExpect(jsonPath("$[0].type").value(SampleHotelDto.getType().toString()));
+				.andExpect(jsonPath("$.responseData.content[0].hotelId").value(SampleHotelDto.getHotelId()))
+				.andExpect(jsonPath("$.responseData.content[0].name").value(SampleHotelDto.getName()))
+				.andExpect(jsonPath("$.responseData.content[0].description").value(SampleHotelDto.getDescription()))
+				.andExpect(jsonPath("$.responseData.content[0].address").value(SampleHotelDto.getAddress()))
+				.andExpect(jsonPath("$.responseData.content[0].city").value(SampleHotelDto.getCity()))
+				.andExpect(jsonPath("$.responseData.content[0].zipCode").value(SampleHotelDto.getZipCode()))
+				.andExpect(jsonPath("$.responseData.content[0].phone").value(SampleHotelDto.getPhone()))
+				.andExpect(jsonPath("$.responseData.content[0].email").value(SampleHotelDto.getEmail()))
+				.andExpect(jsonPath("$.responseData.content[0].checkIn").value(SampleHotelDto.getCheckIn().format(TIME_FORMATTER)))
+				.andExpect(jsonPath("$.responseData.content[0].checkOut").value(SampleHotelDto.getCheckOut().format(TIME_FORMATTER)))
+				.andExpect(jsonPath("$.responseData.content[0].starRate").value(SampleHotelDto.getStarRate()))
+				.andExpect(jsonPath("$.responseData.content[0].isActive").value(SampleHotelDto.getIsActive()))
+				.andExpect(jsonPath("$.responseData.content[0].latitude").value(SampleHotelDto.getLatitude()))
+				.andExpect(jsonPath("$.responseData.content[0].longitude").value(SampleHotelDto.getLongitude()))
+				.andExpect(jsonPath("$.responseData.content[0].type").value(SampleHotelDto.getType().toString()))
+				.andExpect(jsonPath("$.responseData.totalElements").value(1));
 
-		verify(hotelService, times(1)).findAll();
+		verify(hotelService, times(1)).findAll(any());
 	}
 
 	@Test
@@ -106,21 +116,21 @@ public class TestHotelRestController {
 		// when & then
 		mockMvc.perform(get("/api/hotels/{hotelId}", 1L))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.hotelId").value(SampleHotelDto.getHotelId()))
-				.andExpect(jsonPath("$.name").value(SampleHotelDto.getName()))
-				.andExpect(jsonPath("$.description").value(SampleHotelDto.getDescription()))
-				.andExpect(jsonPath("$.address").value(SampleHotelDto.getAddress()))
-				.andExpect(jsonPath("$.city").value(SampleHotelDto.getCity()))
-				.andExpect(jsonPath("$.zipCode").value(SampleHotelDto.getZipCode()))
-				.andExpect(jsonPath("$.phone").value(SampleHotelDto.getPhone()))
-				.andExpect(jsonPath("$.email").value(SampleHotelDto.getEmail()))
-				.andExpect(jsonPath("$.checkIn").value(SampleHotelDto.getCheckIn().format(TIME_FORMATTER)))
-				.andExpect(jsonPath("$.checkOut").value(SampleHotelDto.getCheckOut().format(TIME_FORMATTER)))
-				.andExpect(jsonPath("$.starRate").value(SampleHotelDto.getStarRate()))
-				.andExpect(jsonPath("$.isActive").value(SampleHotelDto.getIsActive()))
-				.andExpect(jsonPath("$.latitude").value(SampleHotelDto.getLatitude()))
-				.andExpect(jsonPath("$.longitude").value(SampleHotelDto.getLongitude()))
-				.andExpect(jsonPath("$.type").value(SampleHotelDto.getType().toString()));
+				.andExpect(jsonPath("$.responseData.hotelId").value(SampleHotelDto.getHotelId()))
+				.andExpect(jsonPath("$.responseData.name").value(SampleHotelDto.getName()))
+				.andExpect(jsonPath("$.responseData.description").value(SampleHotelDto.getDescription()))
+				.andExpect(jsonPath("$.responseData.address").value(SampleHotelDto.getAddress()))
+				.andExpect(jsonPath("$.responseData.city").value(SampleHotelDto.getCity()))
+				.andExpect(jsonPath("$.responseData.zipCode").value(SampleHotelDto.getZipCode()))
+				.andExpect(jsonPath("$.responseData.phone").value(SampleHotelDto.getPhone()))
+				.andExpect(jsonPath("$.responseData.email").value(SampleHotelDto.getEmail()))
+				.andExpect(jsonPath("$.responseData.checkIn").value(SampleHotelDto.getCheckIn().format(TIME_FORMATTER)))
+				.andExpect(jsonPath("$.responseData.checkOut").value(SampleHotelDto.getCheckOut().format(TIME_FORMATTER)))
+				.andExpect(jsonPath("$.responseData.starRate").value(SampleHotelDto.getStarRate()))
+				.andExpect(jsonPath("$.responseData.isActive").value(SampleHotelDto.getIsActive()))
+				.andExpect(jsonPath("$.responseData.latitude").value(SampleHotelDto.getLatitude()))
+				.andExpect(jsonPath("$.responseData.longitude").value(SampleHotelDto.getLongitude()))
+				.andExpect(jsonPath("$.responseData.type").value(SampleHotelDto.getType().toString()));
 
 		verify(hotelService, times(1)).findById(1L);
 	}
@@ -135,67 +145,82 @@ public class TestHotelRestController {
 		mockMvc.perform(post("/api/hotels")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(SampleHotelDto)))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.hotelId").value(SampleHotelDto.getHotelId()))
-				.andExpect(jsonPath("$.name").value(SampleHotelDto.getName()))
-				.andExpect(jsonPath("$.description").value(SampleHotelDto.getDescription()))
-				.andExpect(jsonPath("$.address").value(SampleHotelDto.getAddress()))
-				.andExpect(jsonPath("$.city").value(SampleHotelDto.getCity()))
-				.andExpect(jsonPath("$.zipCode").value(SampleHotelDto.getZipCode()))
-				.andExpect(jsonPath("$.phone").value(SampleHotelDto.getPhone()))
-				.andExpect(jsonPath("$.email").value(SampleHotelDto.getEmail()))
-				.andExpect(jsonPath("$.checkIn").value(SampleHotelDto.getCheckIn().format(TIME_FORMATTER)))
-				.andExpect(jsonPath("$.checkOut").value(SampleHotelDto.getCheckOut().format(TIME_FORMATTER)))
-				.andExpect(jsonPath("$.starRate").value(SampleHotelDto.getStarRate()))
-				.andExpect(jsonPath("$.isActive").value(SampleHotelDto.getIsActive()))
-				.andExpect(jsonPath("$.latitude").value(SampleHotelDto.getLatitude()))
-				.andExpect(jsonPath("$.longitude").value(SampleHotelDto.getLongitude()))
-				.andExpect(jsonPath("$.type").value(SampleHotelDto.getType().toString()));
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$.responseData.hotelId").value(SampleHotelDto.getHotelId()))
+				.andExpect(jsonPath("$.responseData.name").value(SampleHotelDto.getName()))
+				.andExpect(jsonPath("$.responseData.description").value(SampleHotelDto.getDescription()))
+				.andExpect(jsonPath("$.responseData.address").value(SampleHotelDto.getAddress()))
+				.andExpect(jsonPath("$.responseData.city").value(SampleHotelDto.getCity()))
+				.andExpect(jsonPath("$.responseData.zipCode").value(SampleHotelDto.getZipCode()))
+				.andExpect(jsonPath("$.responseData.phone").value(SampleHotelDto.getPhone()))
+				.andExpect(jsonPath("$.responseData.email").value(SampleHotelDto.getEmail()))
+				.andExpect(jsonPath("$.responseData.checkIn").value(SampleHotelDto.getCheckIn().format(TIME_FORMATTER)))
+				.andExpect(jsonPath("$.responseData.checkOut").value(SampleHotelDto.getCheckOut().format(TIME_FORMATTER)))
+				.andExpect(jsonPath("$.responseData.starRate").value(SampleHotelDto.getStarRate()))
+				.andExpect(jsonPath("$.responseData.isActive").value(SampleHotelDto.getIsActive()))
+				.andExpect(jsonPath("$.responseData.latitude").value(SampleHotelDto.getLatitude()))
+				.andExpect(jsonPath("$.responseData.longitude").value(SampleHotelDto.getLongitude()))
+				.andExpect(jsonPath("$.responseData.type").value(SampleHotelDto.getType().toString()));
 
 		verify(hotelService, times(1)).insert(any(HotelDto.class));
 	}
 
 	@Test
-	@DisplayName("PUT /api/hotels/{hotelId} - 호텔 수정 성공")
+	@DisplayName("PATCH /api/hotels - 호텔 수정 성공")
 	void updateHotel_shouldReturnOk() throws Exception {
 		// given
 		SampleHotelDto.setName("수정된 엠제이씨 호텔");
-		when(hotelService.update(eq(1L), any(HotelDto.class))).thenReturn(SampleHotelDto);
+		when(hotelService.update(any(HotelDto.class))).thenReturn(SampleHotelDto);
 
 		// when & then
-		mockMvc.perform(put("/api/hotels/{hotelId}", 1L)
+		mockMvc.perform(patch("/api/hotels")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(SampleHotelDto)))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.hotelId").value(SampleHotelDto.getHotelId()))
-				.andExpect(jsonPath("$.name").value(SampleHotelDto.getName()))
-				.andExpect(jsonPath("$.description").value(SampleHotelDto.getDescription()))
-				.andExpect(jsonPath("$.address").value(SampleHotelDto.getAddress()))
-				.andExpect(jsonPath("$.city").value(SampleHotelDto.getCity()))
-				.andExpect(jsonPath("$.zipCode").value(SampleHotelDto.getZipCode()))
-				.andExpect(jsonPath("$.phone").value(SampleHotelDto.getPhone()))
-				.andExpect(jsonPath("$.email").value(SampleHotelDto.getEmail()))
-				.andExpect(jsonPath("$.checkIn").value(SampleHotelDto.getCheckIn().format(TIME_FORMATTER)))
-				.andExpect(jsonPath("$.checkOut").value(SampleHotelDto.getCheckOut().format(TIME_FORMATTER)))
-				.andExpect(jsonPath("$.starRate").value(SampleHotelDto.getStarRate()))
-				.andExpect(jsonPath("$.isActive").value(SampleHotelDto.getIsActive()))
-				.andExpect(jsonPath("$.latitude").value(SampleHotelDto.getLatitude()))
-				.andExpect(jsonPath("$.longitude").value(SampleHotelDto.getLongitude()))
-				.andExpect(jsonPath("$.type").value(SampleHotelDto.getType().toString()));
+				.andExpect(jsonPath("$.responseData.hotelId").value(SampleHotelDto.getHotelId()))
+				.andExpect(jsonPath("$.responseData.name").value(SampleHotelDto.getName()))
+				.andExpect(jsonPath("$.responseData.description").value(SampleHotelDto.getDescription()))
+				.andExpect(jsonPath("$.responseData.address").value(SampleHotelDto.getAddress()))
+				.andExpect(jsonPath("$.responseData.city").value(SampleHotelDto.getCity()))
+				.andExpect(jsonPath("$.responseData.zipCode").value(SampleHotelDto.getZipCode()))
+				.andExpect(jsonPath("$.responseData.phone").value(SampleHotelDto.getPhone()))
+				.andExpect(jsonPath("$.responseData.email").value(SampleHotelDto.getEmail()))
+				.andExpect(jsonPath("$.responseData.checkIn").value(SampleHotelDto.getCheckIn().format(TIME_FORMATTER)))
+				.andExpect(jsonPath("$.responseData.checkOut").value(SampleHotelDto.getCheckOut().format(TIME_FORMATTER)))
+				.andExpect(jsonPath("$.responseData.starRate").value(SampleHotelDto.getStarRate()))
+				.andExpect(jsonPath("$.responseData.isActive").value(SampleHotelDto.getIsActive()))
+				.andExpect(jsonPath("$.responseData.latitude").value(SampleHotelDto.getLatitude()))
+				.andExpect(jsonPath("$.responseData.longitude").value(SampleHotelDto.getLongitude()))
+				.andExpect(jsonPath("$.responseData.type").value(SampleHotelDto.getType().toString()));
 
-		verify(hotelService, times(1)).update(eq(1L), any(HotelDto.class));
+		verify(hotelService, times(1)).update(any(HotelDto.class));
 	}
 
 	@Test
 	@DisplayName("DELETE /api/hotels/{hotelId} - 호텔 삭제 성공")
-	void deleteHotel_shouldReturnNoContent() throws Exception {
+	void deleteHotel_shouldReturnOk() throws Exception {
 		// given
-		doNothing().when(hotelService).deleteByID(1L);
+		when(hotelService.deleteById(1L)).thenReturn(SampleHotelDto);
 
 		// when & then
 		mockMvc.perform(delete("/api/hotels/{hotelId}", 1L))
-				.andExpect(status().isNoContent());
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.responseData.hotelId").value(SampleHotelDto.getHotelId()))
+				.andExpect(jsonPath("$.responseData.name").value(SampleHotelDto.getName()))
+				.andExpect(jsonPath("$.responseData.description").value(SampleHotelDto.getDescription()))
+				.andExpect(jsonPath("$.responseData.address").value(SampleHotelDto.getAddress()))
+				.andExpect(jsonPath("$.responseData.city").value(SampleHotelDto.getCity()))
+				.andExpect(jsonPath("$.responseData.zipCode").value(SampleHotelDto.getZipCode()))
+				.andExpect(jsonPath("$.responseData.phone").value(SampleHotelDto.getPhone()))
+				.andExpect(jsonPath("$.responseData.email").value(SampleHotelDto.getEmail()))
+				.andExpect(jsonPath("$.responseData.checkIn").value(SampleHotelDto.getCheckIn().format(TIME_FORMATTER)))
+				.andExpect(jsonPath("$.responseData.checkOut").value(SampleHotelDto.getCheckOut().format(TIME_FORMATTER)))
+				.andExpect(jsonPath("$.responseData.starRate").value(SampleHotelDto.getStarRate()))
+				.andExpect(jsonPath("$.responseData.isActive").value(SampleHotelDto.getIsActive()))
+				.andExpect(jsonPath("$.responseData.latitude").value(SampleHotelDto.getLatitude()))
+				.andExpect(jsonPath("$.responseData.longitude").value(SampleHotelDto.getLongitude()))
+				.andExpect(jsonPath("$.responseData.type").value(SampleHotelDto.getType().toString()));
 
-		verify(hotelService, times(1)).deleteByID(1L);
+		verify(hotelService, times(1)).deleteById(1L);
 	}
 }
