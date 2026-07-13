@@ -38,32 +38,31 @@ public class RoomImageRestController {
 
 	@PostMapping("/room/{roomId}")
 	public ResponseEntity<ApiResponse<RoomImageResponseDto>> uploadAndInsert(@PathVariable Long roomId, @RequestPart MultipartFile file) throws RuntimeException {
-		RoomImageDto resultDto = this.roomImageService.uploadAndInsert(roomId, file);
-		RoomImageResponseDto result = RoomImageResponseDto.builder().build();
-		result.copyMembers(resultDto, true);
+		RoomImageResponseDto resultDto = this.roomImageService.uploadAndInsert(roomId, file);
+//		result.copyMembers(resultDto, true);
 		return ResponseEntity.status(HttpStatus.CREATED).body(
-				ApiResponse.make(ResponseCode.INSERT_OK, "ok", result)
+				ApiResponse.make(ResponseCode.INSERT_OK, "ok", resultDto)
 		);
 	}
 
 	@PatchMapping
 	public ResponseEntity<ApiResponse<RoomImageResponseDto>> update(@RequestBody RoomImageRequestDto requestDto) {
-		RoomImageDto resultDto = this.roomImageService.update(requestDto);
-		RoomImageResponseDto result = RoomImageResponseDto.builder().build();
-		result.copyMembers(resultDto, true);
+		RoomImageResponseDto resultDto = this.roomImageService.update(requestDto);
+//		RoomImageResponseDto result = RoomImageResponseDto.builder().build();
+//		result.copyMembers(resultDto, true);
 //		result.getImageUrl();
 		return ResponseEntity.status(HttpStatus.OK).body(
-				ApiResponse.make(ResponseCode.UPDATE_OK, "ok", result)
+				ApiResponse.make(ResponseCode.UPDATE_OK, "ok", resultDto)
 		);
 	}
 
 	@PatchMapping("/image/{roomImageId}")
 	public ResponseEntity<ApiResponse<RoomImageResponseDto>> uploadAndUpdate(@PathVariable Long roomImageId, @RequestPart MultipartFile file) throws RuntimeException {
-		RoomImageDto resultDto = this.roomImageService.uploadAndUpdate(roomImageId, file);
-		RoomImageResponseDto result = RoomImageResponseDto.builder().build();
-		result.copyMembers(resultDto, true);
+		RoomImageResponseDto resultDto = this.roomImageService.uploadAndUpdate(roomImageId, file);
+//		RoomImageResponseDto result = RoomImageResponseDto.builder().build();
+//		result.copyMembers(resultDto, true);
 		return ResponseEntity.status(HttpStatus.CREATED).body(
-				ApiResponse.make(ResponseCode.INSERT_OK, "ok", result)
+				ApiResponse.make(ResponseCode.INSERT_OK, "ok", resultDto)
 		);
 	}
 
@@ -77,7 +76,7 @@ public class RoomImageRestController {
 
 	@GetMapping("/download/{roomImageId}")
 	public ResponseEntity<ByteArrayResource> downloadImageById(@PathVariable Long roomImageId) throws IOException {
-		RoomImageDto findDto = this.roomImageService.findById(roomImageId);
+		RoomImageResponseDto findDto = this.roomImageService.findById(roomImageId);
 		byte[] result = this.roomImageService.getImageBytesById(findDto);
 		ByteArrayResource resource = new ByteArrayResource(result);
 		return ResponseEntity
@@ -90,7 +89,7 @@ public class RoomImageRestController {
 
 	@GetMapping("/image/{roomImageId}")
 	public ResponseEntity<Resource> resourceImageById(@PathVariable Long roomImageId) throws IOException {
-		RoomImageDto findDto = this.roomImageService.findById(roomImageId);
+		RoomImageResponseDto findDto = this.roomImageService.findById(roomImageId);
 		Resource result = this.roomImageService.getImageResourceById(findDto);
 		String contentType = "image/" + findDto.getExt();
 		return ResponseEntity
@@ -100,8 +99,8 @@ public class RoomImageRestController {
 	}
 
 	@DeleteMapping("/{roomImageId}")
-	public ResponseEntity<ApiResponse<RoomImageDto>> deleteById(@PathVariable Long roomImageId) {
-		RoomImageDto resultDto = this.roomImageService.deleteById(roomImageId);
+	public ResponseEntity<ApiResponse<RoomImageResponseDto>> deleteById(@PathVariable Long roomImageId) {
+		RoomImageResponseDto resultDto = this.roomImageService.deleteById(roomImageId);
 		return ResponseEntity.status(HttpStatus.OK).body(
 				ApiResponse.make(ResponseCode.DELETE_OK, "ok", resultDto)
 		);

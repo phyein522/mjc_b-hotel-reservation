@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @ToString
 @SuperBuilder
-public class RoomImageResponseDto extends RoomImageDto {
+public class RoomImageResponseDto extends RoomImageListDto {
 	private String imageUrl;
 
 	public String getImageUrl() {
