@@ -4,6 +4,8 @@ import com.mjc.hotel.common.dto.BaseDto;
 import com.mjc.hotel.user.dto.IUser;
 import com.mjc.hotel.user.dto.UserDto;
 import lombok.*;
+
+import java.math.BigDecimal;
 import java.time.LocalTime;
 
 @Getter
@@ -25,8 +27,8 @@ public class HotelDto extends BaseDto implements IHotel{
     private LocalTime checkOut;
     private int starRate;
     private Boolean isActive;
-    private String latitude;
-    private String longitude;
+    private BigDecimal latitude;
+    private BigDecimal longitude;
     private HotelTypeEnum type;
 
     private Long userId;
