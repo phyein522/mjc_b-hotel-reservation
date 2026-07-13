@@ -1,6 +1,9 @@
 package com.mjc.hotel.bookings;
 
 import com.mjc.hotel.common.dto.IBase;
+import com.mjc.hotel.rooms.dto.IRoom;
+import com.mjc.hotel.user.dto.IUser;
+import org.hibernate.LazyInitializationException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -55,9 +58,13 @@ public interface IBooking extends IBase {
 
     Long getUserId();
     void setUserId(Long userId);
+    IUser getUser();
+    void setUser(IUser user);
 
     Long getRoomId();
     void setRoomId(Long roomId);
+    IRoom getRoom();
+    void setRoom(IRoom room);
 
     default IBooking copyMembers(IBooking src, boolean forced) {
         if(src == null) {
@@ -110,9 +117,21 @@ public interface IBooking extends IBase {
         }
         if(forced || src.getUserId() != null) {
             this.setUserId(src.getUserId());
+            try {
+                if(src.getUser() != null) {
+                    this.setUser(src.getUser());
+                }
+            } catch(LazyInitializationException e) {
+            }
         }
         if(forced || src.getRoomId() != null) {
             this.setRoomId(src.getRoomId());
+            try {
+                if(src.getRoom() != null) {
+                    this.setRoom(src.getRoom());
+                }
+            } catch(LazyInitializationException e) {
+            }
         }
         return this;
     }
