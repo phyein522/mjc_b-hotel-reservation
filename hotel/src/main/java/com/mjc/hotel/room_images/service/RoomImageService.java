@@ -67,12 +67,12 @@ public class RoomImageService {
 		return resultDto;
 	}
 
-	public Resource getImageResourceById(RoomImageDto roomImageDto) throws IOException {
+	public Resource getImageResourceById(IRoomImage roomImageDto) throws IOException {
 		Resource result = this.fileUtil.loadFileAsResource(roomImageDto.getPath(), roomImageDto.getStoreName());
 		return result;
 	}
 
-	public byte[] getImageBytesById(RoomImageDto roomImageDto) throws IOException {
+	public byte[] getImageBytesById(IRoomImage roomImageDto) throws IOException {
 		byte[] result = this.fileUtil.loadFileAsBytes(roomImageDto.getPath(), roomImageDto.getStoreName());
 		return result;
 	}
@@ -89,7 +89,7 @@ public class RoomImageService {
 	public RoomImageResponseDto uploadAndUpdate(Long roomImageId, MultipartFile file) throws RuntimeException {
 		RoomImageResponseDto findDto = this.findById(roomImageId);
 		this.fileUtil.deleteFile(findDto.getPath(), findDto.getStoreName());
-		RoomImageDto upload = this.upload(findDto.getRoomId(), file);
+		RoomImageResponseDto upload = this.upload(findDto.getRoomId(), file);
 		upload.setRoomImageId(roomImageId);
 		RoomImageEntity updateEntity = (RoomImageEntity) new RoomImageEntity().copyMembers(upload, true);
 		RoomImageEntity updatedEntity = this.roomImageRepository.save(updateEntity);
@@ -97,8 +97,8 @@ public class RoomImageService {
 		return resultDto;
 	}
 
-	public RoomImageDto deleteById(Long roomId) {
-		RoomImageDto findDto = this.findById(roomId);
+	public RoomImageResponseDto deleteById(Long roomId) {
+		RoomImageResponseDto findDto = this.findById(roomId);
 		this.fileUtil.deleteFile(findDto.getPath(), findDto.getStoreName());
 		this.roomImageRepository.deleteById(roomId);
 		return findDto;
