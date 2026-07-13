@@ -1,8 +1,8 @@
 package com.mjc.hotel.hotels;
 
-
 import com.mjc.hotel.common.dto.IBase;
-import com.mjc.hotel.hotelsimage.HotelImageRequestDto;
+import com.mjc.hotel.user.dto.IUser;
+import org.hibernate.LazyInitializationException;
 
 import java.time.LocalTime;
 
@@ -53,6 +53,12 @@ public interface IHotel extends IBase {
     HotelTypeEnum getType();
     void setType(HotelTypeEnum type);
 
+    Long getUserId();
+    void setUserId(Long userId);
+
+    IUser getUser();
+    void setUser(IUser user);
+
     default IHotel copyMembers(IHotel source, boolean forced) {
         if ( source == null ) {
             return this;
@@ -102,6 +108,17 @@ public interface IHotel extends IBase {
         }
         if ( forced || source.getType() != null ) {
             this.setType(source.getType());
+        }
+        if (forced || source.getUserId() != null) {
+            this.setUserId(source.getUserId());
+
+            try {
+                if (source.getUser() != null) {
+                    this.setUser(source.getUser());
+                }
+            } catch (LazyInitializationException e) {
+                System.err.println(e.getMessage());
+            }
         }
         return this;
     }

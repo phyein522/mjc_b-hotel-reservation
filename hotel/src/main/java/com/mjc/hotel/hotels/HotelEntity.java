@@ -1,9 +1,10 @@
 package com.mjc.hotel.hotels;
 
 import com.mjc.hotel.common.dto.BaseEntity;
+import com.mjc.hotel.user.dto.IUser;
+import com.mjc.hotel.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalTime;
 
 @Entity
@@ -60,4 +61,47 @@ public class HotelEntity extends BaseEntity implements IHotel {
 
     @Column(nullable = false, comment = "호텔 유형")
     private HotelTypeEnum type;
+
+    @Transient
+    private Long userId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
+
+    @Override
+    public Long getUserId() {
+
+        if (user != null) {
+            return user.getUserId();
+        }
+
+        return userId;
+    }
+
+    @Override
+    public void setUserId(Long userId) {
+
+        this.userId = userId;
+
+        if (user == null) {
+            user = new UserEntity();
+        }
+
+        user.setUserId(userId);
+    }
+    @Override
+    public void setUser(IUser user) {
+
+        if (user == null) {
+            return;
+        }
+
+        if (this.user == null) {
+            this.user = new UserEntity();
+        }
+
+        this.user.copyMembers(user, true);
+        this.userId = user.getUserId();
+    }
 }

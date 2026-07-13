@@ -1,10 +1,9 @@
 package com.mjc.hotel.hotels;
 
 import com.mjc.hotel.common.dto.BaseDto;
-import com.mjc.hotel.common.dto.IBase;
+import com.mjc.hotel.user.dto.IUser;
+import com.mjc.hotel.user.dto.UserDto;
 import lombok.*;
-
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
@@ -29,4 +28,43 @@ public class HotelDto extends BaseDto implements IHotel{
     private String latitude;
     private String longitude;
     private HotelTypeEnum type;
+
+    private Long userId;
+    private UserDto user;
+
+    @Override
+    public Long getUserId() {
+
+        if (user != null) {
+            return user.getUserId();
+        }
+
+        return userId;
+    }
+
+    @Override
+    public void setUserId(Long userId) {
+
+        this.userId = userId;
+
+        if (user == null) {
+            user = new UserDto();
+        }
+
+        user.setUserId(userId);
+    }
+    @Override
+    public void setUser(IUser user) {
+
+        if (user == null) {
+            return;
+        }
+
+        if (this.user == null) {
+            this.user = new UserDto();
+        }
+
+        this.user.copyMembers(user, true);
+        this.userId = user.getUserId();
+    }
 }
