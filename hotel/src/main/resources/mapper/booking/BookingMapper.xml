@@ -87,6 +87,7 @@
                 WHEN 0 THEN 'Standard'
                 WHEN 1 THEN 'Suite'
                 WHEN 2 THEN 'Deluxe'
+                WHEN 3 THEN 'Premium'
             END AS roomType,
             CASE room_status
                 WHEN 0 THEN 'EnableReservation'
