@@ -13,6 +13,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
+import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -65,8 +66,8 @@ public class TestHotelRestController {
 				.checkOut(LocalTime.of(11, 0))
 				.starRate(5)
 				.isActive(true)
-				.latitude("36.3504119")
-				.longitude("127.3845475")
+				.latitude(BigDecimal.valueOf(36.3504119))
+				.longitude(BigDecimal.valueOf(127.3845475))
 				.type(HotelTypeEnum.HOTEL)
 				.build();
 	}

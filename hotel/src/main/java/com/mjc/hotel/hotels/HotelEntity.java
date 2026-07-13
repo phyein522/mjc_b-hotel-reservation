@@ -5,6 +5,8 @@ import com.mjc.hotel.user.dto.IUser;
 import com.mjc.hotel.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.math.BigDecimal;
 import java.time.LocalTime;
 
 @Entity
@@ -54,10 +56,10 @@ public class HotelEntity extends BaseEntity implements IHotel {
     private Boolean isActive;
 
     @Column(nullable = false, comment = "위도")
-    private String latitude;
+    private BigDecimal latitude;
 
     @Column(nullable = false, comment = "경도")
-    private String longitude;
+    private BigDecimal longitude;
 
     @Column(nullable = false, comment = "호텔 유형")
     private HotelTypeEnum type;

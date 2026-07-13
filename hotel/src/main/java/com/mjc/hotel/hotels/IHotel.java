@@ -4,6 +4,7 @@ import com.mjc.hotel.common.dto.IBase;
 import com.mjc.hotel.user.dto.IUser;
 import org.hibernate.LazyInitializationException;
 
+import java.math.BigDecimal;
 import java.time.LocalTime;
 
 @tools.jackson.databind.annotation.JsonDeserialize(as = HotelDto.class)
@@ -44,11 +45,11 @@ public interface IHotel extends IBase {
     Boolean getIsActive();
     void setIsActive(Boolean isActive);
 
-    String getLatitude();
-    void setLatitude(String latitude);
+    BigDecimal getLatitude();
+    void setLatitude(BigDecimal latitude);
 
-    String getLongitude();
-    void setLongitude(String longitude);
+    BigDecimal getLongitude();
+    void setLongitude(BigDecimal longitude);
 
     HotelTypeEnum getType();
     void setType(HotelTypeEnum type);
