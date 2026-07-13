@@ -57,7 +57,7 @@ public class HotelImageRestController {
         HotelImageResponseDto result = HotelImageResponseDto.builder().build();
         result.copyMembers(resultDto, true);
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                ApiResponse.make(ResponseCode.INSERT_OK, "ok", resultDto)
+                ApiResponse.make(ResponseCode.UPDATE_OK, "ok", result)
         );
     }
 
