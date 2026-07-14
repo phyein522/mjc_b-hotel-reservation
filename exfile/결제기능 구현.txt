@@ -1,0 +1,110 @@
+# 결제(Payment) 기능 구현 정리
+
+## 한줄 요약
+결제는 "요청생성 → PG승인/실패 → 결제완료 → 취소/환불요청 → 환불처리" 순서로 움직이는 **상태 흐름(state machine)** 이다. `payments`, `refunds` 테이블에 컬럼 몇 개만 추가하면 구현 스펙이 명확해진다.
+
+---
+
+## 1. 결제 상태 흐름도
+
+```
+[결제 요청 생성 (READY)]
+        |
+        v
+[PG 결제 승인 요청] --(외부 PG사 호출)
+        |
+   -----------------
+   |               |
+   v               v
+[결제 실패        [결제 완료
+ FAILED]           PAID]
+                    |
+                    v
+              [취소/환불 요청
+               REQUESTED]
+                    |
+             -----------------
+             |               |
+             v               v
+        [부분 환불        [전액 환불
+      PARTIAL_REFUNDED]   REFUNDED]
+```
+
+- 빨강(FAILED) = 실패
+- 초록(PAID) = 결제완료
+- 주황(REQUESTED, PARTIAL_REFUNDED) = 처리중
+- 청록(REFUNDED) = 환불완료
+
+---
+
+## 2. SQL 수정 사항
+
+현재 `payments` 테이블에는 화면(결제 상세 금액)에 나오는 **쿠폰 할인 / 포인트 사용 / PG 거래번호**를 저장할 컬럼이 없음. 아래 컬럼 추가 필요.
+
+```sql
+ALTER TABLE payments
+  -- 적용한 쿠폰 ID (FK, 쿠폰 안 쓰면 NULL 가능)
+  ADD COLUMN coupon_id BIGINT NULL COMMENT '적용한 쿠폰 ID (FK, nullable)',
+
+  -- 결제 시 사용한 포인트 금액
+  ADD COLUMN used_point INT NOT NULL DEFAULT 0 COMMENT '결제 시 사용한 포인트',
+
+  -- 쿠폰+포인트 할인 총액 (화면에 보이는 할인 금액)
+  ADD COLUMN discount_amount NUMERIC(12,2) NOT NULL DEFAULT 0 COMMENT '쿠폰+포인트 할인 총액',
+
+  -- PG사에서 발급하는 거래 고유번호 (결제 조회/취소 시 필요)
+  ADD COLUMN pg_transaction_id VARCHAR(100) NULL COMMENT 'PG사 발급 거래 고유번호',
+
+  -- READY 상태일 땐 아직 결제가 안 됐으므로 NOT NULL이면 버그
+  MODIFY paid_at TIMESTAMP NULL;
+```
+
+`refunds` 테이블은 지금 구조로도 충분하지만, 필요하면 아래 컬럼 추가 고려:
+
+```sql
+ALTER TABLE refunds
+  -- 전체취소인지 부분환불인지 구분
+  ADD COLUMN refund_type ENUM('CANCEL','PARTIAL') NOT NULL DEFAULT 'CANCEL'
+    COMMENT '환불 유형 - CANCEL(전체취소)/PARTIAL(부분환불)';
+```
+
+---
+
+## 3. 클래스 구조 (패키지: payment)
+
+```
+payment/
+├── controller/PaymentController.java      // 결제 요청/조회 API
+├── controller/RefundController.java       // 환불 요청/조회 API
+├── service/PaymentService.java            // 결제 생성, PG 승인 콜백 처리
+├── service/RefundService.java             // 환불 요청, 승인 처리
+├── entity/Payment.java
+├── entity/Refund.java
+├── repository/PaymentRepository.java
+├── repository/RefundRepository.java
+├── dto/PaymentCreateRequest.java          // 결제 요청 시 body (쿠폰, 포인트 포함)
+├── dto/PaymentConfirmRequest.java         // PG 콜백에서 오는 데이터
+└── dto/PaymentResponse.java               // 프론트에 내려줄 응답
+```
+
+---
+
+## 4. API 흐름 (화면 순서 기준)
+
+1. 예약설정 페이지에서 넘어온 booking 정보로 `POST /payments` 호출
+   → `payments` 행을 `READY` 상태로 생성, 쿠폰/포인트 계산해서 `discount_amount`에 반영
+2. 프론트가 PG 결제창을 띄우고 결제 진행
+3. PG 콜백으로 `POST /payments/{id}/confirm` 호출
+   → 성공: `PAID` + `paid_at` 갱신 / 실패: `FAILED`
+4. `PAID`가 되면 `point_transactions`에 적립 내역(`type=EARN`) 자동 insert
+5. 사용자가 취소 요청 → `POST /refunds` 호출
+   → `refunds` 행 생성(`REQUESTED`), `payments.payment_status`도 `PARTIAL_REFUNDED`/`REFUNDED`로 동기화
+6. 환불 완료 시 `refunds.refunded_at` 채우고, 사용했던 포인트는 `point_transactions`에 `CANCEL_EARN`으로 되돌리기
+
+---
+
+## 5. agy(바이브 코딩 도구)에게 넘길 때 팁
+
+- "결제 컨트롤러 만들어줘"처럼 뭉뚱그려 시키지 말고, 위 **상태 흐름표 + 수정된 SQL + API 명세(입출력 필드)**를 문서 하나로 정리해서 넘길 것
+- "이 상태들 사이를 이렇게 전이시키는 컨트롤러/서비스를 만들어줘"라고 구체적으로 지시하면 정확도가 훨씬 올라감
+- 예전에 rate_management 스펙 문서 만들었던 방식 그대로 적용하면 됨
