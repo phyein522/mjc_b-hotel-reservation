@@ -69,8 +69,6 @@ public class BookingService {
     }
 
     public List<BookingResponseDto> findAllByUserId(Long userId) {
-        UserDto user = this.bookingMapper.getUser(userId);
-
         List<BookingDto> bookings = this.bookingMapper.getBookingsByUserId(userId);
         List<BookingResponseDto> result = new ArrayList<>();
         for(BookingDto booking : bookings) {
@@ -78,7 +76,10 @@ public class BookingService {
             List<RoomImageResponseDto> roomImages = this.bookingMapper.getRoomImages(room.getRoomId());
             HotelDto hotel = this.bookingMapper.getHotelByRoomId(booking.getRoomId());
             List<HotelImageResponseDto> hotelImages = this.bookingMapper.getHotelImages(hotel.getHotelId());
-            result.add(new BookingResponseDto(booking, user, room, roomImages, hotel, hotelImages));
+
+            room.setHotel(hotel);
+            booking.setRoom(room);
+            result.add(new BookingResponseDto(booking, roomImages, hotelImages));
         }
         return result;
     }

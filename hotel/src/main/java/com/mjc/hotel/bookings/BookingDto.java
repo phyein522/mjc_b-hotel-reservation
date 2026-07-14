@@ -1,7 +1,9 @@
 package com.mjc.hotel.bookings;
 
 import com.mjc.hotel.common.dto.BaseDto;
+import com.mjc.hotel.rooms.dto.IRoom;
 import com.mjc.hotel.rooms.dto.RoomDto;
+import com.mjc.hotel.user.dto.IUser;
 import com.mjc.hotel.user.dto.UserDto;
 import lombok.*;
 
@@ -52,6 +54,17 @@ public class BookingDto extends BaseDto implements IBooking {
         }
         this.user.setUserId(this.userId);
     }
+    @Override
+    public void setUser(IUser user) {
+        if(user == null) {
+            return;
+        }
+        if(this.user == null) {
+            this.user = new UserDto();
+        }
+        this.user.copyMembers(user, true);
+        this.userId = this.user.getUserId();
+    }
 
     @Override
     public Long getRoomId() {
@@ -67,5 +80,16 @@ public class BookingDto extends BaseDto implements IBooking {
             this.room = new RoomDto();
         }
         this.room.setRoomId(this.roomId);
+    }
+    @Override
+    public void setRoom(IRoom room) {
+        if(room == null) {
+            return;
+        }
+        if(this.room == null) {
+            this.room = new RoomDto();
+        }
+        this.room.copyMembers(room, true);
+        this.roomId = this.room.getRoomId();
     }
 }

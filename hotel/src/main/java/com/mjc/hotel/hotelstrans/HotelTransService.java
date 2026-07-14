@@ -1,6 +1,10 @@
 package com.mjc.hotel.hotelstrans;
 
+import com.mjc.hotel.hotels.HotelEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -8,13 +12,6 @@ import java.util.List;
 public class HotelTransService {
     @Autowired
     private HotelTransRepository hotelTransRepository;
-
-    public List<HotelTransDto> findAll() {
-
-        List<HotelTransEntity> list = hotelTransRepository.findAll();
-
-        return getListHotelTransDto(list);
-    }
 
     private List<HotelTransDto> getListHotelTransDto(List<HotelTransEntity> list) {
 
@@ -41,9 +38,9 @@ public class HotelTransService {
 
         return (HotelTransDto) new HotelTransDto().copyMembers(inserted, true);
     }
-    public HotelTransDto update(Long transId, IHotelTrans dto) {
+    public HotelTransDto update(IHotelTrans dto) {
 
-        HotelTransDto findDto = this.findById(transId);
+        HotelTransDto findDto = this.findById(dto.getTransId());
 
         findDto.copyMembers(dto, false);
 
@@ -55,12 +52,18 @@ public class HotelTransService {
         return (HotelTransDto) new HotelTransDto().copyMembers(updated, true);
     }
 
-    public void deleteById(Long transId) {
+    public HotelTransDto deleteById(Long transId) {
 
-        if (!hotelTransRepository.existsById(transId)) {
-            throw new IllegalArgumentException("호텔 교통편을 찾을 수 없습니다.");
-        }
-
+        HotelTransDto findDto = this.findById(transId);
         hotelTransRepository.deleteById(transId);
+        return findDto;
+    }
+
+    public Page<HotelTransDto> findAllByHotelIdEquals(Long hotelId, Pageable pageable) {
+
+        HotelEntity hotel = HotelEntity.builder().hotelId(hotelId).build();
+        Page<HotelTransEntity> page = this.hotelTransRepository.findAllByHotelEquals(hotel, pageable);
+        List<HotelTransDto> list = this.getListHotelTransDto(page.getContent());
+        return new PageImpl<>(list, pageable, page.getTotalElements());
     }
 }

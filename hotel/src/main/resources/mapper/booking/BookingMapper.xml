@@ -67,7 +67,9 @@
             checkout_time AS checkoutTime,
             cancelled_at AS cancelledAt,
             user_id AS userId,
-            room_id AS roomId
+            room_id AS roomId,
+            created_at AS createdAt,
+            modified_at AS modifiedAt
         FROM bookings
         WHERE user_id = #{userId}
     </select>
@@ -87,6 +89,7 @@
                 WHEN 0 THEN 'Standard'
                 WHEN 1 THEN 'Suite'
                 WHEN 2 THEN 'Deluxe'
+                WHEN 3 THEN 'Premium'
             END AS roomType,
             CASE room_status
                 WHEN 0 THEN 'EnableReservation'
@@ -103,9 +106,11 @@
                 WHEN 1 THEN 'DoubleBed'
                 WHEN 2 THEN 'QueenBed'
             END AS roomBedOption,
-            hotel_id AS hotelId
+            hotel_id AS hotelId,
             block_start_date AS blockStartDate,
-            block_end_date AS blockEndDate
+            block_end_date AS blockEndDate,
+            created_at AS createdAt,
+            modified_at AS modifiedAt
         FROM rooms
         WHERE room_id = #{roomId}
     </select>
@@ -118,7 +123,9 @@
             room_images.ext AS ext,
             room_images.store_name AS storeName,
             room_images.path AS path,
-            room_images.room_id AS roomId
+            room_images.room_id AS roomId,
+            room_images.created_at AS createdAt,
+            room_images.modified_at AS modifiedAt
         FROM room_images
         INNER JOIN rooms
         ON room_images.room_id = rooms.room_id
@@ -183,13 +190,15 @@
 
     <select id="getHotelImages" resultType="com.mjc.hotel.hotelsimage.HotelImageResponseDto">
         SELECT
-            hotel_images.image_id AS hotelImageId,
+            hotel_images.hotel_image_id AS hotelImageId,
             hotel_images.file_name AS fileName,
             hotel_images.size AS size,
             hotel_images.ext AS ext,
             hotel_images.store_name AS storeName,
             hotel_images.path AS path,
-            hotel_images.hotel_id AS hotelId
+            hotel_images.hotel_id AS hotelId,
+            hotel_images.created_at AS createdAt,
+            hotel_images.modified_at AS modifiedAt
         FROM hotel_images
         INNER JOIN hotels
         ON hotel_images.hotel_id = hotels.hotel_id

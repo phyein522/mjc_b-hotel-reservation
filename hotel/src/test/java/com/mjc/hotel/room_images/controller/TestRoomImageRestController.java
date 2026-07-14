@@ -1,6 +1,7 @@
 package com.mjc.hotel.room_images.controller;
 
 import com.mjc.hotel.room_images.dto.RoomImageDto;
+import com.mjc.hotel.room_images.dto.RoomImageListDto;
 import com.mjc.hotel.room_images.dto.RoomImageRequestDto;
 import com.mjc.hotel.room_images.dto.RoomImageResponseDto;
 import com.mjc.hotel.room_images.service.RoomImageService;
@@ -60,6 +61,7 @@ public class TestRoomImageRestController {
 	private ObjectMapper objectMapper;
 
 	private static RoomImageResponseDto SampleRoomImageResponseDto;
+	private static RoomImageListDto SampleRoomImageListDto;
 	private static RoomImageDto SampleRoomImageDto;
 
 	@BeforeEach
@@ -75,6 +77,16 @@ public class TestRoomImageRestController {
 				.build();
 
 		SampleRoomImageDto = RoomImageDto.builder()
+				.roomImageId(1L)
+				.fileName("room1.jpg")
+				.size(102400)
+				.ext("jpg")
+				.storeName("uuid-store-name.jpg")
+				.path("/upload/room/1")
+				.roomId(10L)
+				.build();
+
+		SampleRoomImageListDto = RoomImageListDto.builder()
 				.roomImageId(1L)
 				.fileName("room1.jpg")
 				.size(102400)
@@ -280,18 +292,18 @@ public class TestRoomImageRestController {
 	@DisplayName("DELETE /api/roomimage/{roomImageId} - 삭제 성공")
 	void deleteById_shouldReturnOk() throws Exception {
 		// given
-		when(roomImageService.deleteById(1L)).thenReturn(SampleRoomImageDto);
+		when(roomImageService.deleteById(1L)).thenReturn(SampleRoomImageResponseDto);
 
 		// when & then
 		mockMvc.perform(delete("/api/roomimage/{roomImageId}", 1L))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.responseData.roomImageId").value(SampleRoomImageDto.getRoomImageId()))
-				.andExpect(jsonPath("$.responseData.fileName").value(SampleRoomImageDto.getFileName()))
-				.andExpect(jsonPath("$.responseData.size").value(SampleRoomImageDto.getSize()))
-				.andExpect(jsonPath("$.responseData.ext").value(SampleRoomImageDto.getExt()))
-				.andExpect(jsonPath("$.responseData.storeName").value(SampleRoomImageDto.getStoreName()))
-				.andExpect(jsonPath("$.responseData.path").value(SampleRoomImageDto.getPath()))
-				.andExpect(jsonPath("$.responseData.roomId").value(SampleRoomImageDto.getRoomId()))
+				.andExpect(jsonPath("$.responseData.roomImageId").value(SampleRoomImageResponseDto.getRoomImageId()))
+				.andExpect(jsonPath("$.responseData.fileName").value(SampleRoomImageResponseDto.getFileName()))
+				.andExpect(jsonPath("$.responseData.size").value(SampleRoomImageResponseDto.getSize()))
+				.andExpect(jsonPath("$.responseData.ext").value(SampleRoomImageResponseDto.getExt()))
+				.andExpect(jsonPath("$.responseData.storeName").value(SampleRoomImageResponseDto.getStoreName()))
+				.andExpect(jsonPath("$.responseData.path").value(SampleRoomImageResponseDto.getPath()))
+				.andExpect(jsonPath("$.responseData.roomId").value(SampleRoomImageResponseDto.getRoomId()))
 		;
 
 		verify(roomImageService, times(1)).deleteById(1L);

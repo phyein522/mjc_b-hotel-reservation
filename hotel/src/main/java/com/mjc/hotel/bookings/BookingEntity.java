@@ -1,7 +1,9 @@
 package com.mjc.hotel.bookings;
 
 import com.mjc.hotel.common.dto.BaseEntity;
+import com.mjc.hotel.rooms.dto.IRoom;
 import com.mjc.hotel.rooms.dto.RoomEntity;
+import com.mjc.hotel.user.dto.IUser;
 import com.mjc.hotel.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -91,6 +93,17 @@ public class BookingEntity extends BaseEntity implements IBooking {
         }
         this.user.setUserId(this.userId);
     }
+    @Override
+    public void setUser(IUser user) {
+        if(user == null) {
+            return;
+        }
+        if(this.user == null) {
+            this.user = new UserEntity();
+        }
+        this.user.copyMembers(user, true);
+        this.userId = this.user.getUserId();
+    }
 
     @Override
     public Long getRoomId() {
@@ -106,5 +119,16 @@ public class BookingEntity extends BaseEntity implements IBooking {
             this.room = new RoomEntity();
         }
         this.room.setRoomId(this.roomId);
+    }
+    @Override
+    public void setRoom(IRoom room) {
+        if(room == null) {
+            return;
+        }
+        if(this.room == null) {
+            this.room = new RoomEntity();
+        }
+        this.room.copyMembers(room, true);
+        this.roomId = this.room.getRoomId();
     }
 }
