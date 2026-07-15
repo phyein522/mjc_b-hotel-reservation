@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @ToString(exclude = "booking")
 public class Payment {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "payment_id")
     private Long id;
 
@@ -36,7 +37,7 @@ public class Payment {
     @Column(nullable = false, length = 3)
     private String currency;
 
-    @Column(name = "paid_at", nullable = false)
+    @Column(name = "paid_at")
     private LocalDateTime paidAt;
 
     @Column(name = "cancelled_at")
@@ -44,4 +45,18 @@ public class Payment {
 
     private String cardCompany;
     private String cardLast4;
+
+    @Column(name = "coupon_id")
+    private Long couponId;
+
+    @Column(name = "used_point", nullable = false)
+    @Builder.Default
+    private Integer usedPoint = 0;
+
+    @Column(name = "discount_amount", nullable = false, precision = 12, scale = 2)
+    @Builder.Default
+    private BigDecimal discountAmount = BigDecimal.ZERO;
+
+    @Column(name = "pg_transaction_id", length = 100)
+    private String pgTransactionId;
 }
