@@ -613,26 +613,6 @@
       "name": "hotelsimage",
       "item": [
         {
-          "name": "Image findAll",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8989/api/hotelimage",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotelimage"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "Image findbyid",
           "request": {
             "method": "GET",
@@ -689,13 +669,13 @@
         {
           "name": "Image Update",
           "request": {
-            "method": "PUT",
+            "method": "PATCH",
             "header": [],
             "body": {
               "mode": "formdata",
               "formdata": [
                 {
-                  "key": "",
+                  "key": "file",
                   "type": "file",
                   "uuid": "978339d6-114e-4f21-9b31-7ea6b61eb3bf",
                   "src": "/Users/minsang/Desktop/hotel2.jpg"
@@ -703,7 +683,7 @@
               ]
             },
             "url": {
-              "raw": "http://localhost:8989/api/hotelimage/1",
+              "raw": "http://localhost:8989/api/hotelimage/image/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -712,6 +692,7 @@
               "path": [
                 "api",
                 "hotelimage",
+                "image",
                 "1"
               ]
             }
@@ -1801,6 +1782,368 @@
                   "key": "targetMonth",
                   "value": "2026-0"
                 }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "rates",
+      "item": [
+        {
+          "name": "시즌 요금제 관련 API",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/rates/hotels/1/rooms/suite",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "hotels",
+                "1",
+                "rooms",
+                "suite"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "시즌 요금 추가",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n      \"seasonName\": \"호텔 3 여름 성수기\",\r\n      \"startDate\": \"2026-07-16\",\r\n      \"endDate\": \"2026-08-14\",\r\n      \"weekdayPrice\": 200000,\r\n      \"minStayNights\": 2,\r\n      \"weekdayPolicyEnabled\": true,\r\n      \"roomType\": \"Suite\",\r\n      \"hotelId\": 3  \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/rates?multiplier=20",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates"
+              ],
+              "query": [
+                {
+                  "key": "multiplier",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "시즌 요금 수정",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n      \"seasonName\": \"호텔 4 수정 여름 성수기\",\r\n      \"startDate\": \"2026-07-20\",\r\n      \"endDate\": \"2026-08-20\",\r\n      \"weekdayPrice\": 220000,\r\n      \"minStayNights\": 1,\r\n      \"weekdayPolicyEnabled\": true,\r\n      \"roomType\": \"Suite\"\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/rates/4?multiplier=20",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "4"
+              ],
+              "query": [
+                {
+                  "key": "multiplier",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "시즌 요금 삭제",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/rates/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "요금 계산 미리보기",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n      \"weekdayPrice\": 100000,\r\n      \"weekendPrice\": 120000,\r\n      \"weekdayPolicyEnabled\": true,\r\n      \"multiplier\": 20.0\r\n    ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/rates/preview",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "preview"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "호텔 요금 정책 조회",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/rates/policies/hotels/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "policies",
+                "hotels",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "최소 투숙 기간 수정",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n      \"minStayNights\": 3\r\n    }\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/rates/policies/hotels/1/min-stay",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "policies",
+                "hotels",
+                "1",
+                "min-stay"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "체크인/아웃 시각 수정",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n      \"checkInTime\": \"15:00:00\",\r\n      \"checkOutTime\": \"11:00:00\"\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/rates/policies/hotels/1/times",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "policies",
+                "hotels",
+                "1",
+                "times"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "취소 수수료 규정 수정",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n      \"cancelDeadlineDays\": 5,\r\n      \"cancelFeeRate\": 0.60\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/rates/policies/hotels/1/cancellation",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "policies",
+                "hotels",
+                "1",
+                "cancellation"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "아동 요금 정책 수정",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n      \"freeChildAge\": 7,\r\n      \"childRateType\": \"FREE\",\r\n      \"childDiscountRate\": 0.20\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/rates/policies/hotels/1/child-rates",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "policies",
+                "hotels",
+                "1",
+                "child-rates"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "요금 요약 정보 조회",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/rates/hotels/1/summary",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "hotels",
+                "1",
+                "summary"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "호텔 더미 추가",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/rates/fix-db",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "fix-db"
               ]
             }
           },
