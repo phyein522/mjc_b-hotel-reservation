@@ -3,6 +3,9 @@ package com.mjc.hotel.hotels;
 import com.mjc.hotel.common.FileUtil;
 import com.mjc.hotel.hotelsimage.HotelImageResponseDto;
 import com.mjc.hotel.hotelsimage.HotelImageService;
+import com.mjc.hotel.user.entity.Role;
+import com.mjc.hotel.user.entity.UserEntity;
+import com.mjc.hotel.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,10 +28,14 @@ public class HotelService {
     private HotelImageService hotelImageService;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private FileUtil fileUtil;
 
     public HotelDto insert(IHotel hotelDto) {
         HotelEntity insertEntity = (HotelEntity) new HotelEntity().copyMembers(hotelDto, true);
+        validateHotelManager(insertEntity);
         insertEntity.setHotelId(null);
         HotelEntity insertedEntity = this.hotelRepository.save(insertEntity);
         HotelDto resultDto = (HotelDto) new HotelDto().copyMembers(insertedEntity, true);
@@ -87,6 +94,7 @@ public class HotelService {
         HotelDto findDto = this.findById(hotelDto.getHotelId());
         findDto.copyMembers(hotelDto, false);
         HotelEntity updateEntity = (HotelEntity) new HotelEntity().copyMembers(findDto, true);
+        validateHotelManager(updateEntity);
         HotelEntity updatedEntity = this.hotelRepository.save(updateEntity);
         HotelDto resultDto = (HotelDto) new HotelDto().copyMembers(updatedEntity, true);
         return resultDto;
@@ -102,5 +110,20 @@ public class HotelService {
         return list.stream()
                 .map(x -> (HotelDto) new HotelDto().copyMembers(x, true))
                 .toList();
+    }
+
+    private void validateHotelManager(IHotel hotelDto) {
+        if (hotelDto.getUserId() == null) {
+            throw new IllegalArgumentException("호텔 관리자 userId가 필요합니다.");
+        }
+
+        UserEntity user = this.userRepository.findById(hotelDto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("호텔 관리자를 찾을 수 없습니다."));
+
+        if (user.getRole() != Role.HOTEL_MANAGER) {
+            throw new IllegalArgumentException("HOTEL_MANAGER 권한의 사용자만 호텔을 관리할 수 있습니다.");
+        }
+
+        hotelDto.setUser(user);
     }
 }
