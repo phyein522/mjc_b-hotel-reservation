@@ -1,5 +1,6 @@
 package com.mjc.hotel.payment.controller;
 
+import com.mjc.hotel.payment.dto.PaymentConfirmRequest;
 import com.mjc.hotel.payment.dto.PaymentCreateRequest;
 import com.mjc.hotel.payment.dto.PaymentResponse;
 import com.mjc.hotel.payment.service.PaymentService;
@@ -22,14 +23,28 @@ public class PaymentController {
     }
 
     @PostMapping("/{paymentId}/confirm")
-    public ResponseEntity<PaymentResponse> confirmPayment(@PathVariable Long paymentId) {
-        PaymentResponse response = paymentService.confirmPayment(paymentId);
+    public ResponseEntity<PaymentResponse> confirmPayment(
+            @PathVariable Long paymentId,
+            @RequestBody(required = false) PaymentConfirmRequest request) {
+        PaymentResponse response = paymentService.confirmPayment(paymentId, request);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{paymentId}")
     public ResponseEntity<PaymentResponse> getPayment(@PathVariable Long paymentId) {
         PaymentResponse response = paymentService.getPayment(paymentId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/booking/{bookingId}")
+    public ResponseEntity<PaymentResponse> getPaymentByBookingId(@PathVariable Long bookingId) {
+        PaymentResponse response = paymentService.getPaymentByBookingId(bookingId);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{paymentId}/cancel")
+    public ResponseEntity<PaymentResponse> cancelPayment(@PathVariable Long paymentId) {
+        PaymentResponse response = paymentService.cancelPayment(paymentId);
         return ResponseEntity.ok(response);
     }
 }
