@@ -163,19 +163,15 @@ public class PromotionService {
     }
 
     // 할인 값이 비어 있지 않고 0 이상의 숫자인지 확인한다.
-    private BigDecimal parseDiscountValue(String disValue) {
-        if (disValue == null || disValue.isBlank()) {
+    private BigDecimal parseDiscountValue(BigDecimal disValue) {
+        if (disValue == null) {
             throw new IllegalArgumentException("프로모션 할인 값이 필요합니다.");
         }
 
-        try {
-            BigDecimal value = new BigDecimal(disValue);
-            if (value.compareTo(BigDecimal.ZERO) < 0) {
-                throw new IllegalArgumentException("프로모션 할인 값은 0 이상이어야 합니다.");
-            }
-            return value;
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("프로모션 할인 값은 숫자여야 합니다.");
+        if (disValue.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("프로모션 할인 값은 0 이상이어야 합니다.");
         }
+
+        return disValue;
     }
 }
