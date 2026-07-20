@@ -24,6 +24,8 @@ public class PromotionSaleEntity extends BaseEntity implements IPromotionSale {
 
     @Transient
     private Long proId;
+    @Transient
+    private Long userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pro_id", nullable = false)

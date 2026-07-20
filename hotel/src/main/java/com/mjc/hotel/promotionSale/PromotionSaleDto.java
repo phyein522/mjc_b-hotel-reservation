@@ -18,6 +18,7 @@ public class PromotionSaleDto extends BaseDto implements IPromotionSale {
 
     private Long proId;
     private PromotionDto promotion;
+    private Long userId;
 
     @Override
     public Long getProId() {
