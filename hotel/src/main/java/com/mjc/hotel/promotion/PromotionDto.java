@@ -5,6 +5,8 @@ import com.mjc.hotel.rooms.dto.IRoom;
 import com.mjc.hotel.rooms.dto.RoomDto;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -17,14 +19,15 @@ public class PromotionDto extends BaseDto implements IPromotion {
     private String name;
     private String description;
     private DiscountTypeEnum disType;
-    private String disValue;
+    private BigDecimal disValue;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private Integer resCount;
-    private String status;
+    private PromotionStateTypeEnum status;
 
     private Long roomId;
     private RoomDto room;
+    private Long userId;
 
     @Override
     public Long getRoomId() {

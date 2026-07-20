@@ -13,12 +13,15 @@ public class HotelTransService {
     @Autowired
     private HotelTransRepository hotelTransRepository;
 
+    // Entity 목록을 응답용 DTO 목록으로 변환한다.
     private List<HotelTransDto> getListHotelTransDto(List<HotelTransEntity> list) {
 
         return list.stream()
                 .map(x -> (HotelTransDto) new HotelTransDto().copyMembers(x, true))
                 .toList();
     }
+
+    // 교통편 ID로 호텔 교통편 정보를 조회한다.
     public HotelTransDto findById(Long transId) {
 
         HotelTransEntity entity = hotelTransRepository.findById(transId)
@@ -27,6 +30,7 @@ public class HotelTransService {
         return (HotelTransDto) new HotelTransDto().copyMembers(entity, true);
     }
 
+    // 호텔 교통편 정보를 등록한다.
     public HotelTransDto insert(IHotelTrans dto) {
 
         HotelTransEntity entity =
@@ -38,6 +42,8 @@ public class HotelTransService {
 
         return (HotelTransDto) new HotelTransDto().copyMembers(inserted, true);
     }
+
+    // 기존 호텔 교통편 정보를 수정한다.
     public HotelTransDto update(IHotelTrans dto) {
 
         HotelTransDto findDto = this.findById(dto.getTransId());
@@ -52,6 +58,7 @@ public class HotelTransService {
         return (HotelTransDto) new HotelTransDto().copyMembers(updated, true);
     }
 
+    // 교통편 ID로 삭제하고, 삭제 전 정보를 반환한다.
     public HotelTransDto deleteById(Long transId) {
 
         HotelTransDto findDto = this.findById(transId);
@@ -59,6 +66,7 @@ public class HotelTransService {
         return findDto;
     }
 
+    // 호텔 ID에 속한 교통편 목록을 페이지 단위로 조회한다.
     public Page<HotelTransDto> findAllByHotelIdEquals(Long hotelId, Pageable pageable) {
 
         HotelEntity hotel = HotelEntity.builder().hotelId(hotelId).build();
