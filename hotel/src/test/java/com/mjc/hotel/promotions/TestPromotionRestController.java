@@ -1,9 +1,6 @@
 package com.mjc.hotel.promotions;
 
-import com.mjc.hotel.promotion.DiscountTypeEnum;
-import com.mjc.hotel.promotion.PromotionDto;
-import com.mjc.hotel.promotion.PromotionRestController;
-import com.mjc.hotel.promotion.PromotionService;
+import com.mjc.hotel.promotion.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +14,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -48,11 +46,11 @@ public class TestPromotionRestController {
                 .name("여름 할인")
                 .description("여름 20% 할인")
                 .disType(DiscountTypeEnum.RATE)
-                .disValue("20")
+                .disValue(BigDecimal.valueOf(20))
                 .startDate(LocalDateTime.of(2026,7,20,0,0))
                 .endDate(LocalDateTime.of(2026,7,31,23,59))
                 .resCount(0)
-                .status("ACTIVE")
+                .status(PromotionStateTypeEnum.ACTIVE)
                 .roomId(1L)
                 .userId(2L)
                 .build();
@@ -116,7 +114,7 @@ public class TestPromotionRestController {
     @DisplayName("PATCH /api/promotion - 수정")
     void updatePromotion_shouldReturnOk() throws Exception {
 
-        samplePromotionDto.setDisValue("30");
+        samplePromotionDto.setDisValue(BigDecimal.valueOf(30));
 
         when(promotionService.update(any(PromotionDto.class)))
                 .thenReturn(samplePromotionDto);
@@ -125,7 +123,7 @@ public class TestPromotionRestController {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(samplePromotionDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.responseData.disValue").value("30"));
+                .andExpect(jsonPath("$.responseData.disValue").value(30));
 
         verify(promotionService,times(1))
                 .update(any(PromotionDto.class));
