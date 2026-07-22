@@ -12,7 +12,7 @@ public enum UserCouponStatusEnum {
     USED,
 
     /**
-     * 만료
+     * 사용 만료
      */
     EXPIRED
 }
