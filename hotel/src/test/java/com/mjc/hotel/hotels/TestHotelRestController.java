@@ -171,9 +171,7 @@ public class TestHotelRestController {
 	void updateHotel_shouldReturnOk() throws Exception {
 		// given
 		SampleHotelDto.setName("수정된 엠제이씨 호텔");
-		when(hotelService.update(any(HotelDto.class))).thenReturn(SampleHotelDto);
-
-		// when & then
+		when(hotelService.update(any(HotelDto.class))).thenReturn(SampleHotelDto);		// when & then
 		mockMvc.perform(patch("/api/hotels")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(SampleHotelDto)))
@@ -201,10 +199,10 @@ public class TestHotelRestController {
 	@DisplayName("DELETE /api/hotels/{hotelId} - 호텔 삭제 성공")
 	void deleteHotel_shouldReturnOk() throws Exception {
 		// given
-		when(hotelService.deleteById(1L)).thenReturn(SampleHotelDto);
-
+		when(hotelService.deleteById(1L, 3L)).thenReturn(SampleHotelDto);
 		// when & then
-		mockMvc.perform(delete("/api/hotels/{hotelId}", 1L))
+		mockMvc.perform(delete("/api/hotels/{hotelId}", 1L)
+				.param("userId", "3"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.responseData.hotelId").value(SampleHotelDto.getHotelId()))
 				.andExpect(jsonPath("$.responseData.name").value(SampleHotelDto.getName()))
@@ -222,6 +220,5 @@ public class TestHotelRestController {
 				.andExpect(jsonPath("$.responseData.longitude").value(SampleHotelDto.getLongitude()))
 				.andExpect(jsonPath("$.responseData.type").value(SampleHotelDto.getType().toString()));
 
-		verify(hotelService, times(1)).deleteById(1L);
-	}
+		verify(hotelService, times(1)).deleteById(1L, 3L);	}
 }
