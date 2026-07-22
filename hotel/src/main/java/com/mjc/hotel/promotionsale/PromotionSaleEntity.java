@@ -1,24 +1,35 @@
-package com.mjc.hotel.promotionSale;
+package com.mjc.hotel.promotionsale;
 
-import com.mjc.hotel.common.dto.BaseDto;
+import com.mjc.hotel.common.dto.BaseEntity;
+import com.mjc.hotel.promotion.PromotionEntity;
 import com.mjc.hotel.promotion.IPromotion;
-import com.mjc.hotel.promotion.PromotionDto;
+import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
+@Entity
+@Table(name = "promotion_sale")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
-public class PromotionSaleDto extends BaseDto implements IPromotionSale {
+@Builder
+public class PromotionSaleEntity extends BaseEntity implements IPromotionSale {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long proSaleId;
+
+    @Column(nullable = false)
     private String saleDes;
 
+    @Transient
     private Long proId;
-    private PromotionDto promotion;
+    @Transient
     private Long userId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pro_id", nullable = false)
+    private PromotionEntity promotion;
 
     @Override
     public Long getProId() {
@@ -35,11 +46,11 @@ public class PromotionSaleDto extends BaseDto implements IPromotionSale {
 
         this.proId = proId;
 
-        if (promotion == null) {
-            promotion = new PromotionDto();
+        if (this.promotion == null) {
+            this.promotion = new PromotionEntity();
         }
 
-        promotion.setProId(proId);
+        this.promotion.setProId(proId);
     }
     @Override
     public void setPromotion(IPromotion promotion) {
@@ -49,7 +60,7 @@ public class PromotionSaleDto extends BaseDto implements IPromotionSale {
         }
 
         if (this.promotion == null) {
-            this.promotion = new PromotionDto();
+            this.promotion = new PromotionEntity();
         }
 
         this.promotion.copyMembers(promotion, true);

@@ -1,4 +1,4 @@
-package com.mjc.hotel.promotionSale;
+package com.mjc.hotel.promotionsale;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

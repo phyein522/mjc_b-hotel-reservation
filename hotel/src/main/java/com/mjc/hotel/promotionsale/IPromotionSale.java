@@ -1,4 +1,4 @@
-package com.mjc.hotel.promotionSale;
+package com.mjc.hotel.promotionsale;
 
 import com.mjc.hotel.common.dto.IBase;
 import com.mjc.hotel.promotion.IPromotion;
