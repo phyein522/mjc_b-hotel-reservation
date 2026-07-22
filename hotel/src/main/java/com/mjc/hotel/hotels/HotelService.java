@@ -106,10 +106,20 @@ public class HotelService {
         return resultDto;
     }
 
-    // 호텔 ID로 호텔을 삭제하고, 삭제 전 정보를 반환한다.
-    public HotelDto deleteById(Long hotelId) {
+    // 호텔 ID로 호텔을 삭제하고, 삭제 사용자가 호텔 매니저인지 확인한다.
+    public HotelDto deleteById(Long hotelId, Long userId) {
+
         HotelDto findDto = this.findById(hotelId);
+
+        UserEntity user = this.userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("호텔 관리자를 찾을 수 없습니다."));
+
+        if (user.getRole() != Role.HOTEL_MANAGER) {
+            throw new IllegalArgumentException("HOTEL_MANAGER 권한의 사용자만 호텔을 삭제할 수 있습니다.");
+        }
+
         this.hotelRepository.deleteById(hotelId);
+
         return findDto;
     }
 

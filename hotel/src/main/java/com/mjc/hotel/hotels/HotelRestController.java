@@ -72,8 +72,12 @@ public class HotelRestController {
     }
 
     @DeleteMapping("/{hotelId}")
-    public ResponseEntity<ApiResponse<HotelDto>> deleteById(@PathVariable Long hotelId) {
-        HotelDto resultDto = this.hotelService.deleteById(hotelId);
+    public ResponseEntity<ApiResponse<HotelDto>> deleteById(
+            @PathVariable Long hotelId,
+            @RequestParam Long userId) {
+
+        HotelDto resultDto = this.hotelService.deleteById(hotelId, userId);
+
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.make(ResponseCode.DELETE_OK, "ok", resultDto)
         );
