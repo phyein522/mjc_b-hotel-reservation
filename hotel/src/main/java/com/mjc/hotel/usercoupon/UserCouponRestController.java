@@ -2,8 +2,6 @@ package com.mjc.hotel.usercoupon;
 
 import com.mjc.hotel.common.ApiResponse;
 import com.mjc.hotel.common.ResponseCode;
-import com.mjc.hotel.coupon.CouponDto;
-import com.mjc.hotel.coupon.CouponService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequestMapping("/api/usercoupons")
 public class UserCouponRestController {
+
     @Autowired
     private UserCouponService userCouponService;
 
@@ -67,10 +66,10 @@ public class UserCouponRestController {
     }
     @DeleteMapping("/{userCouponId}/{userId}")
     public ResponseEntity<ApiResponse<UserCouponDto>> deleteById(
-            @PathVariable Long couponId,
+            @PathVariable Long userCouponId,
             @PathVariable Long userId) {
 
-        CouponDto resultDto = this.couponService.deleteById(couponId, userId);
+        UserCouponDto resultDto = this.userCouponService.deleteById(userCouponId, userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.make(ResponseCode.DELETE_OK, "ok", resultDto)
