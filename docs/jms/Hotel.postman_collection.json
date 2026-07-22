@@ -1,6 +1,6 @@
 {
   "info": {
-    "_postman_id": "0ee3b609-94e8-4a70-9b00-f33ac7a52615",
+    "_postman_id": "19a6adef-a3dc-4ca5-99c7-f1dd11b0da9b",
     "name": "Hotel",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "53674091"
@@ -484,132 +484,6 @@
       ]
     },
     {
-      "name": "hotels",
-      "item": [
-        {
-          "name": "Hotel findAll",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8989/api/hotels",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotels"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Hotel findbyid",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8989/api/hotels/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotels",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Hotel insert",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"신라 서울\",\n    \"description\": \"서울 중심에 위치한 5성급 호텔\",\n    \"address\": \"서울특별시 중구 동호로 249\",\n    \"city\": \"서울\",\n    \"zipCode\": \"04605\",\n    \"phone\": \"02-2233-3131\",\n    \"email\": \"hotel@test.com\",\n    \"checkIn\": \"15:00:00\",\n    \"checkOut\": \"11:00:00\",\n    \"starRate\": 5,\n    \"isActive\": true,\n    \"latitude\": \"37.5567\",\n    \"longitude\": \"127.0055\",\n    \"type\": \"HOTEL\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "http://localhost:8989/api/hotels",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotels"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Hotel Update",
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"백제 서울\",\n    \"description\": \"서울 중심에 위치한 4성급 호텔\",\n    \"address\": \"서울특별시 서대문구 홍은동 249\",\n    \"city\": \"서울\",\n    \"zipCode\": \"03241\",\n    \"phone\": \"02-1234-5678\",\n    \"email\": \"baekjae@test.com\",\n    \"checkIn\": \"12:00:00\",\n    \"checkOut\": \"12:00:00\",\n    \"starRate\": 4,\n    \"isActive\": true,\n    \"latitude\": \"37.1111\",\n    \"longitude\": \"127.1111\",\n    \"type\": \"HOTEL\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "http://localhost:8989/api/hotels/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotels",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Hotel deletebyid",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8989/api/hotels/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotels",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
       "name": "hotelsimage",
       "item": [
         {
@@ -645,7 +519,7 @@
                   "key": "file",
                   "type": "file",
                   "uuid": "d95c0f7b-1783-490f-a70b-f3ae714d21d2",
-                  "src": "/Users/minsang/Desktop/hotel1.jpg"
+                  "src": "/C:/Temp/hotel_test/room2.jpeg"
                 }
               ]
             },
@@ -678,7 +552,7 @@
                   "key": "file",
                   "type": "file",
                   "uuid": "978339d6-114e-4f21-9b31-7ea6b61eb3bf",
-                  "src": "/Users/minsang/Desktop/hotel1.jpg"
+                  "src": "/Users/minsang/Desktop/hotel2.jpg"
                 }
               ]
             },
@@ -1782,6 +1656,554 @@
                   "key": "targetMonth",
                   "value": "2026-0"
                 }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "rates",
+      "item": [
+        {
+          "name": "시즌 요금제 관련 API",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/rates/hotels/1/rooms/suite",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "hotels",
+                "1",
+                "rooms",
+                "suite"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "시즌 요금 추가",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n      \"seasonName\": \"호텔 3 여름 성수기\",\r\n      \"startDate\": \"2026-07-16\",\r\n      \"endDate\": \"2026-08-14\",\r\n      \"weekdayPrice\": 200000,\r\n      \"minStayNights\": 2,\r\n      \"weekdayPolicyEnabled\": true,\r\n      \"roomType\": \"Suite\",\r\n      \"hotelId\": 3  \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/rates?multiplier=20",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates"
+              ],
+              "query": [
+                {
+                  "key": "multiplier",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "시즌 요금 수정",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n      \"seasonName\": \"호텔 4 수정 여름 성수기\",\r\n      \"startDate\": \"2026-07-20\",\r\n      \"endDate\": \"2026-08-20\",\r\n      \"weekdayPrice\": 220000,\r\n      \"minStayNights\": 1,\r\n      \"weekdayPolicyEnabled\": true,\r\n      \"roomType\": \"Suite\"\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/rates/4?multiplier=20",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "4"
+              ],
+              "query": [
+                {
+                  "key": "multiplier",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "시즌 요금 삭제",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/rates/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "요금 계산 미리보기",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n      \"weekdayPrice\": 100000,\r\n      \"weekendPrice\": 120000,\r\n      \"weekdayPolicyEnabled\": true,\r\n      \"multiplier\": 20.0\r\n    ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/rates/preview",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "preview"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "호텔 요금 정책 조회",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/rates/policies/hotels/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "policies",
+                "hotels",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "최소 투숙 기간 수정",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n      \"minStayNights\": 3\r\n    }\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/rates/policies/hotels/1/min-stay",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "policies",
+                "hotels",
+                "1",
+                "min-stay"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "체크인/아웃 시각 수정",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n      \"checkInTime\": \"15:00:00\",\r\n      \"checkOutTime\": \"11:00:00\"\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/rates/policies/hotels/1/times",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "policies",
+                "hotels",
+                "1",
+                "times"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "취소 수수료 규정 수정",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n      \"cancelDeadlineDays\": 5,\r\n      \"cancelFeeRate\": 0.60\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/rates/policies/hotels/1/cancellation",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "policies",
+                "hotels",
+                "1",
+                "cancellation"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "아동 요금 정책 수정",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n      \"freeChildAge\": 7,\r\n      \"childRateType\": \"FREE\",\r\n      \"childDiscountRate\": 0.20\r\n    }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/rates/policies/hotels/1/child-rates",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "policies",
+                "hotels",
+                "1",
+                "child-rates"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "요금 요약 정보 조회",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/rates/hotels/1/summary",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "hotels",
+                "1",
+                "summary"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "호텔 더미 추가",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/rates/fix-db",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "rates",
+                "fix-db"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "hotels",
+      "item": [
+        {
+          "name": "Hotel findByIdWithImages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/hotels/images/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotels",
+                "images",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Hotel findbyid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/hotels/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotels",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Hotel insert",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"신라 서울\",\n  \"description\": \"서울 중심에 위치한 5성급 호텔\",\n  \"address\": \"서울특별시 중구 동호로 249\",\n  \"city\": \"서울\",\n  \"zipCode\": \"04605\",\n  \"phone\": \"02-2233-3131\",\n  \"email\": \"hotel@test.com\",\n  \"checkIn\": \"15:00:00\",\n  \"checkOut\": \"11:00:00\",\n  \"starRate\": 5,\n  \"isActive\": true,\n  \"latitude\": 37.5567,\n  \"longitude\": 127.0055,\n  \"type\": \"HOTEL\",\n  \"userId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/hotels",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotels"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Hotel Update",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hotelId\": 1,\n  \"name\": \"신라 서울 리뉴얼\",\n  \"description\": \"리뉴얼된 호텔\",\n  \"address\": \"서울특별시 중구 동호로 249\",\n  \"city\": \"서울\",\n  \"zipCode\": \"04605\",\n  \"phone\": \"02-2233-3131\",\n  \"email\": \"hotel@test.com\",\n  \"checkIn\": \"15:00:00\",\n  \"checkOut\": \"11:00:00\",\n  \"starRate\": 5,\n  \"isActive\": true,\n  \"latitude\": 37.5567,\n  \"longitude\": 127.0055,\n  \"type\": \"HOTEL\",\n  \"userId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/hotels",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotels"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Hotel deletebyid",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/hotels/1?userId=1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotels",
+                "1"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Hotel pageByHotelId",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/hotels/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotels",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Hotel insertWithImages",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "43a79799-985d-4246-8501-29a7c7082a71",
+                  "src": "/Users/minsang/Desktop/hotel1.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/hotels/image",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotels",
+                "image"
               ]
             }
           },
