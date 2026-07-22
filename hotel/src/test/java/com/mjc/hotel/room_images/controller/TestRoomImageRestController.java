@@ -255,7 +255,7 @@ public class TestRoomImageRestController {
 		// given
 		byte[] imageBytes = "dummy-image-content".getBytes(StandardCharsets.UTF_8);
 		when(roomImageService.findById(1L)).thenReturn(SampleRoomImageResponseDto);
-		when(roomImageService.getImageBytesById(any(RoomImageDto.class))).thenReturn(imageBytes);
+		when(roomImageService.getImageBytesById(any(RoomImageResponseDto.class))).thenReturn(imageBytes);
 
 		String expectedFileName = URLEncoder.encode(SampleRoomImageResponseDto.getFileName(), StandardCharsets.UTF_8);
 
@@ -267,7 +267,7 @@ public class TestRoomImageRestController {
 		;
 
 		verify(roomImageService, times(1)).findById(1L);
-		verify(roomImageService, times(1)).getImageBytesById(any(RoomImageDto.class));
+		verify(roomImageService, times(1)).getImageBytesById(any(RoomImageResponseDto.class));
 	}
 
 	@Test
@@ -276,7 +276,7 @@ public class TestRoomImageRestController {
 		// given
 		Resource imageResource = new ByteArrayResource("dummy-image-content".getBytes(StandardCharsets.UTF_8));
 		when(roomImageService.findById(1L)).thenReturn(SampleRoomImageResponseDto);
-		when(roomImageService.getImageResourceById(any(RoomImageDto.class))).thenReturn(imageResource);
+		when(roomImageService.getImageResourceById(any(RoomImageResponseDto.class))).thenReturn(imageResource);
 
 		// when & then
 		mockMvc.perform(get("/api/roomimage/image/{roomImageId}", 1L))
@@ -285,7 +285,7 @@ public class TestRoomImageRestController {
 		;
 
 		verify(roomImageService, times(1)).findById(1L);
-		verify(roomImageService, times(1)).getImageResourceById(any(RoomImageDto.class));
+		verify(roomImageService, times(1)).getImageResourceById(any(RoomImageResponseDto.class));
 	}
 
 	@Test

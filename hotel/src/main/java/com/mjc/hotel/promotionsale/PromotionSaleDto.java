@@ -1,4 +1,4 @@
-package com.mjc.hotel.promotionSale;
+package com.mjc.hotel.promotionsale;
 
 import com.mjc.hotel.common.dto.BaseDto;
 import com.mjc.hotel.promotion.IPromotion;
@@ -18,6 +18,7 @@ public class PromotionSaleDto extends BaseDto implements IPromotionSale {
 
     private Long proId;
     private PromotionDto promotion;
+    private Long userId;
 
     @Override
     public Long getProId() {
