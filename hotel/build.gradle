@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.1.0'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id "org.sonarqube" version "7.3.1.8318"
 }
 
 group = 'com.mjc'
@@ -38,6 +39,16 @@ dependencies {
 	testRuntimeOnly 'com.h2database:h2'
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+}
+
+sonar {
+	properties {
+		property "sonar.projectKey", "hotel"
+		property "sonar.projectName", "hotel"
+		property "sonar.host.url", "http://localhost:9000"
+		property "sonar.token", "sqp_e77bb7d87113f0f228d7a2fef6b03a03fb6773dc"
+		property "sonar.java.binaries", "build/classes/java/main"
+	}
 }
 
 tasks.named('test') {
