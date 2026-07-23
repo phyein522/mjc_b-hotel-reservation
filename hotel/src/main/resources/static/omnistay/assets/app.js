@@ -4,6 +4,7 @@ const app = document.querySelector("#app");
 const page = document.body.dataset.page;
 const rel = document.body.dataset.area === "admin" ? "../" : "";
 const TOSS_SDK_URL = "https://js.tosspayments.com/v2/standard";
+const TOSS_SAMPLE_CLIENT_KEY = "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq";
 let hotelsCache = [];
 let tossSdkPromise = null;
 
@@ -45,6 +46,11 @@ function loadTossPaymentsSdk() {
     document.head.appendChild(script);
   });
   return tossSdkPromise;
+}
+
+function generateTossOrderId(bookingId) {
+  const suffix = Math.random().toString(36).slice(2, 10).toUpperCase();
+  return `OMNISTAY-${bookingId || "ORDER"}-${Date.now()}-${suffix}`;
 }
 
 const adminNav = [
@@ -375,152 +381,124 @@ async function submitBooking(event) {
     document.querySelector("#bookingResult").innerHTML = `<div class="message error">체크아웃 날짜는 체크인 날짜 이후로 선택해야 합니다.</div>`;
     return;
   }
-  data.userId = Number(currentUser.userId);
-  data.guestName = currentUser.name || currentUser.email || `User ${currentUser.userId}`;
-  data.guestPhone = currentUser.phone || "";
-  data.guestEmail = currentUser.email || "";
-  data.roomId = Number(data.roomId);
-  data.adultCount = Number(data.adultCount || 0);
-  data.childCount = Number(data.childCount || 0);
-  data.nationality = "KOREA";
   const params = new URLSearchParams(location.search);
   const paymentBaseAmount = Number(data.baseAmount || params.get("amount") || 0);
   const paymentOrderName = data.orderName || params.get("orderName") || "";
   delete data.baseAmount;
   delete data.orderName;
-  try {
-    const booking = await request("/api/bookings/insert", { method: "POST", body: JSON.stringify(data) });
-    const nights = Math.max(1, Math.ceil((new Date(data.checkoutDate) - new Date(data.checkinDate)) / 86400000));
-    const paymentAmount = paymentBaseAmount * nights;
-    const roomText = event.currentTarget.elements.roomId?.selectedOptions?.[0]?.textContent.trim() || "";
-    const orderName = paymentOrderName || `${roomText} 예약`.trim() || "OmniStay 호텔 예약";
-    const paymentParams = new URLSearchParams({
-      bookingId: String(booking.bookingId),
-      amount: String(paymentAmount),
-      orderName
-    });
-    location.href = `payment.html?${paymentParams.toString()}`;
-  } catch (error) {
-    document.querySelector("#bookingResult").innerHTML = errorMessage(error);
-  }
+  const nights = Math.max(1, Math.ceil((new Date(data.checkoutDate) - new Date(data.checkinDate)) / 86400000));
+  const paymentAmount = paymentBaseAmount * nights;
+  const roomText = event.currentTarget.elements.roomId?.selectedOptions?.[0]?.textContent.trim() || "";
+  const orderName = paymentOrderName || `${roomText} 예약`.trim() || "OmniStay 호텔 예약";
+  const paymentParams = new URLSearchParams({
+    bookingId: params.get("bookingId") || String(Date.now()),
+    amount: String(paymentAmount),
+    orderName,
+    checkinDate: data.checkinDate,
+    checkoutDate: data.checkoutDate,
+    adultCount: String(data.adultCount || 0),
+    childCount: String(data.childCount || 0),
+    skipConfirm: "true"
+  });
+  location.href = `payment.html?${paymentParams.toString()}`;
 }
 
 async function paymentPage() {
   const currentUser = getCurrentUser();
   const params = new URLSearchParams(location.search);
-  if (!currentUser) {
-    const redirect = encodeURIComponent(`payment.html${location.search}`);
-    location.href = `login.html?reason=payment&redirect=${redirect}`;
-    return;
-  }
   const bookingId = params.get("bookingId") || "";
   const totalAmount = Number(params.get("amount") || params.get("totalAmount") || 0);
   const orderName = params.get("orderName") || "OmniStay 호텔 예약";
-  const amountView = totalAmount ? money(totalAmount) : "예약 화면에서 결제로 이동하면 자동 입력";
-  userShell("bookings", `${title("토스 결제", "예약에서 넘어온 금액과 로그인 회원 정보로 결제를 준비합니다.")}<section class="grid cols-2"><form class="card card-body grid" id="paymentForm"><div class="message">토스 결제 준비는 백엔드 ready API에 연결됩니다.<div class="small">예약 화면에서 자동으로 넘어온 정보로 결제합니다.</div></div><input name="bookingId" type="hidden" value="${escapeHtml(bookingId)}"><input name="totalAmount" type="hidden" value="${escapeHtml(totalAmount)}"><input name="orderName" type="hidden" value="${escapeHtml(orderName)}"><section class="message"><div class="toolbar" style="margin:0"><span>결제 예정 금액</span><strong>${escapeHtml(amountView)}</strong></div><div class="small">회원: ${escapeHtml(currentUser.name || currentUser.email || `User ${currentUser.userId}`)}</div></section><label><span>쿠폰 선택</span><select name="userCouponId" id="paymentCouponSelect"><option value="">사용 안 함</option></select></label><label><span>할인금액</span><input name="discountAmount" type="number" value="0"></label><label><span>구매자명</span><input name="customerName" value="${escapeHtml(currentUser.name || "")}" placeholder="로그인 정보 자동 입력"></label><label><span>구매자 이메일</span><input name="customerEmail" type="email" value="${escapeHtml(currentUser.email || "")}" placeholder="로그인 정보 자동 입력"></label><label><span>구매자 연락처</span><input name="customerMobilePhone" value="${escapeHtml(currentUser.phone || "")}" placeholder="01012345678"></label><label><span>Toss Client Key</span><input name="tossClientKey" placeholder="test_ck_..."></label><button class="btn primary">결제 준비</button><button class="btn" id="openTossPayment" type="button" disabled>Toss checkout</button></form><section class="card"><div class="card-body"><div class="toolbar" style="margin:0 0 10px"><h2>백엔드 연결 상태</h2><span class="status ok">API 연결</span></div><div id="tossPayloadBox">${empty("결제 준비를 실행하세요.")}</div><div class="section"><button class="btn" id="copyTossPayload" type="button" disabled>JSON 복사</button></div></div></section></section>`);
-  loadPaymentCoupons(currentUser.userId);
-  let latestPayload = null;
-  let latestClientKey = "";
+  const skipConfirm = params.get("skipConfirm") === "true";
+  const customerName = currentUser?.name || currentUser?.email || "비회원";
+  const customerEmail = currentUser?.email || "";
+  const customerPhone = (currentUser?.phone || "").replaceAll("-", "");
+  const couponNote = currentUser ? "" : `<div class="toss-note">로그인하지 않아도 결제할 수 있습니다. 쿠폰은 로그인 회원에게만 표시됩니다.</div>`;
+  userShell("bookings", `<section class="toss-page"><div class="toss-wrapper"><form class="toss-box" id="paymentForm"><h1>일반 결제</h1><input name="bookingId" type="hidden" value="${escapeHtml(bookingId)}"><input name="totalAmount" type="hidden" value="${escapeHtml(totalAmount)}"><input name="orderName" type="hidden" value="${escapeHtml(orderName)}"><input name="customerName" type="hidden" value="${escapeHtml(customerName)}"><input name="customerEmail" type="hidden" value="${escapeHtml(customerEmail)}"><input name="customerMobilePhone" type="hidden" value="${escapeHtml(customerPhone)}"><div class="toss-summary"><div class="toss-row"><span>결제자</span><strong>${escapeHtml(customerName)}</strong></div><div class="toss-row"><span>예약 금액</span><strong>${totalAmount ? money(totalAmount) : "예약 금액 없음"}</strong></div><div class="toss-row"><span>쿠폰 할인</span><strong id="paymentDiscount">${money(0)}</strong></div><div class="toss-row total"><span>최종 결제금액</span><strong id="paymentFinalAmount">${totalAmount ? money(totalAmount) : "-"}</strong></div></div><label class="toss-field"><span>쿠폰 선택</span><select name="userCouponId" id="paymentCouponSelect"><option value="">사용 안 함</option></select></label>${couponNote}<div class="toss-methods" id="payment-method"><button class="toss-method active" type="button" data-payment-method="CARD">카드</button><button class="toss-method" type="button" data-payment-method="TRANSFER">계좌이체</button><button class="toss-method" type="button" data-payment-method="VIRTUAL_ACCOUNT">가상계좌</button><button class="toss-method" type="button" data-payment-method="MOBILE_PHONE">휴대폰</button><button class="toss-method" type="button" data-payment-method="CULTURE_GIFT_CERTIFICATE">문화상품권</button></div><button class="toss-button" id="openTossPayment" type="submit">결제하기</button><div class="toss-note" id="tossPaymentStatus">토스페이먼츠 샘플 결제창을 사용합니다. 결제 금액은 예약 정보에서 자동으로 들어갑니다.</div></form></div></section>`);
+  if (currentUser?.userId) {
+    await loadPaymentCoupons(currentUser.userId);
+  }
+  let selectedPaymentMethod = "CARD";
+  const couponSelect = document.querySelector("#paymentCouponSelect");
+  const discountEl = document.querySelector("#paymentDiscount");
+  const finalAmountEl = document.querySelector("#paymentFinalAmount");
+  const statusEl = document.querySelector("#tossPaymentStatus");
+  const calculateDiscount = () => {
+    const option = couponSelect.selectedOptions?.[0];
+    if (!option?.value || !totalAmount) return 0;
+    const minOrder = Number(option.dataset.minOrder || 0);
+    if (minOrder && totalAmount < minOrder) return 0;
+    const discountValue = Number(option.dataset.discountValue || 0);
+    const discountType = option.dataset.discountType || "FIXED";
+    const maxDiscount = Number(option.dataset.maxDiscount || 0);
+    let discount = discountType === "RATE" ? Math.floor(totalAmount * discountValue / 100) : discountValue;
+    if (maxDiscount > 0) discount = Math.min(discount, maxDiscount);
+    return Math.max(0, Math.min(totalAmount, discount));
+  };
+  const updateAmount = () => {
+    const discount = calculateDiscount();
+    const finalAmount = Math.max(totalAmount - discount, 0);
+    discountEl.textContent = money(discount);
+    finalAmountEl.textContent = totalAmount ? money(finalAmount) : "-";
+    return { discount, finalAmount };
+  };
+  couponSelect.addEventListener("change", updateAmount);
+  updateAmount();
+  document.querySelectorAll("[data-payment-method]").forEach((button) => {
+    button.addEventListener("click", () => {
+      selectedPaymentMethod = button.dataset.paymentMethod;
+      document.querySelectorAll("[data-payment-method]").forEach((item) => item.classList.remove("active"));
+      button.classList.add("active");
+    });
+  });
   document.querySelector("#paymentForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const data = qs(event.currentTarget);
-    const totalAmount = Number(data.totalAmount || 0);
-    const discountAmount = Number(data.discountAmount || 0);
-    if (!data.bookingId || totalAmount <= 0) {
-      document.querySelector("#tossPayloadBox").innerHTML = `<div class="message error">예약에서 결제 화면으로 이동해야 결제 정보가 자동 입력됩니다.</div>`;
-      return;
-    }
-    const amount = Math.max(totalAmount - discountAmount, 0);
-    latestClientKey = data.tossClientKey || window.OMNISTAY_TOSS_CLIENT_KEY || "";
-    const readyRequest = {
-      memberId: Number(currentUser.userId),
-      bookingId: Number(data.bookingId),
-      amount,
-      orderName: data.orderName
-    };
-    let readyResponse;
-    try {
-      readyResponse = await request("/api/payments/toss/ready", { method: "POST", body: JSON.stringify(readyRequest) });
-    } catch (error) {
-      document.querySelector("#tossPayloadBox").innerHTML = errorMessage(error);
-      return;
-    }
-    const orderId = readyResponse.orderId || `OMNISTAY-${data.bookingId}-${Date.now()}`;
-    const successUrl = `${location.origin}/omnistay/payment-success.html?bookingId=${encodeURIComponent(data.bookingId)}`;
-    const failUrl = `${location.origin}/omnistay/payment-fail.html?bookingId=${encodeURIComponent(data.bookingId)}`;
-    latestPayload = {
-      readyEndpoint: "POST /api/payments/toss/ready",
-      readyRequest,
-      readyResponse,
-      provider: "TOSS",
-      paymentMethod: "TOSS_PAYMENTS",
-      paymentStatus: "READY",
-      orderId,
-      orderName: data.orderName,
-      amount,
-      totalAmount,
-      discountAmount,
-      currency: "KRW",
-      userCouponId: data.userCouponId ? Number(data.userCouponId) : null,
-      bookingId: Number(data.bookingId),
-      customerUserId: currentUser?.userId ?? null,
-      customerName: data.customerName || currentUser?.name || "",
-      customerEmail: data.customerEmail || currentUser?.email || "",
-      customerMobilePhone: (data.customerMobilePhone || currentUser?.phone || "").replaceAll("-", ""),
-      successUrl,
-      failUrl,
-      tossPaymentRequest: {
-        method: "CARD",
-        amount: {
-          value: amount,
-          currency: "KRW"
-        },
-        orderId,
-        orderName: data.orderName,
-        customerName: data.customerName || currentUser?.name || "",
-        customerEmail: data.customerEmail || currentUser?.email || "",
-        customerMobilePhone: (data.customerMobilePhone || currentUser?.phone || "").replaceAll("-", ""),
-        successUrl,
-        failUrl,
-        metadata: {
-          bookingId: String(data.bookingId),
-          userCouponId: data.userCouponId || "",
-          discountAmount: String(discountAmount)
-        }
-      }
-    };
-    const previewPayload = JSON.parse(JSON.stringify(latestPayload));
-    delete previewPayload.bookingId;
-    delete previewPayload.orderName;
-    delete previewPayload.readyRequest?.bookingId;
-    delete previewPayload.readyRequest?.orderName;
-    delete previewPayload.readyResponse?.bookingId;
-    delete previewPayload.readyResponse?.orderName;
-    delete previewPayload.tossPaymentRequest.orderName;
-    delete previewPayload.tossPaymentRequest.metadata.bookingId;
-    document.querySelector("#tossPayloadBox").innerHTML = `<pre class="code-block">${escapeHtml(JSON.stringify(previewPayload, null, 2))}</pre>`;
-    document.querySelector("#copyTossPayload").disabled = false;
-    document.querySelector("#openTossPayment").disabled = !latestClientKey;
-    toast("결제 준비가 완료되었습니다.");
-  });
-  document.querySelector("#copyTossPayload").addEventListener("click", async () => {
-    if (!latestPayload) return;
-    await navigator.clipboard.writeText(JSON.stringify(latestPayload, null, 2));
-    toast("JSON을 복사");
-  });
-  document.querySelector("#openTossPayment").addEventListener("click", async () => {
-    if (!latestPayload) return;
-    if (!latestClientKey) {
-      toast("Toss Client Key를 입력");
+    const { discount, finalAmount } = updateAmount();
+    if (!data.bookingId || !totalAmount || finalAmount <= 0) {
+      statusEl.className = "message error toss-note";
+      statusEl.textContent = "예약에서 결제 화면으로 이동해야 결제 정보가 자동 입력됩니다.";
       return;
     }
     try {
       const TossPayments = await loadTossPaymentsSdk();
-      const customerKey = currentUser?.userId ? `USER_${currentUser.userId}` : `BOOKING_${latestPayload.bookingId}`;
-      const payment = TossPayments(latestClientKey).payment({ customerKey });
-      await payment.requestPayment(latestPayload.tossPaymentRequest);
+      const customerKey = currentUser?.userId ? `USER_${currentUser.userId}` : TossPayments.ANONYMOUS;
+      const payment = TossPayments(window.OMNISTAY_TOSS_CLIENT_KEY || TOSS_SAMPLE_CLIENT_KEY).payment({ customerKey });
+      const query = new URLSearchParams({
+        bookingId: data.bookingId,
+        userCouponId: data.userCouponId || "",
+        discountAmount: String(discount),
+        skipConfirm: skipConfirm ? "true" : ""
+      });
+      const paymentRequest = {
+        method: selectedPaymentMethod,
+        amount: {
+          currency: "KRW",
+          value: finalAmount
+        },
+        orderId: generateTossOrderId(data.bookingId),
+        orderName: data.orderName,
+        successUrl: `${location.origin}/omnistay/payment-success.html?${query.toString()}`,
+        failUrl: `${location.origin}/omnistay/payment-fail.html?${query.toString()}`,
+        customerEmail: data.customerEmail,
+        customerName: data.customerName,
+        customerMobilePhone: data.customerMobilePhone
+      };
+      if (selectedPaymentMethod === "CARD") {
+        paymentRequest.card = { useEscrow: false, flowMode: "DEFAULT", useCardPoint: false, useAppCardOnly: false };
+      }
+      if (selectedPaymentMethod === "TRANSFER") {
+        paymentRequest.transfer = { cashReceipt: { type: "소득공제" }, useEscrow: false };
+      }
+      if (selectedPaymentMethod === "VIRTUAL_ACCOUNT") {
+        paymentRequest.virtualAccount = { cashReceipt: { type: "소득공제" }, useEscrow: false, validHours: 24 };
+      }
+      statusEl.className = "toss-note";
+      statusEl.textContent = "토스 결제창을 여는 중입니다.";
+      await payment.requestPayment(paymentRequest);
     } catch (error) {
-      document.querySelector("#tossPayloadBox").insertAdjacentHTML("beforeend", `<div class="message error section">${escapeHtml(error.message || String(error))}</div>`);
+      statusEl.className = "message error toss-note";
+      statusEl.textContent = error.message || String(error);
     }
   });
 }
@@ -530,7 +508,7 @@ async function loadPaymentCoupons(userId) {
     const userCoupons = pageItems(await request("/api/usercoupons?size=100"))
       .filter((item) => String(item.userId || item.user?.userId) === String(userId))
       .filter((item) => !item.userCouponStatus || item.userCouponStatus === "AVAILABLE");
-    document.querySelector("#paymentCouponSelect").innerHTML = `<option value="">사용 안 함</option>${userCoupons.map((item) => `<option value="${item.userCouponId}">${escapeHtml(item.coupon?.name || `쿠폰 ${item.couponId}`)}</option>`).join("")}`;
+    document.querySelector("#paymentCouponSelect").innerHTML = `<option value="">사용 안 함</option>${userCoupons.map((item) => `<option value="${item.userCouponId}" data-discount-type="${escapeHtml(item.coupon?.discountType || "FIXED")}" data-discount-value="${escapeHtml(item.coupon?.discountValue || 0)}" data-min-order="${escapeHtml(item.coupon?.minOrder || 0)}" data-max-discount="${escapeHtml(item.coupon?.maxDiscount || 0)}">${escapeHtml(item.coupon?.name || `쿠폰 ${item.couponId}`)}</option>`).join("")}`;
   } catch {
     document.querySelector("#paymentCouponSelect").innerHTML = `<option value="">쿠폰 불러오기 실패</option>`;
   }
@@ -542,28 +520,36 @@ async function paymentResultPage(status) {
   const paymentKey = params.get("paymentKey") || "-";
   const amount = params.get("amount") || "-";
   const bookingId = params.get("bookingId") || "";
+  const skipConfirm = params.get("skipConfirm") === "true";
   const code = params.get("code") || "";
   const message = params.get("message") || "";
   const isSuccess = status === "success";
-  userShell("bookings", `${title(isSuccess ? "결제 성공" : "결제 실패", "토스 결제 redirect 후 표시되는 화면입니다.")}<section class="card"><div class="card-body grid"><span class="status ${isSuccess ? "ok" : "bad"}">${isSuccess ? "SUCCESS" : "FAIL"}</span><div class="table-wrap"><table><tbody><tr><th>orderId</th><td>${escapeHtml(orderId)}</td></tr><tr><th>paymentKey</th><td>${escapeHtml(paymentKey)}</td></tr><tr><th>amount</th><td>${escapeHtml(amount)}</td></tr></tbody></table></div><div id="paymentConfirmResult">${empty(isSuccess ? "결제 승인 확인 중입니다." : "결제 실패 정보를 저장하는 중입니다.")}</div><a class="btn primary" href="bookings.html">예약내역</a></div></section>`);
+  userShell("bookings", `<section class="toss-page"><div class="toss-wrapper"><div class="toss-box"><img class="toss-result-image" src="${isSuccess ? "https://static.toss.im/illusts/check-blue-spot-ending-frame.png" : "https://static.toss.im/lotties/error-spot-no-loop-space-apng.png"}" alt=""><h2>${isSuccess ? "결제를 완료했어요" : "결제를 실패했어요"}</h2><div class="toss-result-grid">${isSuccess ? `<div class="toss-row"><span><b>결제금액</b></span><strong>${escapeHtml(amount)}원</strong></div><div class="toss-row"><span><b>주문번호</b></span><strong class="toss-break">${escapeHtml(orderId)}</strong></div><div class="toss-row"><span><b>paymentKey</b></span><strong class="toss-break">${escapeHtml(paymentKey)}</strong></div>` : `<div class="toss-row"><span><b>에러메시지</b></span><strong class="toss-break">${escapeHtml(message || "-")}</strong></div><div class="toss-row"><span><b>에러코드</b></span><strong class="toss-break">${escapeHtml(code || "-")}</strong></div>`}</div><div class="toss-note" id="paymentConfirmResult">${isSuccess ? "결제 승인 확인 중입니다." : "결제 실패 정보를 저장하는 중입니다."}</div><a class="toss-button" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none" href="bookings.html">예약내역</a></div></div></section>`);
   try {
     if (isSuccess) {
+      if (skipConfirm) {
+        document.querySelector("#paymentConfirmResult").textContent = "백엔드 예약 저장 없이 결제 화면 흐름만 완료했습니다.";
+        return;
+      }
       if (!bookingId || !params.get("paymentKey") || !params.get("orderId") || !params.get("amount")) {
-        document.querySelector("#paymentConfirmResult").innerHTML = `<div class="message error">토스 승인에 필요한 값이 부족합니다.</div>`;
+        document.querySelector("#paymentConfirmResult").className = "message error toss-note";
+        document.querySelector("#paymentConfirmResult").textContent = "토스 승인에 필요한 값이 부족합니다.";
         return;
       }
       const result = await request("/api/payments/toss/confirm", { method: "POST", body: JSON.stringify({ bookingId: Number(bookingId), paymentKey: params.get("paymentKey"), orderId: params.get("orderId"), amount: Number(params.get("amount")) }) });
-      document.querySelector("#paymentConfirmResult").innerHTML = `<div class="message">결제 승인이 저장되었습니다. 결제 ID: ${escapeHtml(result.paymentId || "-")}</div>`;
+      document.querySelector("#paymentConfirmResult").textContent = `결제 승인이 저장되었습니다. 결제 ID: ${result.paymentId || "-"}`;
     } else {
       if (!params.get("orderId")) {
-        document.querySelector("#paymentConfirmResult").innerHTML = `<div class="message error">토스 실패 저장에 필요한 orderId가 없습니다.</div>`;
+        document.querySelector("#paymentConfirmResult").className = "message error toss-note";
+        document.querySelector("#paymentConfirmResult").textContent = "토스 실패 저장에 필요한 orderId가 없습니다.";
         return;
       }
       await request("/api/payments/toss/fail", { method: "POST", body: JSON.stringify({ orderId: params.get("orderId"), code, message }) });
-      document.querySelector("#paymentConfirmResult").innerHTML = `<div class="message">결제 실패 정보가 저장되었습니다.</div>`;
+      document.querySelector("#paymentConfirmResult").textContent = "결제 실패 정보가 저장되었습니다.";
     }
   } catch (error) {
-    document.querySelector("#paymentConfirmResult").innerHTML = errorMessage(error);
+    document.querySelector("#paymentConfirmResult").className = "message error toss-note";
+    document.querySelector("#paymentConfirmResult").textContent = error.message || String(error);
   }
 }
 
