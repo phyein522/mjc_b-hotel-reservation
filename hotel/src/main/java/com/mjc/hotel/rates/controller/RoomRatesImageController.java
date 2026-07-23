@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import org.springframework.http.MediaType;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -29,7 +31,7 @@ public class RoomRatesImageController {
     /**
      * [POST] /api/rates/rooms/{roomId}/images (객실 이미지 추가 업로드)
      */
-    @PostMapping("/{roomId}/images")
+    @PostMapping(value = "/{roomId}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<List<RoomImageResponseDto>>> uploadImages(
             @PathVariable Long roomId,
             @RequestParam("files") List<MultipartFile> files) {
