@@ -3,7 +3,9 @@ import { request, pageItems, qs, money, escapeHtml, todayMonth } from "./api.js"
 const app = document.querySelector("#app");
 const page = document.body.dataset.page;
 const rel = document.body.dataset.area === "admin" ? "../" : "";
+const TOSS_SDK_URL = "https://js.tosspayments.com/v2/standard";
 let hotelsCache = [];
+let tossSdkPromise = null;
 
 const userNav = [
   ["home", "홈", "index.html"],
@@ -29,6 +31,20 @@ function setCurrentUser(user) {
 
 function clearCurrentUser() {
   localStorage.removeItem("omnistayCurrentUser");
+}
+
+function loadTossPaymentsSdk() {
+  if (window.TossPayments) return Promise.resolve(window.TossPayments);
+  if (tossSdkPromise) return tossSdkPromise;
+  tossSdkPromise = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = TOSS_SDK_URL;
+    script.async = true;
+    script.onload = () => resolve(window.TossPayments);
+    script.onerror = () => reject(new Error("Toss Payments SDK load failed."));
+    document.head.appendChild(script);
+  });
+  return tossSdkPromise;
 }
 
 const adminNav = [
@@ -149,6 +165,9 @@ function hotelCard(hotel) {
 }
 
 function roomRow(room) {
+  const amount = Number(room.basePrice || 0);
+  const orderName = `${room.number || ""}호 ${room.name || "객실"} 예약`.trim();
+  const bookingHref = `booking.html?hotelId=${encodeURIComponent(room.hotelId || "")}&roomId=${encodeURIComponent(room.roomId || "")}&amount=${encodeURIComponent(amount)}&orderName=${encodeURIComponent(orderName)}`;
   return `<tr>
     <td><strong>${escapeHtml(room.number)}</strong><div class="small muted">${escapeHtml(room.name)}</div></td>
     <td>${escapeHtml(room.floor)}층</td>
@@ -156,7 +175,7 @@ function roomRow(room) {
     <td>${room.maxAdult ?? 0}명 + 아동 ${room.maxChild ?? 0}명</td>
     <td>${money(room.basePrice)}</td>
     <td>${statusBadge(room.roomStatus)}</td>
-    <td><a class="btn" href="booking.html?hotelId=${room.hotelId}&roomId=${room.roomId}">예약</a></td>
+    <td><a class="btn" href="${bookingHref}">예약</a></td>
   </tr>`;
 }
 
@@ -280,7 +299,7 @@ function reviewCard(review, action = "") {
 }
 
 async function bookingPage() {
-  userShell("bookings", `${title("예약하기", "구현된 예약 등록 API에 맞춰 저장합니다.")}<div id="bookingArea">${empty("객실 정보를 불러오는 중입니다.")}</div>`);
+  userShell("bookings", `${title("예약하기", "예약 등록 API 저장")}<div id="bookingArea">${empty("객실 정보를 불러오는 중입니다.")}</div>`);
   const currentUser = getCurrentUser();
   if (!currentUser) {
     const redirect = encodeURIComponent(`booking.html${location.search}`);
@@ -293,6 +312,9 @@ async function bookingPage() {
     const selectedHotel = params.get("hotelId") || hotels[0]?.hotelId || "";
     const rooms = selectedHotel ? pageItems(await request(`/api/room/hotel/${selectedHotel}?size=100`)) : [];
     const selectedRoom = params.get("roomId") || rooms[0]?.roomId || "";
+    const selectedRoomData = rooms.find((room) => String(room.roomId) === String(selectedRoom)) || rooms[0] || {};
+    const baseAmount = Number(params.get("amount") || selectedRoomData.basePrice || 0);
+    const orderName = params.get("orderName") || `${selectedRoomData.number || ""}호 ${selectedRoomData.name || "객실"} 예약`.trim();
     const today = todayDate();
     document.querySelector("#bookingArea").innerHTML = `
       <form class="card card-body grid" id="bookingForm">
@@ -308,6 +330,8 @@ async function bookingPage() {
           <label><span>성인</span><input name="adultCount" type="number" value="2" min="1"></label>
           <label><span>아동</span><input name="childCount" type="number" value="0" min="0"></label>
         </div>
+        <input name="baseAmount" type="hidden" value="${escapeHtml(baseAmount)}">
+        <input name="orderName" type="hidden" value="${escapeHtml(orderName)}">
         <label><span>요청사항</span><textarea name="specialRequest"></textarea></label>
         <button class="btn primary">예약 저장</button>
       </form>
@@ -356,30 +380,133 @@ async function submitBooking(event) {
   data.adultCount = Number(data.adultCount || 0);
   data.childCount = Number(data.childCount || 0);
   data.nationality = "KOREA";
+  const params = new URLSearchParams(location.search);
+  const paymentBaseAmount = Number(data.baseAmount || params.get("amount") || 0);
+  const paymentOrderName = data.orderName || params.get("orderName") || "";
+  delete data.baseAmount;
+  delete data.orderName;
   try {
     const booking = await request("/api/bookings/insert", { method: "POST", body: JSON.stringify(data) });
-    document.querySelector("#bookingResult").innerHTML = `<div class="message">예약이 저장되었습니다. 예약번호: ${escapeHtml(booking.bookingNo || booking.bookingId)} <a class="btn" href="payment.html?bookingId=${booking.bookingId}">결제 화면</a></div>`;
+    const nights = Math.max(1, Math.ceil((new Date(data.checkoutDate) - new Date(data.checkinDate)) / 86400000));
+    const paymentAmount = paymentBaseAmount * nights;
+    const roomText = event.currentTarget.elements.roomId?.selectedOptions?.[0]?.textContent.trim() || "";
+    const orderName = paymentOrderName || `${roomText} 예약`.trim() || "OmniStay 호텔 예약";
+    const paymentParams = new URLSearchParams({
+      bookingId: String(booking.bookingId),
+      amount: String(paymentAmount),
+      orderName
+    });
+    document.querySelector("#bookingResult").innerHTML = `<div class="message">예약이 저장되었습니다. 예약번호: ${escapeHtml(booking.bookingNo || booking.bookingId)} <a class="btn" href="payment.html?${paymentParams.toString()}">결제 화면</a></div>`;
   } catch (error) {
     document.querySelector("#bookingResult").innerHTML = errorMessage(error);
   }
 }
 
 async function paymentPage() {
-  userShell("bookings", `${title("결제", "구현된 결제 저장 API에 맞춘 필드만 연결합니다.")}<section class="grid cols-2"><form class="card card-body grid" id="paymentForm"><label><span>예약 ID</span><input name="bookingId" type="number" required value="${escapeHtml(new URLSearchParams(location.search).get("bookingId") || "")}"></label><label><span>결제수단</span><select name="paymentMethod"><option>CreditCard</option><option>CheckCard</option><option>BankTransfer</option><option>Online</option><option>Cache</option></select></label><label><span>결제상태</span><select name="paymentStatus"><option>Paid</option><option>Ready</option><option>Failed</option><option>Cancelled</option></select></label><label><span>금액</span><input name="totalAmount" type="number" required></label><label><span>쿠폰 선택 ${screenOnlyBadge()}</span><select name="couponId"><option value="">사용 안 함</option><option value="101">신규회원 10,000원</option><option value="202">장기투숙 15%</option><option value="303">VIP 등급 할인</option></select></label><label><span>할인금액</span><input name="discountAmount" type="number" value="0"></label><button class="btn primary">결제 저장</button></form><div id="paymentsBox">${empty("결제 목록을 불러오는 중입니다.")}</div></section>`);
-  document.querySelector("#paymentForm").addEventListener("submit", async (event) => {
+  const currentUser = getCurrentUser();
+  const params = new URLSearchParams(location.search);
+  if (!currentUser) {
+    const redirect = encodeURIComponent(`payment.html${location.search}`);
+    location.href = `login.html?reason=payment&redirect=${redirect}`;
+    return;
+  }
+  const bookingId = params.get("bookingId") || "";
+  const totalAmount = Number(params.get("amount") || params.get("totalAmount") || 0);
+  const orderName = params.get("orderName") || "OmniStay 호텔 예약";
+  const amountView = totalAmount ? money(totalAmount) : "예약 화면에서 결제로 이동하면 자동 입력";
+  userShell("bookings", `${title("토스 결제", "예약에서 넘어온 금액과 로그인 회원 정보로 결제를 준비합니다.")}<section class="grid cols-2"><form class="card card-body grid" id="paymentForm"><div class="message">실제 결제 승인/검증은 백엔드 구현 후 처리합니다.<div class="small">예약 화면에서 자동으로 넘어온 정보로 결제합니다.</div></div><input name="bookingId" type="hidden" value="${escapeHtml(bookingId)}"><input name="totalAmount" type="hidden" value="${escapeHtml(totalAmount)}"><input name="orderName" type="hidden" value="${escapeHtml(orderName)}"><section class="message"><div class="toolbar" style="margin:0"><span>결제 예정 금액</span><strong>${escapeHtml(amountView)}</strong></div><div class="small">회원: ${escapeHtml(currentUser.name || currentUser.email || `User ${currentUser.userId}`)}</div></section><label><span>쿠폰 선택 ${screenOnlyBadge()}</span><select name="couponId"><option value="">사용 안 함</option><option value="101">신규회원 10,000원</option><option value="202">장기투숙 15%</option><option value="303">VIP 등급 할인</option></select></label><label><span>할인금액</span><input name="discountAmount" type="number" value="0"></label><label><span>구매자명</span><input name="customerName" value="${escapeHtml(currentUser.name || "")}" placeholder="로그인 정보 자동 입력"></label><label><span>구매자 이메일</span><input name="customerEmail" type="email" value="${escapeHtml(currentUser.email || "")}" placeholder="로그인 정보 자동 입력"></label><label><span>구매자 연락처</span><input name="customerMobilePhone" value="${escapeHtml(currentUser.phone || "")}" placeholder="01012345678"></label><label><span>Toss Client Key</span><input name="tossClientKey" placeholder="test_ck_..."></label><button class="btn primary">토스 요청값 생성</button><button class="btn" id="openTossPayment" type="button" disabled>Toss checkout</button></form><section class="card"><div class="card-body"><div class="toolbar" style="margin:0 0 10px"><h2>백엔드로 넘길 값</h2><span class="status warn">백엔드 미호출</span></div><div id="tossPayloadBox">${empty("토스 요청값을 생성하세요.")}</div><div class="section"><button class="btn" id="copyTossPayload" type="button" disabled>JSON 복사</button></div></div></section></section>`);
+  let latestPayload = null;
+  let latestClientKey = "";
+  document.querySelector("#paymentForm").addEventListener("submit", (event) => {
     event.preventDefault();
     const data = qs(event.currentTarget);
-    ["bookingId", "couponId", "discountAmount", "totalAmount"].forEach((key) => { if (data[key] !== "") data[key] = Number(data[key]); });
-    data.currency = "KRW";
+    const totalAmount = Number(data.totalAmount || 0);
+    const discountAmount = Number(data.discountAmount || 0);
+    if (!data.bookingId || totalAmount <= 0) {
+      document.querySelector("#tossPayloadBox").innerHTML = `<div class="message error">예약에서 결제 화면으로 이동해야 결제 정보가 자동 입력됩니다.</div>`;
+      return;
+    }
+    const amount = Math.max(totalAmount - discountAmount, 0);
+    const orderId = `OMNISTAY-${data.bookingId}-${Date.now()}`;
+    latestClientKey = data.tossClientKey || window.OMNISTAY_TOSS_CLIENT_KEY || "";
+    latestPayload = {
+      endpoint: "POST /api/payments/toss/ready",
+      bookingId: Number(data.bookingId),
+      provider: "TOSS",
+      paymentMethod: "TOSS_PAYMENTS",
+      paymentStatus: "READY",
+      orderId,
+      orderName: data.orderName,
+      amount,
+      totalAmount,
+      discountAmount,
+      currency: "KRW",
+      couponId: data.couponId ? Number(data.couponId) : null,
+      customerUserId: currentUser?.userId ?? null,
+      customerName: data.customerName || currentUser?.name || "",
+      customerEmail: data.customerEmail || currentUser?.email || "",
+      customerMobilePhone: (data.customerMobilePhone || currentUser?.phone || "").replaceAll("-", ""),
+      successUrl: `${location.origin}/omnistay/payment-success.html`,
+      failUrl: `${location.origin}/omnistay/payment-fail.html`,
+      tossPaymentRequest: {
+        method: "CARD",
+        amount: {
+          value: amount,
+          currency: "KRW"
+        },
+        orderId,
+        orderName: data.orderName,
+        customerName: data.customerName || currentUser?.name || "",
+        customerEmail: data.customerEmail || currentUser?.email || "",
+        customerMobilePhone: (data.customerMobilePhone || currentUser?.phone || "").replaceAll("-", ""),
+        successUrl: `${location.origin}/omnistay/payment-success.html`,
+        failUrl: `${location.origin}/omnistay/payment-fail.html`,
+        metadata: {
+          bookingId: String(data.bookingId),
+          couponId: data.couponId || "",
+          discountAmount: String(discountAmount)
+        }
+      }
+    };
+    const previewPayload = JSON.parse(JSON.stringify(latestPayload));
+    delete previewPayload.bookingId;
+    delete previewPayload.orderName;
+    delete previewPayload.tossPaymentRequest.orderName;
+    delete previewPayload.tossPaymentRequest.metadata.bookingId;
+    document.querySelector("#tossPayloadBox").innerHTML = `<pre class="code-block">${escapeHtml(JSON.stringify(previewPayload, null, 2))}</pre>`;
+    document.querySelector("#copyTossPayload").disabled = false;
+    document.querySelector("#openTossPayment").disabled = !latestClientKey;
+    toast("토스 결제 요청값을 생성");
+  });
+  document.querySelector("#copyTossPayload").addEventListener("click", async () => {
+    if (!latestPayload) return;
+    await navigator.clipboard.writeText(JSON.stringify(latestPayload, null, 2));
+    toast("JSON을 복사");
+  });
+  document.querySelector("#openTossPayment").addEventListener("click", async () => {
+    if (!latestPayload) return;
+    if (!latestClientKey) {
+      toast("Toss Client Key를 입력");
+      return;
+    }
     try {
-      await request("/api/payments/add", { method: "POST", body: JSON.stringify(data) });
-      toast("결제가 저장되었습니다.");
-      loadPayments("#paymentsBox");
+      const TossPayments = await loadTossPaymentsSdk();
+      const customerKey = currentUser?.userId ? `USER_${currentUser.userId}` : `BOOKING_${latestPayload.bookingId}`;
+      const payment = TossPayments(latestClientKey).payment({ customerKey });
+      await payment.requestPayment(latestPayload.tossPaymentRequest);
     } catch (error) {
-      document.querySelector("#paymentsBox").innerHTML = errorMessage(error);
+      document.querySelector("#tossPayloadBox").insertAdjacentHTML("beforeend", `<div class="message error section">${escapeHtml(error.message || String(error))}</div>`);
     }
   });
-  loadPayments("#paymentsBox");
+}
+
+function paymentResultPage(status) {
+  const params = new URLSearchParams(location.search);
+  const orderId = params.get("orderId") || "-";
+  const paymentKey = params.get("paymentKey") || "-";
+  const amount = params.get("amount") || "-";
+  const isSuccess = status === "success";
+  userShell("bookings", `${title(isSuccess ? "결제 성공" : "결제 실패", "토스 결제 redirect 후 표시되는 화면입니다.")}<section class="card"><div class="card-body grid"><span class="status ${isSuccess ? "ok" : "bad"}">${isSuccess ? "SUCCESS" : "FAIL"}</span><div class="table-wrap"><table><tbody><tr><th>orderId</th><td>${escapeHtml(orderId)}</td></tr><tr><th>paymentKey</th><td>${escapeHtml(paymentKey)}</td></tr><tr><th>amount</th><td>${escapeHtml(amount)}</td></tr></tbody></table></div><div class="message">${isSuccess ? "백엔드 구현 후 이 값들을 confirm API로 전달해 최종 승인 검증을 진행하면 됩니다." : "백엔드 구현 후 실패 사유를 저장하거나 예약 결제 상태를 갱신하면 됩니다."}</div><a class="btn primary" href="bookings.html">예약내역</a></div></section>`);
 }
 
 async function loadPayments(selector, admin = false) {
@@ -397,19 +524,19 @@ async function loadPayments(selector, admin = false) {
 }
 
 async function bookingsPage() {
-  userShell("bookings", `${title("예약내역", "사용자 ID별 예약 조회는 백엔드 API에 연결되어 있습니다.")}<div class="filters"><input id="bookingUserId" type="number" placeholder="사용자 ID"><button class="btn primary" id="bookingLookup">조회</button></div><section class="section" id="bookingList"></section><section class="section card"><div class="card-body"><div class="toolbar" style="margin:0 0 10px"><h2>예약 상세 흐름</h2>${screenOnlyBadge()}</div><div class="grid cols-3"><div class="metric">예약 접수<strong>일정/인원</strong></div><div class="metric">결제 대기<strong>쿠폰 선택</strong></div><div class="metric">투숙 완료<strong>리뷰 작성</strong></div></div></div></section>`);
+  userShell("bookings", `${title("예약내역", "사용자 ID별 예약 조회는 백엔드 API에 연결")}<div class="filters"><input id="bookingUserId" type="number" placeholder="사용자 ID"><button class="btn primary" id="bookingLookup">조회</button></div><section class="section" id="bookingList"></section><section class="section card"><div class="card-body"><div class="toolbar" style="margin:0 0 10px"><h2>예약 상세 흐름</h2>${screenOnlyBadge()}</div><div class="grid cols-3"><div class="metric">예약 접수<strong>일정/인원</strong></div><div class="metric">결제 대기<strong>쿠폰 선택</strong></div><div class="metric">투숙 완료<strong>리뷰 작성</strong></div></div></div></section>`);
   document.querySelector("#bookingLookup").addEventListener("click", () => loadBookings("#bookingList", document.querySelector("#bookingUserId").value, false));
 }
 
 function couponsPage() {
-  userShell("coupons", `${title("쿠폰함", "쿠폰 전용 백엔드 API가 없어 화면 전용으로 표시합니다.")}<section class="grid cols-3"><article class="card"><div class="card-body"><div class="toolbar" style="margin:0 0 8px"><h3>신규회원 웰컴 쿠폰</h3>${screenOnlyBadge()}</div><p class="price">10,000원 할인</p><p class="muted">7만원 이상 결제 시 사용</p><a class="btn primary" href="payment.html">결제에서 사용</a></div></article><article class="card"><div class="card-body"><div class="toolbar" style="margin:0 0 8px"><h3>장기 투숙 쿠폰</h3>${screenOnlyBadge()}</div><p class="price">15% 할인</p><p class="muted">7박 이상 예약 시 사용</p><a class="btn primary" href="payment.html">결제에서 사용</a></div></article><article class="card"><div class="card-body"><div class="toolbar" style="margin:0 0 8px"><h3>VIP 등급 할인</h3>${screenOnlyBadge()}</div><p class="price">10% 할인</p><p class="muted">VIP 회원 등급 대상</p><a class="btn primary" href="payment.html">결제에서 사용</a></div></article></section>`);
+  userShell("coupons", `${title("쿠폰함", "쿠폰 전용 백엔드 API가 없어 화면 전용으로 표시")}<section class="grid cols-3"><article class="card"><div class="card-body"><div class="toolbar" style="margin:0 0 8px"><h3>신규회원 웰컴 쿠폰</h3>${screenOnlyBadge()}</div><p class="price">10,000원 할인</p><p class="muted">7만원 이상 결제 시 사용</p><a class="btn primary" href="payment.html">결제에서 사용</a></div></article><article class="card"><div class="card-body"><div class="toolbar" style="margin:0 0 8px"><h3>장기 투숙 쿠폰</h3>${screenOnlyBadge()}</div><p class="price">15% 할인</p><p class="muted">7박 이상 예약 시 사용</p><a class="btn primary" href="payment.html">결제에서 사용</a></div></article><article class="card"><div class="card-body"><div class="toolbar" style="margin:0 0 8px"><h3>VIP 등급 할인</h3>${screenOnlyBadge()}</div><p class="price">10% 할인</p><p class="muted">VIP 회원 등급 대상</p><a class="btn primary" href="payment.html">결제에서 사용</a></div></article></section>`);
 }
 
 function loginPage() {
   const params = new URLSearchParams(location.search);
   const redirect = params.get("redirect") || "index.html";
   const reason = params.get("reason");
-  userShell("login", `${title("로그인", "예약은 로그인 상태에서만 진행할 수 있습니다.")}<section class="grid cols-2"><form class="card card-body grid" id="loginForm"><div class="toolbar" style="margin:0"><h2>사용자 ID 로그인</h2><span class="status ok">회원조회 API</span></div>${reason === "booking" ? `<div class="message error">로그인되어 있지 않아 예약을 진행할 수 없습니다. 로그인 후 예약 화면으로 돌아갑니다.</div>` : ""}<label><span>사용자 ID</span><input name="userId" type="number" placeholder="예: 10" required></label><button class="btn primary">로그인</button><a class="small muted" href="signup.html">아직 회원이 아니면 회원가입</a></form><article class="card"><div class="card-body"><h2>예약에 사용되는 정보</h2><p class="muted">로그인하면 회원 API에서 가져온 이름, 전화번호, 이메일이 예약자 정보로 자동 입력됩니다.</p><div class="grid"><span class="pill">사용자 ID</span><span class="pill">이름</span><span class="pill">연락처</span><span class="pill">이메일</span></div></div></article></section><div class="section" id="loginResult"></div>`);
+  userShell("login", `${title("로그인", "예약은 로그인 상태에서만 진행 가능")}<section class="grid cols-2"><form class="card card-body grid" id="loginForm"><div class="toolbar" style="margin:0"><h2>사용자 ID 로그인</h2><span class="status ok">회원조회 API</span></div>${reason === "booking" ? `<div class="message error">로그인되어 있지 않아 예약을 진행할 수 없습니다. 로그인 후 예약 화면으로 돌아갑니다.</div>` : ""}<label><span>사용자 ID</span><input name="userId" type="number" placeholder="예: 10" required></label><button class="btn primary">로그인</button><a class="small muted" href="signup.html">아직 회원이 아니면 회원가입</a></form><article class="card"><div class="card-body"><h2>예약에 사용되는 정보</h2><p class="muted">로그인하면 회원 API에서 가져온 이름, 전화번호, 이메일이 예약자 정보로 자동 입력됩니다.</p><div class="grid"><span class="pill">사용자 ID</span><span class="pill">이름</span><span class="pill">연락처</span><span class="pill">이메일</span></div></div></article></section><div class="section" id="loginResult"></div>`);
   document.querySelector("#loginForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const { userId } = qs(event.currentTarget);
@@ -481,7 +608,7 @@ async function loadReviews(adminMode = false) {
 }
 
 function signupPage() {
-  userShell("signup", `${title("회원가입", "구현된 /api/users/signup API에 연결됩니다.")}<form class="card card-body grid" id="signupForm"><label><span>이메일</span><input name="email" type="email" required></label><label><span>비밀번호</span><input name="password" type="password" required></label><label><span>이름</span><input name="name" required></label><label><span>전화번호</span><input name="phone"></label><button class="btn primary">가입</button></form><div class="section" id="signupResult"></div>`);
+  userShell("signup", `${title("회원가입", "구현된 /api/users/signup API에 연결")}<form class="card card-body grid" id="signupForm"><label><span>이메일</span><input name="email" type="email" required></label><label><span>비밀번호</span><input name="password" type="password" required></label><label><span>이름</span><input name="name" required></label><label><span>전화번호</span><input name="phone"></label><button class="btn primary">가입</button></form><div class="section" id="signupResult"></div>`);
   document.querySelector("#signupForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const data = { ...qs(event.currentTarget), role: "CUSTOMER", status: "ACTIVE", membership: "NEW_MEMBER", marketingAgreed: false, point: 0 };
@@ -774,6 +901,8 @@ const routes = {
   "detail": detailPage,
   "booking": bookingPage,
   "payment": paymentPage,
+  "payment-success": () => paymentResultPage("success"),
+  "payment-fail": () => paymentResultPage("fail"),
   "bookings": bookingsPage,
   "coupons": couponsPage,
   "reviews": () => reviewsPage(false),
