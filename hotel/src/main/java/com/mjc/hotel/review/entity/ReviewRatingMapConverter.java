@@ -20,7 +20,7 @@ public class ReviewRatingMapConverter implements AttributeConverter<Map<ReviewRa
 
         return attribute.entrySet()
                 .stream()
-                .map(entry -> entry.getKey().name() + ":" + entry.getValue())
+                .map(entry -> entry.getKey().getCode() + ":" + entry.getValue())
                 .collect(Collectors.joining(","));
     }
 
@@ -35,7 +35,7 @@ public class ReviewRatingMapConverter implements AttributeConverter<Map<ReviewRa
                 .map(value -> value.split(":"))
                 .filter(parts -> parts.length == 2)
                 .forEach(parts -> ratings.put(
-                        ReviewRatingCategory.valueOf(parts[0].trim()),
+                        ReviewRatingCategory.fromCode(Integer.valueOf(parts[0].trim())),
                         Long.valueOf(parts[1].trim())
                 ));
 

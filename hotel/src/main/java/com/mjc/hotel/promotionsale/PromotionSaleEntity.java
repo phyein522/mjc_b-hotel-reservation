@@ -1,4 +1,4 @@
-package com.mjc.hotel.promotionSale;
+package com.mjc.hotel.promotionsale;
 
 import com.mjc.hotel.common.dto.BaseEntity;
 import com.mjc.hotel.promotion.PromotionEntity;
@@ -24,6 +24,8 @@ public class PromotionSaleEntity extends BaseEntity implements IPromotionSale {
 
     @Transient
     private Long proId;
+    @Transient
+    private Long userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pro_id", nullable = false)

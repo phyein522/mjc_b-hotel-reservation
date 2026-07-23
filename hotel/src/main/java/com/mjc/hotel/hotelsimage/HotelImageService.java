@@ -25,6 +25,7 @@ public class HotelImageService {
     @Autowired
     private FileUtil fileUtil;
 
+    // 호텔 이미지 파일을 저장소에 업로드하고, DB 저장용 DTO를 만든다.
     public HotelImageResponseDto upload(Long hotelId, MultipartFile file) throws RuntimeException {
 
         if (hotelId == null || file == null) {
@@ -51,6 +52,7 @@ public class HotelImageService {
         }
     }
 
+    // 업로드된 호텔 이미지 정보를 DB에 등록한다.
     public HotelImageResponseDto insert(IHotelImage requestDto) {
 
         if (requestDto == null) {
@@ -71,6 +73,7 @@ public class HotelImageService {
         return resultDto;
     }
 
+    // 이미지 파일 업로드와 DB 등록을 한 번에 처리한다.
     public HotelImageResponseDto uploadAndInsert(Long hotelId, MultipartFile file) throws RuntimeException {
 
         HotelImageResponseDto uploadDto = this.upload(hotelId, file);
@@ -79,6 +82,7 @@ public class HotelImageService {
         return resultDto;
     }
 
+    // 호텔 이미지 ID로 이미지 정보를 조회한다.
     public HotelImageResponseDto findById(Long hotelImageId) {
 
         HotelImageEntity findEntity =
@@ -90,6 +94,7 @@ public class HotelImageService {
         return resultDto;
     }
 
+    // 이미지 파일을 Resource 형태로 불러온다.
     public Resource getImageResourceById(HotelImageDto hotelImageDto) throws IOException {
 
         Resource result = this.fileUtil.loadFileAsResource(
@@ -99,6 +104,7 @@ public class HotelImageService {
         return result;
     }
 
+    // 이미지 파일을 byte 배열로 불러온다.
     public byte[] getImageBytesById(HotelImageDto hotelImageDto) throws IOException {
 
         byte[] result = this.fileUtil.loadFileAsBytes(
@@ -108,6 +114,7 @@ public class HotelImageService {
         return result;
     }
 
+    // 호텔 이미지의 DB 정보를 수정한다.
     public HotelImageResponseDto update(IHotelImage requestDto) {
 
         HotelImageResponseDto findDto = this.findById(requestDto.getHotelImageId());
@@ -126,6 +133,7 @@ public class HotelImageService {
         return resultDto;
     }
 
+    // 기존 이미지 파일을 삭제한 뒤 새 파일로 교체하고 DB 정보를 수정한다.
     public HotelImageResponseDto uploadAndUpdate(Long hotelImageId, MultipartFile file) throws RuntimeException {
 
         HotelImageResponseDto findDto = this.findById(hotelImageId);
@@ -148,6 +156,7 @@ public class HotelImageService {
         return resultDto;
     }
 
+    // 이미지 파일과 DB 정보를 함께 삭제하고, 삭제 전 정보를 반환한다.
     public HotelImageDto deleteById(Long hotelImageId) {
 
         HotelImageDto findDto = this.findById(hotelImageId);
@@ -159,6 +168,7 @@ public class HotelImageService {
         return findDto;
     }
 
+    // 호텔 ID에 속한 이미지 목록을 페이지 단위로 조회한다.
     public Page<HotelImageResponseDto> findAllByHotelIdEquals(Long hotelId, Pageable pageable) {
 
         HotelEntity hotel = HotelEntity.builder().hotelId(hotelId).build();
@@ -172,6 +182,7 @@ public class HotelImageService {
         return new PageImpl<>(list, pageable, page.getTotalElements());
     }
 
+    // Entity 목록을 응답용 DTO 목록으로 변환한다.
     private List<HotelImageResponseDto> getListHotelImageDto(List<HotelImageEntity> list) {
 
         List<HotelImageResponseDto> result = list.stream()

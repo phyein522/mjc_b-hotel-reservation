@@ -1,4 +1,4 @@
-package com.mjc.hotel.promotionSale;
+package com.mjc.hotel.promotionsale;
 
 import com.mjc.hotel.common.dto.IBase;
 import com.mjc.hotel.promotion.IPromotion;
@@ -18,6 +18,9 @@ public interface IPromotionSale extends IBase {
     IPromotion getPromotion();
     void setPromotion(IPromotion promotion);
 
+    Long getUserId();
+    void setUserId(Long userId);
+
     default IPromotionSale copyMembers(IPromotionSale source, boolean forced) {
 
         if (source == null) {
@@ -36,10 +39,15 @@ public interface IPromotionSale extends IBase {
             this.setProId(source.getProId());
 
             try {
-                this.getPromotion().copyMembers(source.getPromotion(), forced);
+                if (source.getPromotion() != null) {
+                    this.setPromotion(source.getPromotion());
+                }
             } catch (LazyInitializationException e) {
                 System.err.println(e.getMessage());
             }
+        }
+        if (forced || source.getUserId() != null) {
+            this.setUserId(source.getUserId());
         }
         return this;
     }

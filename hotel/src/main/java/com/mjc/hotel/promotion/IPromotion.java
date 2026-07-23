@@ -1,6 +1,8 @@
 package com.mjc.hotel.promotion;
 
 import com.mjc.hotel.common.dto.IBase;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import com.mjc.hotel.rooms.dto.IRoom;
 import org.hibernate.LazyInitializationException;
@@ -19,8 +21,8 @@ public interface IPromotion extends IBase {
     DiscountTypeEnum getDisType();
     void setDisType(DiscountTypeEnum disType);
 
-    String getDisValue();
-    void setDisValue(String disValue);
+    BigDecimal getDisValue();
+    void setDisValue(BigDecimal disValue);
 
     LocalDateTime getStartDate();
     void setStartDate(LocalDateTime startDate);
@@ -31,14 +33,17 @@ public interface IPromotion extends IBase {
     Integer getResCount();
     void setResCount(Integer resCount);
 
-    String getStatus();
-    void setStatus(String status);
+    PromotionStateTypeEnum getStatus();
+    void setStatus(PromotionStateTypeEnum status);
 
     Long getRoomId();
     void setRoomId(Long roomId);
 
     IRoom getRoom();
     void setRoom(IRoom room);
+
+    Long getUserId();
+    void setUserId(Long userId);
 
     default IPromotion copyMembers(IPromotion source, boolean forced) {
 
@@ -85,10 +90,15 @@ public interface IPromotion extends IBase {
             this.setRoomId(source.getRoomId());
 
             try {
-                this.getRoom().copyMembers(source.getRoom(), forced);
+                if (source.getRoom() != null) {
+                    this.setRoom(source.getRoom());
+                }
             } catch (LazyInitializationException e) {
                 System.err.println(e.getMessage());
             }
+        }
+        if (forced || source.getUserId() != null) {
+            this.setUserId(source.getUserId());
         }
         return this;
     }

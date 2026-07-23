@@ -1,7 +1,12 @@
 package com.mjc.hotel.review.service;
 
+import com.mjc.hotel.bookings.BookingEntity;
+import com.mjc.hotel.bookings.BookingRepository;
 import com.mjc.hotel.hotels.HotelEntity;
 import com.mjc.hotel.hotels.HotelRepository;
+import com.mjc.hotel.payment.dto.PaymentEntity;
+import com.mjc.hotel.payment.dto.PaymentStatus;
+import com.mjc.hotel.payment.repository.PaymentRepository;
 import com.mjc.hotel.review.dto.IReview;
 import com.mjc.hotel.review.dto.ReviewDto;
 import com.mjc.hotel.review.dto.ReviewPhotoDto;
@@ -53,6 +58,10 @@ public class ReviewService {
     private HotelRepository hotelRepository;
     @Autowired
     private RoomRepository roomRepository;
+    @Autowired
+    private BookingRepository bookingRepository;
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     @Transactional
     public ReviewDto insert(IReview reviewDto) {
@@ -250,6 +259,7 @@ public class ReviewService {
         findUser(dto.getUserId());
         findHotel(dto.getHotelId());
         findRoomIfPresent(dto.getRoomId());
+        validatePaidRoomBooking(dto);
     }
 
     private UserEntity findUser(Long userId) {
@@ -268,6 +278,34 @@ public class ReviewService {
         }
         return this.roomRepository.findById(roomId)
                 .orElseThrow(() -> new ReviewReferenceNotFoundException("Room", roomId));
+    }
+
+    private void validatePaidRoomBooking(IReview dto) {
+        if (dto.getReservationId() == null) {
+            throw new IllegalArgumentException("리뷰 작성에는 예약 ID가 필요합니다.");
+        }
+        if (dto.getUserId() == null) {
+            throw new IllegalArgumentException("리뷰 작성에는 회원 ID가 필요합니다.");
+        }
+        if (dto.getRoomId() == null) {
+            throw new IllegalArgumentException("리뷰 작성에는 객실 ID가 필요합니다.");
+        }
+
+        BookingEntity booking = this.bookingRepository.findById(dto.getReservationId())
+                .orElseThrow(() -> new ReviewReferenceNotFoundException("Booking", dto.getReservationId()));
+
+        if (!dto.getUserId().equals(booking.getUserId())) {
+            throw new IllegalArgumentException("리뷰 작성 회원과 예약 회원이 일치하지 않습니다.");
+        }
+        if (!dto.getRoomId().equals(booking.getRoomId())) {
+            throw new IllegalArgumentException("리뷰 작성 객실과 예약 객실이 일치하지 않습니다.");
+        }
+
+        PaymentEntity payment = this.paymentRepository.findByBookingEquals(booking)
+                .orElseThrow(() -> new ReviewReferenceNotFoundException("Payment", dto.getReservationId()));
+        if (payment.getPaymentStatus() != PaymentStatus.Paid) {
+            throw new IllegalArgumentException("결제가 완료된 예약만 리뷰를 작성할 수 있습니다.");
+        }
     }
 
     private void savePhotos(Long reviewId, List<ReviewPhotoDto> photos) {

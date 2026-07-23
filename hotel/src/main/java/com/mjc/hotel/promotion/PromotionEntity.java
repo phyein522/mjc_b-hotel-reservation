@@ -5,6 +5,8 @@ import com.mjc.hotel.rooms.dto.IRoom;
 import com.mjc.hotel.rooms.dto.RoomEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -30,18 +32,22 @@ public class PromotionEntity extends BaseEntity implements IPromotion {
     private DiscountTypeEnum disType;
 
     @Column(nullable = false)
-    private String disValue;
+    private BigDecimal disValue;
 
     @Column(nullable = false)
     private LocalDateTime startDate;
+
+    @Column(nullable = false)
     private LocalDateTime endDate;
     private Integer resCount;
-    private String status;
+    private PromotionStateTypeEnum status;
 
 
 
     @Transient
     private Long roomId;
+    @Transient
+    private Long userId;
 
     @JoinColumn(name = "room_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
