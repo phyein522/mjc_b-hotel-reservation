@@ -114,6 +114,13 @@ button, input, select, textarea {
   color: #57708f;
   font-weight: 700;
 }
+.cover-img {
+  display: block;
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+}
 .section { margin-top: 22px; }
 
 .pill, .status {

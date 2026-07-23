@@ -246,19 +246,22 @@ async function detailPage() {
       document.querySelector("#detail").innerHTML = empty("표시할 호텔이 없습니다.");
       return;
     }
-    const [hotel, roomsRes, amenRes, transRes, reviewsRes] = await Promise.all([
+    const [hotel, roomsRes, amenRes, transRes, reviewsRes, imageRes] = await Promise.all([
       request(`/api/hotels/${id}`),
       request(`/api/room/hotel/${id}?size=100`),
       request(`/api/hotelamenities/hotel/${id}?size=10`).catch(() => null),
       request(`/api/hoteltrans/hotel/${id}?size=20`).catch(() => null),
-      request(`/api/review/hotel/${id}?size=20`).catch(() => null)
+      request(`/api/review/hotel/${id}?size=20`).catch(() => null),
+      request(`/api/hotelimage/hotel/${id}?size=20`).catch(() => null)
     ]);
     const rooms = pageItems(roomsRes);
     const amens = pageItems(amenRes);
     const trans = pageItems(transRes);
     const reviews = pageItems(reviewsRes);
+    const images = pageItems(imageRes);
     document.querySelector("#detail").innerHTML = `
       <div class="hero"><h1>${escapeHtml(hotel.name)}</h1><p>${escapeHtml(hotel.description || hotel.address || "")}</p></div>
+      ${images.length ? `<section class="section grid cols-3">${images.map((image) => `<article class="card"><img class="cover-img" src="/api/hotelimage/image/${image.hotelImageId}" alt="${escapeHtml(image.fileName || hotel.name)}"></article>`).join("")}</section>` : ""}
       <section class="section grid cols-4">
         <div class="metric">지역<strong>${escapeHtml(hotel.city || "-")}</strong></div>
         <div class="metric">등급<strong>${hotel.starRate ?? "-"}성</strong></div>
@@ -333,7 +336,7 @@ async function bookingPage() {
         <input name="baseAmount" type="hidden" value="${escapeHtml(baseAmount)}">
         <input name="orderName" type="hidden" value="${escapeHtml(orderName)}">
         <label><span>요청사항</span><textarea name="specialRequest"></textarea></label>
-        <button class="btn primary">예약 저장</button>
+        <button class="btn primary">결제로 이동</button>
       </form>
       <div class="section" id="bookingResult"></div>
     `;
@@ -396,7 +399,7 @@ async function submitBooking(event) {
       amount: String(paymentAmount),
       orderName
     });
-    document.querySelector("#bookingResult").innerHTML = `<div class="message">예약이 저장되었습니다. 예약번호: ${escapeHtml(booking.bookingNo || booking.bookingId)} <a class="btn" href="payment.html?${paymentParams.toString()}">결제 화면</a></div>`;
+    location.href = `payment.html?${paymentParams.toString()}`;
   } catch (error) {
     document.querySelector("#bookingResult").innerHTML = errorMessage(error);
   }
@@ -414,10 +417,11 @@ async function paymentPage() {
   const totalAmount = Number(params.get("amount") || params.get("totalAmount") || 0);
   const orderName = params.get("orderName") || "OmniStay 호텔 예약";
   const amountView = totalAmount ? money(totalAmount) : "예약 화면에서 결제로 이동하면 자동 입력";
-  userShell("bookings", `${title("토스 결제", "예약에서 넘어온 금액과 로그인 회원 정보로 결제를 준비합니다.")}<section class="grid cols-2"><form class="card card-body grid" id="paymentForm"><div class="message">실제 결제 승인/검증은 백엔드 구현 후 처리합니다.<div class="small">예약 화면에서 자동으로 넘어온 정보로 결제합니다.</div></div><input name="bookingId" type="hidden" value="${escapeHtml(bookingId)}"><input name="totalAmount" type="hidden" value="${escapeHtml(totalAmount)}"><input name="orderName" type="hidden" value="${escapeHtml(orderName)}"><section class="message"><div class="toolbar" style="margin:0"><span>결제 예정 금액</span><strong>${escapeHtml(amountView)}</strong></div><div class="small">회원: ${escapeHtml(currentUser.name || currentUser.email || `User ${currentUser.userId}`)}</div></section><label><span>쿠폰 선택 ${screenOnlyBadge()}</span><select name="couponId"><option value="">사용 안 함</option><option value="101">신규회원 10,000원</option><option value="202">장기투숙 15%</option><option value="303">VIP 등급 할인</option></select></label><label><span>할인금액</span><input name="discountAmount" type="number" value="0"></label><label><span>구매자명</span><input name="customerName" value="${escapeHtml(currentUser.name || "")}" placeholder="로그인 정보 자동 입력"></label><label><span>구매자 이메일</span><input name="customerEmail" type="email" value="${escapeHtml(currentUser.email || "")}" placeholder="로그인 정보 자동 입력"></label><label><span>구매자 연락처</span><input name="customerMobilePhone" value="${escapeHtml(currentUser.phone || "")}" placeholder="01012345678"></label><label><span>Toss Client Key</span><input name="tossClientKey" placeholder="test_ck_..."></label><button class="btn primary">토스 요청값 생성</button><button class="btn" id="openTossPayment" type="button" disabled>Toss checkout</button></form><section class="card"><div class="card-body"><div class="toolbar" style="margin:0 0 10px"><h2>백엔드로 넘길 값</h2><span class="status warn">백엔드 미호출</span></div><div id="tossPayloadBox">${empty("토스 요청값을 생성하세요.")}</div><div class="section"><button class="btn" id="copyTossPayload" type="button" disabled>JSON 복사</button></div></div></section></section>`);
+  userShell("bookings", `${title("토스 결제", "예약에서 넘어온 금액과 로그인 회원 정보로 결제를 준비합니다.")}<section class="grid cols-2"><form class="card card-body grid" id="paymentForm"><div class="message">토스 결제 준비는 백엔드 ready API에 연결됩니다.<div class="small">예약 화면에서 자동으로 넘어온 정보로 결제합니다.</div></div><input name="bookingId" type="hidden" value="${escapeHtml(bookingId)}"><input name="totalAmount" type="hidden" value="${escapeHtml(totalAmount)}"><input name="orderName" type="hidden" value="${escapeHtml(orderName)}"><section class="message"><div class="toolbar" style="margin:0"><span>결제 예정 금액</span><strong>${escapeHtml(amountView)}</strong></div><div class="small">회원: ${escapeHtml(currentUser.name || currentUser.email || `User ${currentUser.userId}`)}</div></section><label><span>쿠폰 선택</span><select name="userCouponId" id="paymentCouponSelect"><option value="">사용 안 함</option></select></label><label><span>할인금액</span><input name="discountAmount" type="number" value="0"></label><label><span>구매자명</span><input name="customerName" value="${escapeHtml(currentUser.name || "")}" placeholder="로그인 정보 자동 입력"></label><label><span>구매자 이메일</span><input name="customerEmail" type="email" value="${escapeHtml(currentUser.email || "")}" placeholder="로그인 정보 자동 입력"></label><label><span>구매자 연락처</span><input name="customerMobilePhone" value="${escapeHtml(currentUser.phone || "")}" placeholder="01012345678"></label><label><span>Toss Client Key</span><input name="tossClientKey" placeholder="test_ck_..."></label><button class="btn primary">결제 준비</button><button class="btn" id="openTossPayment" type="button" disabled>Toss checkout</button></form><section class="card"><div class="card-body"><div class="toolbar" style="margin:0 0 10px"><h2>백엔드 연결 상태</h2><span class="status ok">API 연결</span></div><div id="tossPayloadBox">${empty("결제 준비를 실행하세요.")}</div><div class="section"><button class="btn" id="copyTossPayload" type="button" disabled>JSON 복사</button></div></div></section></section>`);
+  loadPaymentCoupons(currentUser.userId);
   let latestPayload = null;
   let latestClientKey = "";
-  document.querySelector("#paymentForm").addEventListener("submit", (event) => {
+  document.querySelector("#paymentForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const data = qs(event.currentTarget);
     const totalAmount = Number(data.totalAmount || 0);
@@ -427,11 +431,27 @@ async function paymentPage() {
       return;
     }
     const amount = Math.max(totalAmount - discountAmount, 0);
-    const orderId = `OMNISTAY-${data.bookingId}-${Date.now()}`;
     latestClientKey = data.tossClientKey || window.OMNISTAY_TOSS_CLIENT_KEY || "";
-    latestPayload = {
-      endpoint: "POST /api/payments/toss/ready",
+    const readyRequest = {
+      memberId: Number(currentUser.userId),
       bookingId: Number(data.bookingId),
+      amount,
+      orderName: data.orderName
+    };
+    let readyResponse;
+    try {
+      readyResponse = await request("/api/payments/toss/ready", { method: "POST", body: JSON.stringify(readyRequest) });
+    } catch (error) {
+      document.querySelector("#tossPayloadBox").innerHTML = errorMessage(error);
+      return;
+    }
+    const orderId = readyResponse.orderId || `OMNISTAY-${data.bookingId}-${Date.now()}`;
+    const successUrl = `${location.origin}/omnistay/payment-success.html?bookingId=${encodeURIComponent(data.bookingId)}`;
+    const failUrl = `${location.origin}/omnistay/payment-fail.html?bookingId=${encodeURIComponent(data.bookingId)}`;
+    latestPayload = {
+      readyEndpoint: "POST /api/payments/toss/ready",
+      readyRequest,
+      readyResponse,
       provider: "TOSS",
       paymentMethod: "TOSS_PAYMENTS",
       paymentStatus: "READY",
@@ -441,13 +461,14 @@ async function paymentPage() {
       totalAmount,
       discountAmount,
       currency: "KRW",
-      couponId: data.couponId ? Number(data.couponId) : null,
+      userCouponId: data.userCouponId ? Number(data.userCouponId) : null,
+      bookingId: Number(data.bookingId),
       customerUserId: currentUser?.userId ?? null,
       customerName: data.customerName || currentUser?.name || "",
       customerEmail: data.customerEmail || currentUser?.email || "",
       customerMobilePhone: (data.customerMobilePhone || currentUser?.phone || "").replaceAll("-", ""),
-      successUrl: `${location.origin}/omnistay/payment-success.html`,
-      failUrl: `${location.origin}/omnistay/payment-fail.html`,
+      successUrl,
+      failUrl,
       tossPaymentRequest: {
         method: "CARD",
         amount: {
@@ -459,11 +480,11 @@ async function paymentPage() {
         customerName: data.customerName || currentUser?.name || "",
         customerEmail: data.customerEmail || currentUser?.email || "",
         customerMobilePhone: (data.customerMobilePhone || currentUser?.phone || "").replaceAll("-", ""),
-        successUrl: `${location.origin}/omnistay/payment-success.html`,
-        failUrl: `${location.origin}/omnistay/payment-fail.html`,
+        successUrl,
+        failUrl,
         metadata: {
           bookingId: String(data.bookingId),
-          couponId: data.couponId || "",
+          userCouponId: data.userCouponId || "",
           discountAmount: String(discountAmount)
         }
       }
@@ -471,12 +492,16 @@ async function paymentPage() {
     const previewPayload = JSON.parse(JSON.stringify(latestPayload));
     delete previewPayload.bookingId;
     delete previewPayload.orderName;
+    delete previewPayload.readyRequest?.bookingId;
+    delete previewPayload.readyRequest?.orderName;
+    delete previewPayload.readyResponse?.bookingId;
+    delete previewPayload.readyResponse?.orderName;
     delete previewPayload.tossPaymentRequest.orderName;
     delete previewPayload.tossPaymentRequest.metadata.bookingId;
     document.querySelector("#tossPayloadBox").innerHTML = `<pre class="code-block">${escapeHtml(JSON.stringify(previewPayload, null, 2))}</pre>`;
     document.querySelector("#copyTossPayload").disabled = false;
     document.querySelector("#openTossPayment").disabled = !latestClientKey;
-    toast("토스 결제 요청값을 생성");
+    toast("결제 준비가 완료되었습니다.");
   });
   document.querySelector("#copyTossPayload").addEventListener("click", async () => {
     if (!latestPayload) return;
@@ -500,13 +525,46 @@ async function paymentPage() {
   });
 }
 
-function paymentResultPage(status) {
+async function loadPaymentCoupons(userId) {
+  try {
+    const userCoupons = pageItems(await request("/api/usercoupons?size=100"))
+      .filter((item) => String(item.userId || item.user?.userId) === String(userId))
+      .filter((item) => !item.userCouponStatus || item.userCouponStatus === "AVAILABLE");
+    document.querySelector("#paymentCouponSelect").innerHTML = `<option value="">사용 안 함</option>${userCoupons.map((item) => `<option value="${item.userCouponId}">${escapeHtml(item.coupon?.name || `쿠폰 ${item.couponId}`)}</option>`).join("")}`;
+  } catch {
+    document.querySelector("#paymentCouponSelect").innerHTML = `<option value="">쿠폰 불러오기 실패</option>`;
+  }
+}
+
+async function paymentResultPage(status) {
   const params = new URLSearchParams(location.search);
   const orderId = params.get("orderId") || "-";
   const paymentKey = params.get("paymentKey") || "-";
   const amount = params.get("amount") || "-";
+  const bookingId = params.get("bookingId") || "";
+  const code = params.get("code") || "";
+  const message = params.get("message") || "";
   const isSuccess = status === "success";
-  userShell("bookings", `${title(isSuccess ? "결제 성공" : "결제 실패", "토스 결제 redirect 후 표시되는 화면입니다.")}<section class="card"><div class="card-body grid"><span class="status ${isSuccess ? "ok" : "bad"}">${isSuccess ? "SUCCESS" : "FAIL"}</span><div class="table-wrap"><table><tbody><tr><th>orderId</th><td>${escapeHtml(orderId)}</td></tr><tr><th>paymentKey</th><td>${escapeHtml(paymentKey)}</td></tr><tr><th>amount</th><td>${escapeHtml(amount)}</td></tr></tbody></table></div><div class="message">${isSuccess ? "백엔드 구현 후 이 값들을 confirm API로 전달해 최종 승인 검증을 진행하면 됩니다." : "백엔드 구현 후 실패 사유를 저장하거나 예약 결제 상태를 갱신하면 됩니다."}</div><a class="btn primary" href="bookings.html">예약내역</a></div></section>`);
+  userShell("bookings", `${title(isSuccess ? "결제 성공" : "결제 실패", "토스 결제 redirect 후 표시되는 화면입니다.")}<section class="card"><div class="card-body grid"><span class="status ${isSuccess ? "ok" : "bad"}">${isSuccess ? "SUCCESS" : "FAIL"}</span><div class="table-wrap"><table><tbody><tr><th>orderId</th><td>${escapeHtml(orderId)}</td></tr><tr><th>paymentKey</th><td>${escapeHtml(paymentKey)}</td></tr><tr><th>amount</th><td>${escapeHtml(amount)}</td></tr></tbody></table></div><div id="paymentConfirmResult">${empty(isSuccess ? "결제 승인 확인 중입니다." : "결제 실패 정보를 저장하는 중입니다.")}</div><a class="btn primary" href="bookings.html">예약내역</a></div></section>`);
+  try {
+    if (isSuccess) {
+      if (!bookingId || !params.get("paymentKey") || !params.get("orderId") || !params.get("amount")) {
+        document.querySelector("#paymentConfirmResult").innerHTML = `<div class="message error">토스 승인에 필요한 값이 부족합니다.</div>`;
+        return;
+      }
+      const result = await request("/api/payments/toss/confirm", { method: "POST", body: JSON.stringify({ bookingId: Number(bookingId), paymentKey: params.get("paymentKey"), orderId: params.get("orderId"), amount: Number(params.get("amount")) }) });
+      document.querySelector("#paymentConfirmResult").innerHTML = `<div class="message">결제 승인이 저장되었습니다. 결제 ID: ${escapeHtml(result.paymentId || "-")}</div>`;
+    } else {
+      if (!params.get("orderId")) {
+        document.querySelector("#paymentConfirmResult").innerHTML = `<div class="message error">토스 실패 저장에 필요한 orderId가 없습니다.</div>`;
+        return;
+      }
+      await request("/api/payments/toss/fail", { method: "POST", body: JSON.stringify({ orderId: params.get("orderId"), code, message }) });
+      document.querySelector("#paymentConfirmResult").innerHTML = `<div class="message">결제 실패 정보가 저장되었습니다.</div>`;
+    }
+  } catch (error) {
+    document.querySelector("#paymentConfirmResult").innerHTML = errorMessage(error);
+  }
 }
 
 async function loadPayments(selector, admin = false) {
@@ -528,8 +586,40 @@ async function bookingsPage() {
   document.querySelector("#bookingLookup").addEventListener("click", () => loadBookings("#bookingList", document.querySelector("#bookingUserId").value, false));
 }
 
-function couponsPage() {
-  userShell("coupons", `${title("쿠폰함", "쿠폰 전용 백엔드 API가 없어 화면 전용으로 표시")}<section class="grid cols-3"><article class="card"><div class="card-body"><div class="toolbar" style="margin:0 0 8px"><h3>신규회원 웰컴 쿠폰</h3>${screenOnlyBadge()}</div><p class="price">10,000원 할인</p><p class="muted">7만원 이상 결제 시 사용</p><a class="btn primary" href="payment.html">결제에서 사용</a></div></article><article class="card"><div class="card-body"><div class="toolbar" style="margin:0 0 8px"><h3>장기 투숙 쿠폰</h3>${screenOnlyBadge()}</div><p class="price">15% 할인</p><p class="muted">7박 이상 예약 시 사용</p><a class="btn primary" href="payment.html">결제에서 사용</a></div></article><article class="card"><div class="card-body"><div class="toolbar" style="margin:0 0 8px"><h3>VIP 등급 할인</h3>${screenOnlyBadge()}</div><p class="price">10% 할인</p><p class="muted">VIP 회원 등급 대상</p><a class="btn primary" href="payment.html">결제에서 사용</a></div></article></section>`);
+async function couponsPage() {
+  const currentUser = getCurrentUser();
+  if (!currentUser) {
+    const redirect = encodeURIComponent("coupons.html");
+    location.href = `login.html?reason=coupons&redirect=${redirect}`;
+    return;
+  }
+  userShell("coupons", `${title("쿠폰함", "구현된 쿠폰/회원쿠폰 API에 연결합니다.")}<section class="grid cols-2"><section class="card card-body"><div class="toolbar" style="margin:0 0 10px"><h2>내 쿠폰</h2><span class="status ok">API 연결</span></div><div id="myCoupons">${empty("쿠폰을 불러오는 중입니다.")}</div></section><section class="card card-body"><div class="toolbar" style="margin:0 0 10px"><h2>발급 가능한 쿠폰</h2><span class="status ok">API 연결</span></div><div id="couponCatalog">${empty("쿠폰을 불러오는 중입니다.")}</div></section></section>`);
+  await loadCoupons(currentUser.userId);
+}
+
+async function loadCoupons(userId) {
+  try {
+    const [coupons, userCoupons] = await Promise.all([
+      request("/api/coupons?size=100").then(pageItems),
+      request("/api/usercoupons?size=100").then(pageItems)
+    ]);
+    const mine = userCoupons.filter((item) => String(item.userId || item.user?.userId) === String(userId));
+    document.querySelector("#myCoupons").innerHTML = mine.length ? `<div class="table-wrap"><table><thead><tr><th>쿠폰</th><th>상태</th><th>발급일</th><th></th></tr></thead><tbody>${mine.map((item) => `<tr><td>${escapeHtml(item.coupon?.name || item.couponId || "-")}</td><td>${escapeHtml(item.userCouponStatus || "-")}</td><td>${escapeHtml(item.issuedAt || "-")}</td><td><button class="btn danger" data-delete-user-coupon="${item.userCouponId}">삭제</button></td></tr>`).join("")}</tbody></table></div>` : empty("보유 쿠폰이 없습니다.");
+    document.querySelector("#couponCatalog").innerHTML = coupons.length ? `<div class="grid">${coupons.map((coupon) => `<article class="message"><div class="toolbar" style="margin:0 0 8px"><strong>${escapeHtml(coupon.name)}</strong><span class="status ${coupon.status === "ACTIVE" ? "ok" : "warn"}">${escapeHtml(coupon.status || "-")}</span></div><p class="muted">${escapeHtml(coupon.description || coupon.code || "")}</p><div class="small">${escapeHtml(coupon.discountType || "-")} ${escapeHtml(coupon.discountValue ?? "-")} · 최소 ${money(coupon.minOrder)} · 만료 ${escapeHtml(coupon.expirationDate || "-")}</div><div class="section"><button class="btn primary" data-issue-coupon="${coupon.couponId}">내 쿠폰으로 등록</button></div></article>`).join("")}</div>` : empty("등록된 쿠폰이 없습니다.");
+    document.querySelectorAll("[data-issue-coupon]").forEach((btn) => btn.addEventListener("click", async () => {
+      await request("/api/usercoupons", { method: "POST", body: JSON.stringify({ userId: Number(userId), couponId: Number(btn.dataset.issueCoupon), userCouponStatus: "AVAILABLE" }) });
+      toast("쿠폰이 등록되었습니다.");
+      loadCoupons(userId);
+    }));
+    document.querySelectorAll("[data-delete-user-coupon]").forEach((btn) => btn.addEventListener("click", async () => {
+      await request(`/api/usercoupons/${btn.dataset.deleteUserCoupon}/${userId}`, { method: "DELETE" });
+      toast("쿠폰이 삭제되었습니다.");
+      loadCoupons(userId);
+    }));
+  } catch (error) {
+    document.querySelector("#myCoupons").innerHTML = errorMessage(error);
+    document.querySelector("#couponCatalog").innerHTML = errorMessage(error);
+  }
 }
 
 function loginPage() {
@@ -672,7 +762,7 @@ function hotelFormFields() {
 async function loadAdminHotels() {
   try {
     const hotels = pageItems(await request("/api/hotels?size=100"));
-    document.querySelector("#hotelList").innerHTML = hotels.length ? `<div class="grid">${hotels.map((h) => `<article class="card"><div class="card-body"><div class="toolbar" style="margin:0"><h3>${escapeHtml(h.name)}</h3><button class="btn danger" data-delete-hotel="${h.hotelId}">삭제</button></div><p class="muted">${escapeHtml(h.address || "")}</p><div class="form-row"><a class="btn" href="rooms.html?hotelId=${h.hotelId}">객실</a><button class="btn" data-amen-hotel="${h.hotelId}">편의시설 태그</button><button class="btn" data-trans-hotel="${h.hotelId}">교통 추가</button></div></div></article>`).join("")}</div>` : empty("호텔 데이터가 없습니다.");
+    document.querySelector("#hotelList").innerHTML = hotels.length ? `<div class="grid">${hotels.map((h) => `<article class="card"><div class="card-body"><div class="toolbar" style="margin:0"><h3>${escapeHtml(h.name)}</h3><button class="btn danger" data-delete-hotel="${h.hotelId}">삭제</button></div><p class="muted">${escapeHtml(h.address || "")}</p><div class="form-row"><a class="btn" href="rooms.html?hotelId=${h.hotelId}">객실</a><button class="btn" data-amen-hotel="${h.hotelId}">편의시설 태그</button><button class="btn" data-trans-hotel="${h.hotelId}">교통 추가</button></div><form class="form-row section" data-hotel-image-form="${h.hotelId}"><input type="file" name="file" accept="image/*" required><button class="btn" type="submit">호텔 이미지 업로드</button></form></div></article>`).join("")}</div>` : empty("호텔 데이터가 없습니다.");
     document.querySelectorAll("[data-delete-hotel]").forEach((btn) => btn.addEventListener("click", async () => {
       await request(`/api/hotels/${btn.dataset.deleteHotel}`, { method: "DELETE" });
       toast("호텔이 삭제되었습니다.");
@@ -680,9 +770,20 @@ async function loadAdminHotels() {
     }));
     document.querySelectorAll("[data-amen-hotel]").forEach((btn) => btn.addEventListener("click", () => addAmen(btn.dataset.amenHotel)));
     document.querySelectorAll("[data-trans-hotel]").forEach((btn) => btn.addEventListener("click", () => addTrans(btn.dataset.transHotel)));
+    document.querySelectorAll("[data-hotel-image-form]").forEach((form) => form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      await uploadImage(`/api/hotelimage/hotel/${form.dataset.hotelImageForm}`, form.elements.file.files[0]);
+      toast("호텔 이미지가 업로드되었습니다.");
+    }));
   } catch (error) {
     document.querySelector("#hotelList").innerHTML = errorMessage(error);
   }
+}
+
+async function uploadImage(path, file) {
+  const body = new FormData();
+  body.append("file", file);
+  return request(path, { method: "POST", body });
 }
 
 async function addAmen(hotelId) {
@@ -719,13 +820,18 @@ async function loadRooms(hotelId) {
   }
   try {
     const rooms = pageItems(await request(`/api/room/hotel/${hotelId}?size=200`));
-    document.querySelector("#roomsArea").innerHTML = `<div class="room-board">${rooms.map((r) => `<article class="room-cell ${String(r.roomStatus).toLowerCase().includes("enable") ? "enable" : String(r.roomStatus).toLowerCase().includes("construct") ? "construct" : "disable"}"><div><strong>${escapeHtml(r.number)}호</strong><div class="small muted">${escapeHtml(r.floor)}층 · ${escapeHtml(r.roomType)}</div></div><div><div class="price">${money(r.basePrice)}</div>${statusBadge(r.roomStatus)}<div class="form-row" style="margin-top:8px"><button class="btn" data-edit-room="${r.roomId}">수정</button><button class="btn danger" data-delete-room="${r.roomId}">삭제</button></div></div></article>`).join("") || empty("등록된 객실이 없습니다.")}</div>`;
+    document.querySelector("#roomsArea").innerHTML = `<div class="room-board">${rooms.map((r) => `<article class="room-cell ${String(r.roomStatus).toLowerCase().includes("enable") ? "enable" : String(r.roomStatus).toLowerCase().includes("construct") ? "construct" : "disable"}"><div><strong>${escapeHtml(r.number)}호</strong><div class="small muted">${escapeHtml(r.floor)}층 · ${escapeHtml(r.roomType)}</div><form class="form-row section" data-room-image-form="${r.roomId}"><input type="file" name="file" accept="image/*" required><button class="btn" type="submit">이미지</button></form></div><div><div class="price">${money(r.basePrice)}</div>${statusBadge(r.roomStatus)}<div class="form-row" style="margin-top:8px"><button class="btn" data-edit-room="${r.roomId}">수정</button><button class="btn danger" data-delete-room="${r.roomId}">삭제</button></div></div></article>`).join("") || empty("등록된 객실이 없습니다.")}</div>`;
     document.querySelectorAll("[data-delete-room]").forEach((btn) => btn.addEventListener("click", async () => {
       await request(`/api/room/${btn.dataset.deleteRoom}`, { method: "DELETE" });
       toast("객실이 삭제되었습니다.");
       loadRooms(hotelId);
     }));
     document.querySelectorAll("[data-edit-room]").forEach((btn) => btn.addEventListener("click", () => editRoom(btn.dataset.editRoom, hotelId)));
+    document.querySelectorAll("[data-room-image-form]").forEach((form) => form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      await uploadImage(`/api/roomimage/room/${form.dataset.roomImageForm}`, form.elements.file.files[0]);
+      toast("객실 이미지가 업로드되었습니다.");
+    }));
   } catch (error) {
     document.querySelector("#roomsArea").innerHTML = errorMessage(error);
   }
@@ -796,16 +902,35 @@ async function adminSettlement() {
 }
 
 async function adminPromotions() {
-  await adminShell("promotions", `${title("프로모션 관리", "회원 등급 할인과 장기 투숙 할인은 구현된 promotion API의 이름/설명/할인값으로 저장합니다.")}<div class="grid cols-2"><form class="card card-body grid" id="promoForm"><label><span>이름</span><input name="name" required></label><label><span>설명</span><textarea name="description" placeholder="VIP 등급 할인 또는 장기 투숙 할인"></textarea></label><label><span>할인 타입</span><select name="disType"><option>RATE</option><option>AMOUNT</option><option>PACKAGE</option></select></label><label><span>할인값</span><input name="disValue" required></label><label><span>시작</span><input name="startDate" type="datetime-local"></label><label><span>종료</span><input name="endDate" type="datetime-local"></label><label><span>예약횟수</span><input name="resCount" type="number" value="0"></label><label><span>상태</span><input name="status" value="ACTIVE"></label><label><span>객실 ID</span><input name="roomId" type="number"></label><button class="btn primary">프로모션 추가</button></form><section id="promoList">${empty("불러오는 중입니다.")}</section></div>`);
+  await adminShell("promotions", `${title("프로모션 관리", "프로모션과 적용 대상 API를 연결합니다.")}<div class="grid cols-2"><form class="card card-body grid" id="promoForm"><div class="toolbar" style="margin:0"><h2>프로모션 추가</h2><span class="status ok">API 연결</span></div><label><span>이름</span><input name="name" required></label><label><span>설명</span><textarea name="description" placeholder="VIP 등급 할인 또는 장기 투숙 할인"></textarea></label><label><span>할인 타입</span><select name="disType"><option>RATE</option><option>AMOUNT</option><option>PACKAGE</option></select></label><label><span>할인값</span><input name="disValue" required></label><label><span>시작</span><input name="startDate" type="datetime-local"></label><label><span>종료</span><input name="endDate" type="datetime-local"></label><label><span>예약횟수</span><input name="resCount" type="number" value="0"></label><label><span>상태</span><select name="status"><option>ACTIVE</option><option>INACTIVE</option><option>EXPIRED</option></select></label><label><span>객실 ID</span><input name="roomId" type="number"></label><label><span>관리자 사용자 ID</span><input name="userId" type="number" value="1"></label><button class="btn primary">프로모션 추가</button></form><section id="promoList">${empty("불러오는 중입니다.")}</section><form class="card card-body grid" id="promoSaleForm"><div class="toolbar" style="margin:0"><h2>프로모션 적용 대상</h2><span class="status ok">API 연결</span></div><label><span>프로모션</span><select name="proId" id="promoSaleProId"></select></label><label><span>대상 설명</span><input name="saleDes" placeholder="VIP 회원, 7박 이상 등" required></label><label><span>사용자 ID</span><input name="userId" type="number" value="1"></label><button class="btn primary">적용 대상 추가</button></form><section id="promoSaleList">${empty("불러오는 중입니다.")}</section><form class="card card-body grid" id="couponForm"><div class="toolbar" style="margin:0"><h2>쿠폰 등록</h2><span class="status ok">API 연결</span></div><label><span>코드</span><input name="code" required></label><label><span>이름</span><input name="name" required></label><label><span>설명</span><textarea name="description"></textarea></label><label><span>할인 타입</span><select name="discountType"><option>FIXED</option><option>RATE</option></select></label><label><span>할인값</span><input name="discountValue" type="number" required></label><label><span>최소 주문</span><input name="minOrder" type="number" value="0"></label><label><span>최대 할인</span><input name="maxDiscount" type="number" value="0"></label><label><span>만료일</span><input name="expirationDate" type="date"></label><label><span>상태</span><select name="status"><option>ACTIVE</option><option>USED</option><option>EXPIRED</option></select></label><label><span>관리자 사용자 ID</span><input name="userId" type="number" value="1"></label><button class="btn primary">쿠폰 등록</button></form><section id="adminCouponList">${empty("불러오는 중입니다.")}</section></div>`);
   document.querySelector("#promoForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const data = qs(event.currentTarget);
     data.resCount = Number(data.resCount || 0);
     if (data.roomId) data.roomId = Number(data.roomId); else delete data.roomId;
+    if (data.userId) data.userId = Number(data.userId); else delete data.userId;
     if (data.startDate) data.startDate = `${data.startDate}:00`;
     if (data.endDate) data.endDate = `${data.endDate}:00`;
     await request("/api/promotion", { method: "POST", body: JSON.stringify(data) });
     toast("프로모션이 추가되었습니다.");
+    loadPromotions();
+  });
+  document.querySelector("#promoSaleForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const data = qs(event.currentTarget);
+    data.proId = Number(data.proId);
+    data.userId = Number(data.userId || 0);
+    await request("/api/promotionsale", { method: "POST", body: JSON.stringify(data) });
+    toast("프로모션 적용 대상이 추가되었습니다.");
+    loadPromotions();
+  });
+  document.querySelector("#couponForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const data = qs(event.currentTarget);
+    ["discountValue", "minOrder", "maxDiscount", "userId"].forEach((key) => data[key] = Number(data[key] || 0));
+    if (!data.expirationDate) delete data.expirationDate;
+    await request("/api/coupons", { method: "POST", body: JSON.stringify(data) });
+    toast("쿠폰이 등록되었습니다.");
     loadPromotions();
   });
   loadPromotions();
@@ -813,14 +938,34 @@ async function adminPromotions() {
 
 async function loadPromotions() {
   try {
-    const promotions = pageItems(await request("/api/promotion"));
+    const [promotions, promotionSales, coupons] = await Promise.all([
+      request("/api/promotion?size=100").then(pageItems),
+      request("/api/promotionsale?size=100").then(pageItems),
+      request("/api/coupons?size=100").then(pageItems)
+    ]);
+    const saleSelect = document.querySelector("#promoSaleProId");
+    if (saleSelect) {
+      saleSelect.innerHTML = promotions.map((p) => `<option value="${p.proId}">${escapeHtml(p.name)}</option>`).join("");
+    }
     document.querySelector("#promoList").innerHTML = promotions.length ? `<div class="table-wrap"><table><thead><tr><th>ID</th><th>이름</th><th>할인</th><th>상태</th><th></th></tr></thead><tbody>${promotions.map((p) => `<tr><td>${p.proId}</td><td>${escapeHtml(p.name)}</td><td>${escapeHtml(p.disType)} ${escapeHtml(p.disValue)}</td><td>${escapeHtml(p.status)}</td><td><button class="btn danger" data-delete-promo="${p.proId}">삭제</button></td></tr>`).join("")}</tbody></table></div>` : empty("프로모션 데이터가 없습니다.");
+    document.querySelector("#promoSaleList").innerHTML = promotionSales.length ? `<div class="table-wrap"><table><thead><tr><th>ID</th><th>프로모션</th><th>대상</th><th>사용자</th><th></th></tr></thead><tbody>${promotionSales.map((sale) => `<tr><td>${sale.proSaleId}</td><td>${escapeHtml(sale.promotion?.name || sale.proId || "-")}</td><td>${escapeHtml(sale.saleDes || "-")}</td><td>${escapeHtml(sale.userId || "-")}</td><td><button class="btn danger" data-delete-promo-sale="${sale.proSaleId}" data-user-id="${sale.userId || 1}">삭제</button></td></tr>`).join("")}</tbody></table></div>` : empty("프로모션 적용 대상이 없습니다.");
+    document.querySelector("#adminCouponList").innerHTML = coupons.length ? `<div class="table-wrap"><table><thead><tr><th>ID</th><th>쿠폰</th><th>할인</th><th>만료</th><th>상태</th><th></th></tr></thead><tbody>${coupons.map((coupon) => `<tr><td>${coupon.couponId}</td><td>${escapeHtml(coupon.name)}<div class="small muted">${escapeHtml(coupon.code || "")}</div></td><td>${escapeHtml(coupon.discountType)} ${escapeHtml(coupon.discountValue)}</td><td>${escapeHtml(coupon.expirationDate || "-")}</td><td>${escapeHtml(coupon.status || "-")}</td><td><button class="btn danger" data-delete-coupon="${coupon.couponId}" data-user-id="${coupon.userId || 1}">삭제</button></td></tr>`).join("")}</tbody></table></div>` : empty("등록된 쿠폰이 없습니다.");
     document.querySelectorAll("[data-delete-promo]").forEach((btn) => btn.addEventListener("click", async () => {
-      await request(`/api/promotion/${btn.dataset.deletePromo}`, { method: "DELETE" });
+      await request(`/api/promotion/${btn.dataset.deletePromo}?userId=1`, { method: "DELETE" });
+      loadPromotions();
+    }));
+    document.querySelectorAll("[data-delete-promo-sale]").forEach((btn) => btn.addEventListener("click", async () => {
+      await request(`/api/promotionsale/${btn.dataset.deletePromoSale}?userId=${btn.dataset.userId}`, { method: "DELETE" });
+      loadPromotions();
+    }));
+    document.querySelectorAll("[data-delete-coupon]").forEach((btn) => btn.addEventListener("click", async () => {
+      await request(`/api/coupons/${btn.dataset.deleteCoupon}/${btn.dataset.userId}`, { method: "DELETE" });
       loadPromotions();
     }));
   } catch (error) {
     document.querySelector("#promoList").innerHTML = errorMessage(error);
+    document.querySelector("#promoSaleList").innerHTML = errorMessage(error);
+    document.querySelector("#adminCouponList").innerHTML = errorMessage(error);
   }
 }
 
@@ -830,10 +975,13 @@ async function adminPayments() {
 }
 
 async function adminRates() {
-  await adminShell("rates", `${title("요금 정책", "구현된 rates API만 연결합니다.")}<div class="filters"><select id="rateHotel"></select><select id="rateRoomType"><option>Standard</option><option>Deluxe</option><option>Suite</option><option>Premium</option></select><button class="btn primary" id="loadRates">조회</button></div><section class="section" id="ratesArea"></section>`);
+  await adminShell("rates", `${title("요금 정책", "구현된 rates API를 조회/수정/미리보기까지 연결합니다.")}<div class="filters"><select id="rateHotel"></select><select id="rateRoomType"><option>Standard</option><option>Deluxe</option><option>Suite</option><option>Premium</option></select><button class="btn primary" id="loadRates">조회</button></div><section class="section" id="ratesArea"></section><section class="section grid cols-3"><form class="card card-body grid" id="ratePolicyForm"><div class="toolbar" style="margin:0"><h2>정책 수정</h2><span class="status ok">API 연결</span></div><label><span>최소 숙박</span><input name="minStayNights" type="number" min="1"></label><label><span>체크인</span><input name="checkInTime" type="time"></label><label><span>체크아웃</span><input name="checkOutTime" type="time"></label><label><span>취소 기한(일)</span><input name="cancelDeadlineDays" type="number"></label><label><span>취소 수수료율</span><input name="cancelFeeRate" type="number" step="0.01"></label><label><span>무료 아동 나이</span><input name="freeChildAge" type="number"></label><label><span>아동 요금 유형</span><select name="childRateType"><option>FREE</option><option>DISCOUNT</option></select></label><label><span>아동 할인율</span><input name="childDiscountRate" type="number" step="0.01"></label><button class="btn primary">정책 저장</button></form><form class="card card-body grid" id="seasonRateForm"><div class="toolbar" style="margin:0"><h2>시즌 요금 추가</h2><span class="status ok">API 연결</span></div><label><span>시즌명</span><input name="seasonName" required></label><label><span>시작일</span><input name="startDate" type="date" required></label><label><span>종료일</span><input name="endDate" type="date" required></label><label><span>평일가</span><input name="weekdayPrice" type="number" required></label><label><span>주말가</span><input name="weekendPrice" type="number" required></label><label><span>상태</span><select name="status"><option>UPCOMING</option><option>ONGOING</option><option>ENDED</option></select></label><label><span>배율</span><input name="multiplier" type="number" step="0.01" value="20.0"></label><button class="btn primary">시즌 저장</button></form><form class="card card-body grid" id="pricePreviewForm"><div class="toolbar" style="margin:0"><h2>가격 미리보기</h2><span class="status ok">API 연결</span></div><label><span>평일가</span><input name="weekdayPrice" type="number" required></label><label><span>주말가</span><input name="weekendPrice" type="number" required></label><label><span>평일 정책</span><select name="weekdayPolicyEnabled"><option value="true">사용</option><option value="false">미사용</option></select></label><label><span>배율</span><input name="multiplier" type="number" step="0.01" value="20.0"></label><button class="btn primary">미리보기</button><div id="pricePreviewResult"></div></form></section>`);
   const hotels = await safeLoadHotels();
   document.querySelector("#rateHotel").innerHTML = hotels.map((h) => `<option value="${h.hotelId}">${escapeHtml(h.name)}</option>`).join("");
   document.querySelector("#loadRates").addEventListener("click", loadRates);
+  document.querySelector("#ratePolicyForm").addEventListener("submit", saveRatePolicy);
+  document.querySelector("#seasonRateForm").addEventListener("submit", saveSeasonRate);
+  document.querySelector("#pricePreviewForm").addEventListener("submit", previewRatePrice);
 }
 
 async function loadRates() {
@@ -845,10 +993,59 @@ async function loadRates() {
       request(`/api/rates/policies/hotels/${hotelId}`).catch((e) => ({ error: e.message })),
       request(`/api/rates/hotels/${hotelId}/rooms/${roomType}`).catch(() => [])
     ]);
-    document.querySelector("#ratesArea").innerHTML = `<div class="grid cols-3"><div class="metric">요금 요약<strong>${escapeHtml(summary.error || "조회됨")}</strong></div><div class="metric">정책<strong>${escapeHtml(policy.error || `${policy.minStayNights ?? "-"}박`)}</strong></div><div class="metric">시즌 요금<strong>${pageItems(seasons).length}</strong></div></div>`;
+    const seasonItems = pageItems(seasons);
+    document.querySelector("#ratesArea").innerHTML = `<div class="grid cols-3"><div class="metric">요금 요약<strong>${escapeHtml(summary.error || "조회됨")}</strong></div><div class="metric">정책<strong>${escapeHtml(policy.error || `${policy.minStayNights ?? "-"}박`)}</strong></div><div class="metric">시즌 요금<strong>${seasonItems.length}</strong></div></div><section class="section grid cols-2"><pre class="card card-body">${escapeHtml(JSON.stringify(summary, null, 2))}</pre><pre class="card card-body">${escapeHtml(JSON.stringify(policy, null, 2))}</pre></section><section class="section"><div class="table-wrap"><table><thead><tr><th>ID</th><th>시즌</th><th>기간</th><th>평일/주말</th><th>상태</th><th></th></tr></thead><tbody>${seasonItems.map((season) => `<tr><td>${season.seasonRateId}</td><td>${escapeHtml(season.seasonName)}</td><td>${escapeHtml(season.startDate)} ~ ${escapeHtml(season.endDate)}</td><td>${money(season.weekdayPrice)} / ${money(season.weekendPrice)}</td><td>${escapeHtml(season.status)}</td><td><button class="btn danger" data-delete-season="${season.seasonRateId}">삭제</button></td></tr>`).join("") || `<tr><td colspan="6">시즌 요금이 없습니다.</td></tr>`}</tbody></table></div></section>`;
+    document.querySelectorAll("[data-delete-season]").forEach((btn) => btn.addEventListener("click", async () => {
+      await request(`/api/rates/${btn.dataset.deleteSeason}`, { method: "DELETE" });
+      toast("시즌 요금이 삭제되었습니다.");
+      loadRates();
+    }));
   } catch (error) {
     document.querySelector("#ratesArea").innerHTML = errorMessage(error);
   }
+}
+
+async function saveRatePolicy(event) {
+  event.preventDefault();
+  const hotelId = document.querySelector("#rateHotel").value;
+  const data = qs(event.currentTarget);
+  try {
+    if (data.minStayNights) await request(`/api/rates/policies/hotels/${hotelId}/min-stay`, { method: "PUT", body: JSON.stringify({ minStayNights: Number(data.minStayNights) }) });
+    if (data.checkInTime && data.checkOutTime) await request(`/api/rates/policies/hotels/${hotelId}/times`, { method: "PUT", body: JSON.stringify({ checkInTime: data.checkInTime, checkOutTime: data.checkOutTime }) });
+    if (data.cancelDeadlineDays && data.cancelFeeRate) await request(`/api/rates/policies/hotels/${hotelId}/cancellation`, { method: "PUT", body: JSON.stringify({ cancelDeadlineDays: Number(data.cancelDeadlineDays), cancelFeeRate: Number(data.cancelFeeRate) }) });
+    if (data.freeChildAge && data.childRateType) await request(`/api/rates/policies/hotels/${hotelId}/child-rates`, { method: "PUT", body: JSON.stringify({ freeChildAge: Number(data.freeChildAge), childRateType: data.childRateType, childDiscountRate: Number(data.childDiscountRate || 0) }) });
+    toast("요금 정책이 저장되었습니다.");
+    loadRates();
+  } catch (error) {
+    document.querySelector("#ratesArea").innerHTML = errorMessage(error);
+  }
+}
+
+async function saveSeasonRate(event) {
+  event.preventDefault();
+  const hotelId = document.querySelector("#rateHotel").value;
+  const roomType = document.querySelector("#rateRoomType").value;
+  const data = qs(event.currentTarget);
+  const multiplier = data.multiplier || "20.0";
+  delete data.multiplier;
+  Object.assign(data, {
+    hotelId: Number(hotelId),
+    roomType,
+    weekdayPrice: Number(data.weekdayPrice),
+    weekendPrice: Number(data.weekendPrice),
+    minStayNights: 1,
+    weekdayPolicyEnabled: true
+  });
+  await request(`/api/rates?multiplier=${encodeURIComponent(multiplier)}`, { method: "POST", body: JSON.stringify(data) });
+  toast("시즌 요금이 저장되었습니다.");
+  loadRates();
+}
+
+async function previewRatePrice(event) {
+  event.preventDefault();
+  const data = qs(event.currentTarget);
+  const result = await request("/api/rates/preview", { method: "POST", body: JSON.stringify({ weekdayPrice: Number(data.weekdayPrice), weekendPrice: Number(data.weekendPrice), weekdayPolicyEnabled: data.weekdayPolicyEnabled === "true", multiplier: Number(data.multiplier || 0) }) });
+  document.querySelector("#pricePreviewResult").innerHTML = `<div class="message">평일 ${money(result.calculatedWeekdayPrice)} · 주말 ${money(result.calculatedWeekendPrice)} · 증가율 ${escapeHtml(result.increaseRate ?? "-")}</div>`;
 }
 
 async function adminSales() {
