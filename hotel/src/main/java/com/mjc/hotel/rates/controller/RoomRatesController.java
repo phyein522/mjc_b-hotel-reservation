@@ -1,5 +1,7 @@
 package com.mjc.hotel.rates.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mjc.hotel.common.ApiResponse;
 import com.mjc.hotel.common.ResponseCode;
 import com.mjc.hotel.rates.dto.request.RoomCreateRequestDto;
@@ -7,7 +9,10 @@ import com.mjc.hotel.rates.dto.request.RoomUpdateRequestDto;
 import com.mjc.hotel.rates.dto.response.RoomDetailResponseDto;
 import com.mjc.hotel.rates.dto.response.RoomListResponseDto;
 import com.mjc.hotel.rates.service.RoomRatesService;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +24,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Set;
+
+import jakarta.validation.Validation;
 
 /**
  * 호실 CRUD 및 상세설명/편의시설/이미지 통합 관리 REST Controller
@@ -29,6 +37,8 @@ import java.util.List;
 public class RoomRatesController {
 
     private final RoomRatesService roomRatesService;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     /**
      * [POST] /api/rates/hotels/{hotelId}/rooms (JSON 전용 호실 등록)
@@ -48,8 +58,15 @@ public class RoomRatesController {
     @PostMapping(value = "/hotels/{hotelId}/rooms", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<RoomDetailResponseDto>> createRoomMultipart(
             @PathVariable Long hotelId,
-            @Valid @RequestPart("room") RoomCreateRequestDto requestDto,
-            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+            @RequestPart("room") String roomJson,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files) throws JsonProcessingException {
+        
+        RoomCreateRequestDto requestDto = objectMapper.readValue(roomJson, RoomCreateRequestDto.class);
+        Set<ConstraintViolation<RoomCreateRequestDto>> violations = validator.validate(requestDto);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+
         RoomDetailResponseDto responseData = roomRatesService.createRoomWithDetails(hotelId, requestDto, files);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.make(ResponseCode.INSERT_OK, "호실이 성공적으로 등록되었습니다.", responseData));
