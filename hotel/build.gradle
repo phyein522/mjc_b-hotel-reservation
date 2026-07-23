@@ -43,12 +43,11 @@ dependencies {
 
 sonar {
 	properties {
-		property "sonar.projectKey", "hotel"
-		property "sonar.projectName", "hotel"
+		property "sonar.projectKey", "phyein522_mjc_b-hotel-reservation_4940b099-4abd-4015-8196-99b091440e49"
+		property "sonar.projectName", "mjc_b-hotel-reservation"
 		property "sonar.host.url", "http://localhost:9000"
-		property "sonar.token", "sqp_32a6d3b70d7dbb0f64f74fb1eea71cde710d8d4e"
+		property "sonar.token", "sqp_bd0e30194e2c8e88c7b4a040c9ff8a2fc946a683"
 		property "sonar.java.binaries", "build/classes/java/main"
-
 	}
 }
 
