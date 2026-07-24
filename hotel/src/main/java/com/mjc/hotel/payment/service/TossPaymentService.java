@@ -28,8 +28,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
-public class PaymentService {
+public class TossPaymentService {
 
     private final PaymentRepository paymentRepository;
     private final BookingRepository bookingRepository;
@@ -49,52 +48,50 @@ public class PaymentService {
         return (PaymentDto) new PaymentDto().copyMembers(result, true);
     }
 
-    @Transactional
-    public PaymentDto savePayment(PaymentDto dto) {
+    public PaymentDto insertPayment(PaymentDto dto) {
         PaymentEntity entity = (PaymentEntity) new PaymentEntity().copyMembers(dto, true);
         PaymentEntity result = paymentRepository.save(entity);
         return (PaymentDto) new PaymentDto().copyMembers(result, true);
     }
 
-    @Transactional
-    public TossPaymentReadyResponseDto readyTossPayment(TossPaymentReadyRequestDto dto) {
-        BookingDto booking = getBooking(dto.getBookingId());
-        BigDecimal amount = requirePositiveAmount(dto.getAmount());
-
-//        BigDecimal bookingAmount = BigDecimal.valueOf(booking.getTotalAmount());
-//        if (bookingAmount.compareTo(amount) != 0) {
-//            throw new IllegalArgumentException("예약 금액과 결제 금액이 일치하지 않습니다.");
-//        }
-
-        String orderId = createTossOrderId(booking.getBookingId());
-        String orderName = normalizeOrderName(dto.getOrderName(), booking);
-
-        PaymentEntity payment = PaymentEntity.builder()
-                .bookingId(booking.getBookingId())
-                .totalAmount(amount)
-                .orderId(orderId)
-                .paymentMethod(PaymentMethod.CreditCard)
-                .paymentStatus(PaymentStatus.Ready)
-                .provider("TOSS")
-                .build();
-
-        PaymentEntity saved = paymentRepository.save(payment);
-
-        return TossPaymentReadyResponseDto.builder()
-                .paymentId(saved.getPaymentId())
-                .bookingId(booking.getBookingId())
-                .orderId(orderId)
-                .orderName(orderName)
-                .amount(amount)
-                .build();
-    }
+//    public TossPaymentReadyResponseDto readyTossPayment(TossPaymentReadyRequestDto dto) {
+//        BookingDto booking = getBooking(dto.getBookingId());
+//        BigDecimal amount = requirePositiveAmount(dto.getAmount());
+//
+////        BigDecimal bookingAmount = BigDecimal.valueOf(booking.getTotalAmount());
+////        if (bookingAmount.compareTo(amount) != 0) {
+////            throw new IllegalArgumentException("예약 금액과 결제 금액이 일치하지 않습니다.");
+////        }
+//
+//        String orderId = createTossOrderId(booking.getBookingId());
+//        String orderName = normalizeOrderName(dto.getOrderName(), booking);
+//
+//        PaymentEntity payment = PaymentEntity.builder()
+//                .bookingId(booking.getBookingId())
+//                .totalAmount(amount)
+//                .orderId(orderId)
+//                .paymentMethod(PaymentMethod.CreditCard)
+//                .paymentStatus(PaymentStatus.Ready)
+//                .provider("TOSS")
+//                .build();
+//
+//        PaymentEntity saved = paymentRepository.save(payment);
+//
+//        return TossPaymentReadyResponseDto.builder()
+//                .paymentId(saved.getPaymentId())
+//                .bookingId(booking.getBookingId())
+//                .orderId(orderId)
+//                .orderName(orderName)
+//                .amount(amount)
+//                .build();
+//    }
 
     @Transactional
     public PaymentDto confirmTossPayment(TossPaymentConfirmRequestDto dto) {
         PaymentEntity payment = paymentRepository.findByOrderId(dto.getOrderId())
                 .orElseThrow(() -> new IllegalArgumentException("결제 요청 정보를 찾을 수 없습니다. orderId=" + dto.getOrderId()));
 
-        if (!payment.getBooking().getBookingNo().equals(dto.getBookingId())) {
+        if (!payment.getBooking().getBookingNo().equals(dto.getPaymentKey())) {
             throw new IllegalArgumentException("예약 정보와 결제 요청 정보가 일치하지 않습니다.");
         }
 
@@ -164,7 +161,6 @@ public class PaymentService {
         return pgTransactionKey;
     }
 
-    @Transactional
     public PaymentDto updatePayment(Long paymentId, PaymentDto dto) {
         PaymentDto find = getPayment(paymentId);
         if (dto.getBookingId() != null) {
@@ -176,7 +172,6 @@ public class PaymentService {
         return (PaymentDto) new PaymentDto().copyMembers(result, true);
     }
 
-    @Transactional
     public PaymentDto deletePayment(Long paymentId) {
         PaymentDto payment = getPayment(paymentId);
         this.paymentRepository.deleteById(paymentId);
