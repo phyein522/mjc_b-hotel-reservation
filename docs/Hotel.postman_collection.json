@@ -1,9 +1,10 @@
 {
   "info": {
-    "_postman_id": "9745b489-17cf-494e-b237-384cf334d92a",
+    "_postman_id": "cb72b479-f6c7-46c2-bd54-2ed00fda78dc",
     "name": "Hotel",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "53643729"
+    "_exporter_id": "16448427",
+    "_collection_link": "https://go.postman.co/collection/16448427-cb72b479-f6c7-46c2-bd54-2ed00fda78dc?source=collection_link"
   },
   "item": [
     {
@@ -2204,6 +2205,136 @@
                 "api",
                 "rates",
                 "fix-db"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "payment",
+      "item": [
+        {
+          "name": "getPayments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:8989/api/payment",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "payment"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "payment insert",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"paymentId\":null\r\n    , \"bookingId\": 4\r\n    , \"transactionNum\":\"1234567890123456789\"\r\n    , \"paymentMethod\":\"CreditCard\"\r\n    , \"paymentStatus\":\"Paid\"\r\n    , \"totalAmount\":\"99000\"\r\n    , \"currency\":\"KRW\"\r\n    , \"approvedAt\":\"2026-07-22T00:00:00\"\r\n    , \"cancelledAt\":\"\"\r\n    , \"cardCompany\":\"\"\r\n    , \"cardNumber\":\"12345678****1234\"\r\n    , \"couponId\":\"\"\r\n    , \"usedPoint\":\"0\"\r\n    , \"discountAmount\":\"0\"\r\n    , \"pgTransactionId\":\"\"\r\n    , \"orderId\":\"123456785122478987\"\r\n    , \"paymentKey\":\"SN-2026-0724-9925\"\r\n    , \"provider\":\"\"\r\n    , \"receiptUrl\":\"http://www.www.com\"\r\n    , \"failCode\":\"\"\r\n    , \"failMessage\": \"\"\r\n    , \"createdAt\": \"\"\r\n    , \"modifiedAt\": \"\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:8989/api/payment",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "payment"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "payment findById",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:8989/api/payment/1",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "payment",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "payment update",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"paymentId\": 1\r\n    , \"bookingId\": 1\r\n    , \"transactionNum\":\"1234567890123456789\"\r\n    , \"paymentMethod\":\"CreditCard\"\r\n    , \"paymentStatus\":\"Paid\"\r\n    , \"totalAmount\":\"35000\"\r\n    , \"currency\":\"KRW\"\r\n    , \"approvedAt\":\"2026-07-22T00:00:00\"\r\n    , \"cancelledAt\":\"\"\r\n    , \"cardCompany\":\"\"\r\n    , \"cardNumber\":\"12345678****1234\"\r\n    , \"couponId\":\"\"\r\n    , \"usedPoint\":\"0\"\r\n    , \"discountAmount\":\"0\"\r\n    , \"pgTransactionId\":\"\"\r\n    , \"orderId\":\"123456789000123456\"\r\n    , \"paymentKey\":\"123456789000123456\"\r\n    , \"provider\":\"\"\r\n    , \"receiptUrl\":\"http://www.www.com\"\r\n    , \"failCode\":\"\"\r\n    , \"failMessage\": \"\"\r\n    , \"createdAt\": \"\"\r\n    , \"modifiedAt\": \"\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:8989/api/payment",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "payment"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "toss payment confirm",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"bookingId\": 4\r\n    , \"paymentKey\": \"SN-2026-0724-9925\"\r\n    , \"orderId\": \"123456785122478987\"\r\n    , \"amount\": 99000\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:8989/api/payment/toss/confirm",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "payment",
+                "toss",
+                "confirm"
               ]
             }
           },
