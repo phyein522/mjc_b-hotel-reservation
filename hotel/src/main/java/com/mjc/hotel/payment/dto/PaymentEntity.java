@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = "booking")
 public class PaymentEntity extends BaseEntity implements IPayment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

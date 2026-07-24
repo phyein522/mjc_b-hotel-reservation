@@ -38,3 +38,7 @@ mybatis:
   type-aliases-package: com.mjc.hotel
   configuration:
     map-underscore-to-camel-case: true
+
+toss:
+  payments:
+    secret-key: ${TOSS_SECRET_KEY:test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6}

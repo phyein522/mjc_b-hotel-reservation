@@ -3,8 +3,6 @@ package com.mjc.hotel.payment.dto;
 import com.mjc.hotel.bookings.BookingDto;
 import com.mjc.hotel.bookings.IBooking;
 import com.mjc.hotel.common.dto.BaseDto;
-import com.mjc.hotel.rooms.dto.IRoom;
-import com.mjc.hotel.rooms.dto.RoomDto;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -51,18 +49,18 @@ public class PaymentDto extends BaseDto implements IPayment {
         if ( this.booking.getBookingId() != null) {
             this.bookingId = this.booking.getBookingId();
         } else {
-            this.booking.setRoomId(this.bookingId);
+            this.booking.setBookingId(this.bookingId);
         }
         return this.booking.getBookingId();
     }
 
     @Override
     public void setBookingId(Long bookingId) {
-        // Long bookingId 랑 room.getId() 랑 값이 항상 같도록 해야 한다.
+        // Long bookingId 랑 booking.getId() 랑 값이 항상 같도록 해야 한다.
         if ( this.booking == null ) {
             this.booking = new BookingDto();
         }
-        this.booking.setRoomId(bookingId);
+        this.booking.setBookingId(bookingId);
         this.bookingId = bookingId;
     }
 

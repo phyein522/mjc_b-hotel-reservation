@@ -2,12 +2,11 @@ package com.mjc.hotel.payment.dto;
 
 import com.mjc.hotel.bookings.IBooking;
 import com.mjc.hotel.common.dto.IBase;
-import jakarta.persistence.Column;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-//@tools.jackson.databind.annotation.JsonDeserialize(as = PromotionDto.class)
+@tools.jackson.databind.annotation.JsonDeserialize(as = PaymentDto.class)
 public interface IPayment extends IBase {
     Long getPaymentId();
     void setPaymentId(Long paymentId);
@@ -54,9 +53,15 @@ public interface IPayment extends IBase {
     String getCardNumber();
     void setCardNumber(String cardNumber);
 
+    /**
+     * 유일한 번호
+     */
     String getOrderId();
     void setOrderId(String orderId);
 
+    /**
+     * booking 의 bookingNo 필드의 값과 같아야 한다. "SN-2026-0724-5928"
+     */
     String getPaymentKey();
     void setPaymentKey(String paymentKey);
 
@@ -80,8 +85,10 @@ public interface IPayment extends IBase {
         if (forced || source.getPaymentId() != null) {
             this.setPaymentId(source.getPaymentId());
         }
-        if ( forced || source.getBooking() != null ) {
+        if ( forced || source.getBookingId() != null ) {
             this.setBookingId(source.getBookingId());
+        }
+        if ( forced || source.getBooking() != null ) {
             this.getBooking().copyMembers(source.getBooking(), forced);
         }
         if (forced || source.getTransactionNum() != null) {
