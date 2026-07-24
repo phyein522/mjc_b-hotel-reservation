@@ -56,38 +56,38 @@ public class PaymentService {
         return (PaymentDto) new PaymentDto().copyMembers(result, true);
     }
 
-    @Transactional
-    public TossPaymentReadyResponseDto readyTossPayment(TossPaymentReadyRequestDto dto) {
-        BookingDto booking = getBooking(dto.getBookingId());
-        BigDecimal amount = requirePositiveAmount(dto.getAmount());
-
-//        BigDecimal bookingAmount = BigDecimal.valueOf(booking.getTotalAmount());
-//        if (bookingAmount.compareTo(amount) != 0) {
-//            throw new IllegalArgumentException("예약 금액과 결제 금액이 일치하지 않습니다.");
-//        }
-
-        String orderId = createTossOrderId(booking.getBookingId());
-        String orderName = normalizeOrderName(dto.getOrderName(), booking);
-
-        PaymentEntity payment = PaymentEntity.builder()
-                .bookingId(booking.getBookingId())
-                .totalAmount(amount)
-                .orderId(orderId)
-                .paymentMethod(PaymentMethod.CreditCard)
-                .paymentStatus(PaymentStatus.Ready)
-                .provider("TOSS")
-                .build();
-
-        PaymentEntity saved = paymentRepository.save(payment);
-
-        return TossPaymentReadyResponseDto.builder()
-                .paymentId(saved.getPaymentId())
-                .bookingId(booking.getBookingId())
-                .orderId(orderId)
-                .orderName(orderName)
-                .amount(amount)
-                .build();
-    }
+//    @Transactional
+//    public TossPaymentReadyResponseDto readyTossPayment(TossPaymentReadyRequestDto dto) {
+//        BookingDto booking = getBooking(dto.getBookingId());
+//        BigDecimal amount = requirePositiveAmount(dto.getAmount());
+//
+////        BigDecimal bookingAmount = BigDecimal.valueOf(booking.getTotalAmount());
+////        if (bookingAmount.compareTo(amount) != 0) {
+////            throw new IllegalArgumentException("예약 금액과 결제 금액이 일치하지 않습니다.");
+////        }
+//
+//        String orderId = createTossOrderId(booking.getBookingId());
+//        String orderName = normalizeOrderName(dto.getOrderName(), booking);
+//
+//        PaymentEntity payment = PaymentEntity.builder()
+//                .bookingId(booking.getBookingId())
+//                .totalAmount(amount)
+//                .orderId(orderId)
+//                .paymentMethod(PaymentMethod.CreditCard)
+//                .paymentStatus(PaymentStatus.Ready)
+//                .provider("TOSS")
+//                .build();
+//
+//        PaymentEntity saved = paymentRepository.save(payment);
+//
+//        return TossPaymentReadyResponseDto.builder()
+//                .paymentId(saved.getPaymentId())
+//                .bookingId(booking.getBookingId())
+//                .orderId(orderId)
+//                .orderName(orderName)
+//                .amount(amount)
+//                .build();
+//    }
 
     @Transactional
     public PaymentDto confirmTossPayment(TossPaymentConfirmRequestDto dto) {

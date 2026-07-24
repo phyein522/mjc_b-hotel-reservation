@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/payments")
+@RequestMapping("/api/payment")
 public class TossPaymentRestController {
     @Autowired
     private PaymentService paymentService;
 
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<ApiResponse<PaymentDto>> insert(@RequestBody PaymentDto dto) {
         PaymentDto insert = (PaymentDto) new PaymentDto().copyMembers(paymentService.savePayment(dto), true);
         return ResponseEntity.status(201).body(
@@ -25,12 +25,12 @@ public class TossPaymentRestController {
         );
     }
 
-    @PostMapping("/toss/ready")
-    public ResponseEntity<ApiResponse<TossPaymentReadyResponseDto>> readyTossPayment(@RequestBody TossPaymentReadyRequestDto dto) {
-        return ResponseEntity.status(201).body(
-                new ApiResponse<>(ResponseCode.SUCCESS, "toss payment ready success", paymentService.readyTossPayment(dto))
-        );
-    }
+//    @PostMapping("/toss/ready")
+//    public ResponseEntity<ApiResponse<TossPaymentReadyResponseDto>> readyTossPayment(@RequestBody TossPaymentReadyRequestDto dto) {
+//        return ResponseEntity.status(201).body(
+//                new ApiResponse<>(ResponseCode.SUCCESS, "toss payment ready success", paymentService.readyTossPayment(dto))
+//        );
+//    }
 
     @Operation(
             summary = "토스 결제 승인",
@@ -60,7 +60,6 @@ public class TossPaymentRestController {
             summary = "결제 전체 데이터 조회",
             description = "결제 전체 데이터를 조회합니다."
     )
-
     @GetMapping
     public ResponseEntity<ApiResponse<List<PaymentDto>>> getPayments() {
         List<PaymentDto> payments = paymentService.getPayments().stream()
@@ -94,7 +93,6 @@ public class TossPaymentRestController {
             summary = "결제 데이터 삭제",
             description = "결제 데이터를 삭제합니다."
     )
-
     @DeleteMapping("/{paymentId}")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long paymentId) {
         paymentService.deletePayment(paymentId);
