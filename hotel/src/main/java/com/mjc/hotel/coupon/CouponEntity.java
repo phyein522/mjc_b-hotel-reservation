@@ -52,7 +52,7 @@ public class CouponEntity extends BaseEntity implements ICoupon {
     private Long userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", comment = "기본키")
     private UserEntity user;
 
     @Override

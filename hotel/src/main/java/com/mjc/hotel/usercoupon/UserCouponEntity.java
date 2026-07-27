@@ -20,6 +20,7 @@ public class UserCouponEntity extends BaseEntity implements IUserCoupon {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JoinColumn(name = "userCoupon_id", comment = "기본키")
     private Long userCouponId;
 
     @Column(name = "쿠폰 발급날짜")
