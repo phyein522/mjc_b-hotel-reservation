@@ -43,10 +43,31 @@ dependencies {
 
 sonar {
 	properties {
-		property "sonar.projectKey", "phyein522_mjc_b-hotel-reservation_4940b099-4abd-4015-8196-99b091440e49"
-		property "sonar.projectName", "mjc_b-hotel-reservation"
+		// 공통 속성
+		property "sonar.java.binaries", "build/classes/java/main"
+
+		// 분기 처리
+		if (project.hasProperty('cwc')) {
+			// ./gradlew sonar -Pcwc
+			property "sonar.projectKey", "hotel"
+			property "sonar.projectName", "hotel"
+			property "sonar.host.url", "http://localhost:9000"
+			property "sonar.token", "sqp_fcafee9f0cd6d910b57414a21b0ef631240acfa7"
+		} else {
+			property "sonar.projectKey", "phyein522_mjc_b-hotel-reservation"
+			property "sonar.projectName", "mjc_b-hotel-reservation"
+			property "sonar.host.url", "http://localhost:9000"
+			property "sonar.token", "sqp_bd0e30194e2c8e88c7b4a040c9ff8a2fc946a683"
+		}
+	}
+}
+
+sonar {
+	properties {
+		property "sonar.projectKey", "hotel"
+		property "sonar.projectName", "hotel"
 		property "sonar.host.url", "http://localhost:9000"
-		property "sonar.token", "sqp_bd0e30194e2c8e88c7b4a040c9ff8a2fc946a683"
+		property "sonar.token", "sqp_fcafee9f0cd6d910b57414a21b0ef631240acfa7"
 		property "sonar.java.binaries", "build/classes/java/main"
 	}
 }

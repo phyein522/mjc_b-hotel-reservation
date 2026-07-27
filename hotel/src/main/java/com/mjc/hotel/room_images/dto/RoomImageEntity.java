@@ -17,29 +17,29 @@ import lombok.experimental.SuperBuilder;
 public class RoomImageEntity extends BaseEntity implements IRoomImage {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "room_image_id")
+	@Column(name = "room_image_id", comment = "기본키")
 	private Long roomImageId;
 
-	@Column(name = "file_name", nullable = false, length = 100)
+	@Column(name = "file_name", nullable = false, length = 100, comment = "파일이름")
 	private String fileName;
 
-	@Column(nullable = false)
+	@Column(nullable = false, comment = "파일크기")
 	private Integer size;
 
-	@Column(nullable = false, length = 10)
+	@Column(nullable = false, length = 10, comment = "파일확장자")
 	private String ext;
 
-	@Column(name = "store_name", nullable = false, length = 100)
+	@Column(name = "store_name", nullable = false, length = 100, comment = "물리파일명")
 	private String storeName;
 
-	@Column(nullable = false, length = 100)
+	@Column(nullable = false, length = 100, comment = "경로")
 	private String path;
 
 	@Transient
 	private Long roomId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "room_id", nullable = false)
+	@JoinColumn(name = "room_id", nullable = false, comment = "객실키")
 	private RoomEntity room;
 
 	@Override
