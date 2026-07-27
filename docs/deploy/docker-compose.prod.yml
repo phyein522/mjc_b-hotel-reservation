@@ -1,0 +1,59 @@
+services:
+  hotel_mysql8:
+    container_name: "mysql8_container"
+    image: "mysql:8.4.5"
+    restart: "always"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234@
+      TZ: Asia/Seoul
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+      # 초기화 스크립트
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot1234@"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - my_vnetwork
+
+  backend-server:
+    # EC2에서는 build 하지 않고 Docker Hub에서 이미지를 pull 합니다.
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile.prod
+    # 아래 이미지명을 본인의 Docker Hub 계정/저장소로 교체하세요
+    image: "llistria/hotel-backend:0.0.1"
+    container_name: "backend-container"
+    restart: "always"
+    ports:
+      - "${PORT}:8989"
+    env_file:
+      - .env.prod
+    volumes:
+      - ./uploads:/app/uploads
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:mysql://${DB_IP}:3306/${DB_NAME}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8"
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      TZ: Asia/Seoul
+    depends_on:
+      hotel_mysql8:
+        condition: service_healthy
+    networks:
+      - my_vnetwork
+
+networks:
+  my_vnetwork:
+    driver: bridge
+
+# 두번째 Docker Compose 실행
+# docker compose -f docker-compose.prod.yml --env-file .env.prod up -d
+# docker compose -f docker-compose.prod.yml down

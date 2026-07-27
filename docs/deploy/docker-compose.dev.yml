@@ -1,0 +1,56 @@
+services:
+  hotel_mysql8:
+    container_name: "mysql8_container"
+    image: "mysql:8.4.5"
+    restart: "always"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234@
+      TZ: Asia/Seoul
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot1234@"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - my_vnetwork
+
+  backend-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: "backend-container"
+    image: "backend-server:0.0.1"
+    restart: "always"
+    ports:
+      - "${PORT}:8989"
+    env_file:
+      - .env.dev
+    volumes:
+      - ./uploads:/app/uploads
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:mysql://hotel_mysql8:3306/${DB_NAME}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8"
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      TZ: Asia/Seoul
+    depends_on:
+      hotel_mysql8:
+        condition: service_healthy
+    networks:
+      - my_vnetwork
+
+networks:
+  my_vnetwork:
+    driver: bridge
+
+# Docker Compose 실행
+# docker compose -f docker-compose.dev.yml --env-file .env.dev up -d
+# docker compose -f docker-compose.dev.yml down
