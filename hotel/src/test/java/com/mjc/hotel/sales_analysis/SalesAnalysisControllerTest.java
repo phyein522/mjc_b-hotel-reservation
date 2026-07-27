@@ -22,7 +22,7 @@ public class SalesAnalysisControllerTest {
     private SalesAnalysisService service;
 
     @BeforeEach
-    public void setUp() {
+     void setUp() {
         // 매 테스트마다 서비스는 mock으로, controller는 새로 생성 (테스트 간 상태 공유 방지)
         service = mock(SalesAnalysisService.class);
         controller = new SalesAnalysisController(service);
@@ -33,7 +33,7 @@ public class SalesAnalysisControllerTest {
     // ---------------------------------------------------------
 
     @Test
-    public void testGetDashboardData_Success() {
+     void testGetDashboardData_Success() {
         // Given
         SalesDashboardResponse mockResponse = SalesDashboardResponse.builder()
                 .hotelId(9999L)
@@ -69,7 +69,7 @@ public class SalesAnalysisControllerTest {
     }
 
     @Test
-    public void testGetDashboardData_InvalidMonthFormat() {
+     void testGetDashboardData_InvalidMonthFormat() {
         // Given
         when(service.getDashboardData(9999L, "2026-06-15")).thenThrow(new IllegalArgumentException("유효하지 않은 대상월 날짜 형식입니다."));
 
@@ -84,7 +84,7 @@ public class SalesAnalysisControllerTest {
     // ---------------------------------------------------------
 
     @Test
-    public void testGetMonthlyTrend_Success() {
+     void testGetMonthlyTrend_Success() {
         // Given
         List<MonthlyRevenueDto> mockTrend = List.of(
                 new MonthlyRevenueDto("2025-11", new BigDecimal("500000.00")),
@@ -115,7 +115,7 @@ public class SalesAnalysisControllerTest {
     }
 
     @Test
-    public void testGetMonthlyTrend_EmptyResult() {
+     void testGetMonthlyTrend_EmptyResult() {
         // Given: 예약 데이터가 없는 신규 호텔이라 결과가 빈 리스트인 상황 가정
         when(service.getMonthlyRevenueTrend(8888L, "2026-06-01")).thenReturn(Collections.emptyList());
 
@@ -133,7 +133,7 @@ public class SalesAnalysisControllerTest {
     // ---------------------------------------------------------
 
     @Test
-    public void testGetTopBookings_Success() {
+     void testGetTopBookings_Success() {
         // Given: TOP 5 예약 내역 mock 데이터
         List<TopBookingDto> mockTopBookings = List.of(
                 new TopBookingDto(), new TopBookingDto(), new TopBookingDto(),
@@ -157,7 +157,7 @@ public class SalesAnalysisControllerTest {
     }
 
     @Test
-    public void testGetTopBookings_EmptyResult() {
+     void testGetTopBookings_EmptyResult() {
         // Given: 해당 월에 예약이 하나도 없는 상황 가정
         when(service.getTopBookings(9999L, "2020-01")).thenReturn(Collections.emptyList());
 
@@ -170,7 +170,7 @@ public class SalesAnalysisControllerTest {
     }
 
     @Test
-    public void testGetTopBookings_InvalidMonthFormat() {
+     void testGetTopBookings_InvalidMonthFormat() {
         // Given: 잘못된 targetMonth 형식이 들어오면 서비스에서 예외를 던진다고 가정
         when(service.getTopBookings(9999L, "26-06")).thenThrow(new IllegalArgumentException("유효하지 않은 대상월 날짜 형식입니다."));
 
@@ -185,7 +185,7 @@ public class SalesAnalysisControllerTest {
     // ---------------------------------------------------------
 
     @Test
-    public void testGetRoomTypeRevenue_Success() {
+     void testGetRoomTypeRevenue_Success() {
         // Given: 객실 타입별 매출 통계 mock 데이터
         List<RoomTypeRevenueDto> mockRoomRevenue = List.of(
                 new RoomTypeRevenueDto(), new RoomTypeRevenueDto(), new RoomTypeRevenueDto()
@@ -205,7 +205,7 @@ public class SalesAnalysisControllerTest {
     }
 
     @Test
-    public void testGetRoomTypeRevenue_EmptyResult() {
+     void testGetRoomTypeRevenue_EmptyResult() {
         // Given: 객실 타입 데이터 자체가 아직 등록 안 된 호텔이라고 가정
         when(service.getRoomTypeRevenue(7777L, "2026-06")).thenReturn(Collections.emptyList());
 
@@ -218,7 +218,7 @@ public class SalesAnalysisControllerTest {
     }
 
     @Test
-    public void testGetRoomTypeRevenue_ServiceThrowsException() {
+     void testGetRoomTypeRevenue_ServiceThrowsException() {
         // Given: 존재하지 않는 hotelId로 조회 시 서비스가 예외를 던진다고 가정
         when(service.getRoomTypeRevenue(-1L, "2026-06")).thenThrow(new IllegalArgumentException("존재하지 않는 호텔입니다."));
 
