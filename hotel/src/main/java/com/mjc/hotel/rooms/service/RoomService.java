@@ -8,6 +8,7 @@ import com.mjc.hotel.rooms.dto.IRoom;
 import com.mjc.hotel.rooms.dto.RoomDto;
 import com.mjc.hotel.rooms.dto.RoomEntity;
 import com.mjc.hotel.rooms.dto.RoomResponseWithImagesDto;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,11 +24,10 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class RoomService {
-	@Autowired
-	private RoomRepository roomRepository;
-	@Autowired
-	private RoomImageService roomImageService;
+	private final RoomRepository roomRepository;
+	private final RoomImageService roomImageService;
 
 	@Autowired
 	private FileUtil fileUtil;

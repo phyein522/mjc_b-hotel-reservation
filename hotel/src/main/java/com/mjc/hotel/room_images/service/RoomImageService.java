@@ -6,6 +6,7 @@ import com.mjc.hotel.room_images.dto.RoomImageDto;
 import com.mjc.hotel.room_images.dto.RoomImageEntity;
 import com.mjc.hotel.room_images.dto.RoomImageResponseDto;
 import com.mjc.hotel.rooms.dto.RoomEntity;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -21,11 +22,10 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class RoomImageService {
-	@Autowired
-	private RoomImageRepository roomImageRepository;
-	@Autowired
-	private FileUtil fileUtil;
+	private final FileUtil fileUtil;
+	private final RoomImageRepository roomImageRepository;
 
 	public RoomImageResponseDto upload(Long roomId, MultipartFile file) throws RuntimeException {
 		if ( roomId == null || file == null ) {
