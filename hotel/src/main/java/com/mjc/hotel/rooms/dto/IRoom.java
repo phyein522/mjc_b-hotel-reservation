@@ -1,6 +1,5 @@
 package com.mjc.hotel.rooms.dto;
 
-import com.mjc.hotel.common.dto.BaseDto;
 import com.mjc.hotel.common.dto.IBase;
 import com.mjc.hotel.hotels.IHotel;
 import com.mjc.hotel.rooms.enums.RoomBedOption;

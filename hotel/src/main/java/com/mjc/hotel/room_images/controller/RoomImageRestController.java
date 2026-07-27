@@ -6,6 +6,7 @@ import com.mjc.hotel.room_images.dto.RoomImageDto;
 import com.mjc.hotel.room_images.dto.RoomImageRequestDto;
 import com.mjc.hotel.room_images.dto.RoomImageResponseDto;
 import com.mjc.hotel.room_images.service.RoomImageService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -24,9 +25,9 @@ import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/api/roomimage")
+@RequiredArgsConstructor
 public class RoomImageRestController {
-	@Autowired
-	private RoomImageService roomImageService;
+	private final RoomImageService roomImageService;
 
 	@PostMapping
 	public ResponseEntity<ApiResponse<RoomImageResponseDto>> insert(@RequestPart RoomImageRequestDto requestDto, @RequestPart MultipartFile file) {

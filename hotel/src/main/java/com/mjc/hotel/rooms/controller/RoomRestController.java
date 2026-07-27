@@ -5,6 +5,7 @@ import com.mjc.hotel.common.ResponseCode;
 import com.mjc.hotel.rooms.dto.RoomDto;
 import com.mjc.hotel.rooms.dto.RoomResponseWithImagesDto;
 import com.mjc.hotel.rooms.service.RoomService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,9 +24,9 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/room")
+@RequiredArgsConstructor
 public class RoomRestController {
-	@Autowired
-	private RoomService roomService;
+	private final RoomService roomService;
 
 	@PostMapping
 	public ResponseEntity<ApiResponse<RoomDto>> insert(@RequestBody RoomDto requestDto) {
