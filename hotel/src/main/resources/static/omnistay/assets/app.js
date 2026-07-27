@@ -53,6 +53,16 @@ function generateTossOrderId(bookingId) {
   return `OMNISTAY-${bookingId || "ORDER"}-${Date.now()}-${suffix}`;
 }
 
+function tossMethodToPaymentMethod(method) {
+  if (method === "CARD") return "CreditCard";
+  if (method === "TRANSFER" || method === "VIRTUAL_ACCOUNT") return "BankTransfer";
+  return "Online";
+}
+
+function paymentBookingId(payment) {
+  return payment?.bookingId || payment?.booking?.bookingId || "";
+}
+
 const adminNav = [
   ["dashboard", "대시보드", "dashboard.html", "운영"],
   ["hotels", "호텔 관리", "hotels.html", "운영"],
@@ -365,13 +375,15 @@ async function bookingPage() {
 
 async function submitBooking(event) {
   event.preventDefault();
+  const form = event.currentTarget;
   const currentUser = getCurrentUser();
   if (!currentUser) {
     const redirect = encodeURIComponent(`booking.html${location.search}`);
     location.href = `login.html?reason=booking&redirect=${redirect}`;
     return;
   }
-  const data = qs(event.currentTarget);
+  const data = qs(form);
+  const roomText = form.elements.roomId?.selectedOptions?.[0]?.textContent.trim() || "";
   const today = todayDate();
   if (data.checkinDate < today) {
     document.querySelector("#bookingResult").innerHTML = `<div class="message error">체크인 날짜는 오늘(${today}) 이전으로 선택할 수 없습니다.</div>`;
@@ -381,26 +393,34 @@ async function submitBooking(event) {
     document.querySelector("#bookingResult").innerHTML = `<div class="message error">체크아웃 날짜는 체크인 날짜 이후로 선택해야 합니다.</div>`;
     return;
   }
+  data.userId = Number(currentUser.userId);
+  data.guestName = currentUser.name || currentUser.email || `User ${currentUser.userId}`;
+  data.guestPhone = currentUser.phone || "";
+  data.guestEmail = currentUser.email || "";
+  data.roomId = Number(data.roomId);
+  data.adultCount = Number(data.adultCount || 0);
+  data.childCount = Number(data.childCount || 0);
+  data.nationality = "KOREA";
   const params = new URLSearchParams(location.search);
   const paymentBaseAmount = Number(data.baseAmount || params.get("amount") || 0);
   const paymentOrderName = data.orderName || params.get("orderName") || "";
   delete data.baseAmount;
   delete data.orderName;
-  const nights = Math.max(1, Math.ceil((new Date(data.checkoutDate) - new Date(data.checkinDate)) / 86400000));
-  const paymentAmount = paymentBaseAmount * nights;
-  const roomText = event.currentTarget.elements.roomId?.selectedOptions?.[0]?.textContent.trim() || "";
-  const orderName = paymentOrderName || `${roomText} 예약`.trim() || "OmniStay 호텔 예약";
-  const paymentParams = new URLSearchParams({
-    bookingId: params.get("bookingId") || String(Date.now()),
-    amount: String(paymentAmount),
-    orderName,
-    checkinDate: data.checkinDate,
-    checkoutDate: data.checkoutDate,
-    adultCount: String(data.adultCount || 0),
-    childCount: String(data.childCount || 0),
-    skipConfirm: "true"
-  });
-  location.href = `payment.html?${paymentParams.toString()}`;
+  try {
+    document.querySelector("#bookingResult").innerHTML = empty("예약 정보를 저장하는 중입니다.");
+    const booking = await request("/api/bookings/insert", { method: "POST", body: JSON.stringify(data) });
+    const nights = Math.max(1, Math.ceil((new Date(data.checkoutDate) - new Date(data.checkinDate)) / 86400000));
+    const paymentAmount = paymentBaseAmount * nights;
+    const orderName = paymentOrderName || `${roomText} 예약`.trim() || "OmniStay 호텔 예약";
+    const paymentParams = new URLSearchParams({
+      bookingId: String(booking.bookingId),
+      amount: String(paymentAmount),
+      orderName
+    });
+    location.href = `payment.html?${paymentParams.toString()}`;
+  } catch (error) {
+    document.querySelector("#bookingResult").innerHTML = errorMessage(error);
+  }
 }
 
 async function paymentPage() {
@@ -409,7 +429,6 @@ async function paymentPage() {
   const bookingId = params.get("bookingId") || "";
   const totalAmount = Number(params.get("amount") || params.get("totalAmount") || 0);
   const orderName = params.get("orderName") || "OmniStay 호텔 예약";
-  const skipConfirm = params.get("skipConfirm") === "true";
   const customerName = currentUser?.name || currentUser?.email || "비회원";
   const customerEmail = currentUser?.email || "";
   const customerPhone = (currentUser?.phone || "").replaceAll("-", "");
@@ -464,11 +483,42 @@ async function paymentPage() {
       const TossPayments = await loadTossPaymentsSdk();
       const customerKey = currentUser?.userId ? `USER_${currentUser.userId}` : TossPayments.ANONYMOUS;
       const payment = TossPayments(window.OMNISTAY_TOSS_CLIENT_KEY || TOSS_SAMPLE_CLIENT_KEY).payment({ customerKey });
+      const orderId = generateTossOrderId(data.bookingId);
+      statusEl.className = "toss-note";
+      statusEl.textContent = "결제 정보를 DB에 먼저 저장하는 중입니다.";
+      const existingPayments = pageItems(await request("/api/payment"));
+      const existingPayment = existingPayments.find((item) => String(paymentBookingId(item)) === String(data.bookingId));
+      if (existingPayment?.paymentStatus === "Paid") {
+        statusEl.className = "message error toss-note";
+        statusEl.textContent = "이미 결제가 완료된 예약입니다.";
+        return;
+      }
+      const draftPayload = {
+        ...(existingPayment || {}),
+        paymentId: existingPayment?.paymentId,
+        bookingId: Number(data.bookingId),
+        booking: { bookingId: Number(data.bookingId) },
+        transactionNum: orderId,
+        paymentMethod: tossMethodToPaymentMethod(selectedPaymentMethod),
+        paymentStatus: "Ready",
+        totalAmount: finalAmount,
+        currency: "KRW",
+        couponId: existingPayment?.couponId || 0,
+        usedPoint: existingPayment?.usedPoint || 0,
+        discountAmount: discount,
+        orderId,
+        paymentKey: null,
+        provider: "TOSS"
+      };
+      const draftPayment = await request("/api/payment", {
+        method: existingPayment?.paymentId ? "PATCH" : "POST",
+        body: JSON.stringify(draftPayload)
+      });
       const query = new URLSearchParams({
         bookingId: data.bookingId,
+        paymentId: String(draftPayment.paymentId || ""),
         userCouponId: data.userCouponId || "",
-        discountAmount: String(discount),
-        skipConfirm: skipConfirm ? "true" : ""
+        discountAmount: String(discount)
       });
       const paymentRequest = {
         method: selectedPaymentMethod,
@@ -476,7 +526,7 @@ async function paymentPage() {
           currency: "KRW",
           value: finalAmount
         },
-        orderId: generateTossOrderId(data.bookingId),
+        orderId,
         orderName: data.orderName,
         successUrl: `${location.origin}/omnistay/payment-success.html?${query.toString()}`,
         failUrl: `${location.origin}/omnistay/payment-fail.html?${query.toString()}`,
@@ -520,31 +570,55 @@ async function paymentResultPage(status) {
   const paymentKey = params.get("paymentKey") || "-";
   const amount = params.get("amount") || "-";
   const bookingId = params.get("bookingId") || "";
-  const skipConfirm = params.get("skipConfirm") === "true";
+  const paymentId = params.get("paymentId") || "";
   const code = params.get("code") || "";
   const message = params.get("message") || "";
   const isSuccess = status === "success";
   userShell("bookings", `<section class="toss-page"><div class="toss-wrapper"><div class="toss-box"><img class="toss-result-image" src="${isSuccess ? "https://static.toss.im/illusts/check-blue-spot-ending-frame.png" : "https://static.toss.im/lotties/error-spot-no-loop-space-apng.png"}" alt=""><h2>${isSuccess ? "결제를 완료했어요" : "결제를 실패했어요"}</h2><div class="toss-result-grid">${isSuccess ? `<div class="toss-row"><span><b>결제금액</b></span><strong>${escapeHtml(amount)}원</strong></div><div class="toss-row"><span><b>주문번호</b></span><strong class="toss-break">${escapeHtml(orderId)}</strong></div><div class="toss-row"><span><b>paymentKey</b></span><strong class="toss-break">${escapeHtml(paymentKey)}</strong></div>` : `<div class="toss-row"><span><b>에러메시지</b></span><strong class="toss-break">${escapeHtml(message || "-")}</strong></div><div class="toss-row"><span><b>에러코드</b></span><strong class="toss-break">${escapeHtml(code || "-")}</strong></div>`}</div><div class="toss-note" id="paymentConfirmResult">${isSuccess ? "결제 승인 확인 중입니다." : "결제 실패 정보를 저장하는 중입니다."}</div><a class="toss-button" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none" href="bookings.html">예약내역</a></div></div></section>`);
   try {
     if (isSuccess) {
-      if (skipConfirm) {
-        document.querySelector("#paymentConfirmResult").textContent = "백엔드 예약 저장 없이 결제 화면 흐름만 완료했습니다.";
-        return;
-      }
       if (!bookingId || !params.get("paymentKey") || !params.get("orderId") || !params.get("amount")) {
         document.querySelector("#paymentConfirmResult").className = "message error toss-note";
         document.querySelector("#paymentConfirmResult").textContent = "토스 승인에 필요한 값이 부족합니다.";
         return;
       }
-      const result = await request("/api/payments/toss/confirm", { method: "POST", body: JSON.stringify({ bookingId: Number(bookingId), paymentKey: params.get("paymentKey"), orderId: params.get("orderId"), amount: Number(params.get("amount")) }) });
-      document.querySelector("#paymentConfirmResult").textContent = `결제 승인이 저장되었습니다. 결제 ID: ${result.paymentId || "-"}`;
+      const result = await request("/api/payment/toss/confirm", { method: "POST", body: JSON.stringify({ bookingId: Number(bookingId), paymentKey: params.get("paymentKey"), orderId: params.get("orderId"), amount: Number(params.get("amount")) }) });
+      const saved = await request("/api/payment", {
+        method: "PATCH",
+        body: JSON.stringify({
+          ...result,
+          paymentId: result.paymentId || Number(paymentId),
+          bookingId: Number(bookingId),
+          booking: { bookingId: Number(bookingId) },
+          paymentStatus: "Paid",
+          totalAmount: Number(params.get("amount")),
+          currency: result.currency || "KRW",
+          orderId: params.get("orderId"),
+          paymentKey: params.get("paymentKey"),
+          provider: "TOSS"
+        })
+      });
+      document.querySelector("#paymentConfirmResult").textContent = `결제 승인이 저장되었습니다. 결제 ID: ${saved.paymentId || result.paymentId || "-"}`;
     } else {
       if (!params.get("orderId")) {
         document.querySelector("#paymentConfirmResult").className = "message error toss-note";
         document.querySelector("#paymentConfirmResult").textContent = "토스 실패 저장에 필요한 orderId가 없습니다.";
         return;
       }
-      await request("/api/payments/toss/fail", { method: "POST", body: JSON.stringify({ orderId: params.get("orderId"), code, message }) });
+      const result = await request("/api/payment/toss/fail", { method: "POST", body: JSON.stringify({ orderId: params.get("orderId"), code, message }) });
+      await request("/api/payment", {
+        method: "PATCH",
+        body: JSON.stringify({
+          ...result,
+          paymentId: result.paymentId || Number(paymentId),
+          bookingId: result.bookingId || (bookingId ? Number(bookingId) : null),
+          booking: result.bookingId || bookingId ? { bookingId: result.bookingId || Number(bookingId) } : undefined,
+          paymentStatus: "Failed",
+          orderId: params.get("orderId"),
+          failCode: code,
+          failMessage: message
+        })
+      });
       document.querySelector("#paymentConfirmResult").textContent = "결제 실패 정보가 저장되었습니다.";
     }
   } catch (error) {
@@ -555,10 +629,10 @@ async function paymentResultPage(status) {
 
 async function loadPayments(selector, admin = false) {
   try {
-    const payments = pageItems(await request("/api/payments"));
+    const payments = pageItems(await request("/api/payment"));
     document.querySelector(selector).innerHTML = payments.length ? `<div class="table-wrap"><table><thead><tr><th>ID</th><th>예약</th><th>상태</th><th>금액</th><th>수단</th>${admin ? "<th></th>" : ""}</tr></thead><tbody>${payments.map((p) => `<tr><td>${p.paymentId}</td><td>${p.bookingId || p.booking?.bookingId || "-"}</td><td>${escapeHtml(p.paymentStatus)}</td><td>${money(p.totalAmount)}</td><td>${escapeHtml(p.paymentMethod)}</td>${admin ? `<td><button class="btn danger" data-delete-payment="${p.paymentId}">삭제</button></td>` : ""}</tr>`).join("")}</tbody></table></div>` : empty("등록된 결제가 없습니다.");
     document.querySelectorAll("[data-delete-payment]").forEach((btn) => btn.addEventListener("click", async () => {
-      await request(`/api/payments/${btn.dataset.deletePayment}`, { method: "DELETE" });
+      await request(`/api/payment/${btn.dataset.deletePayment}`, { method: "DELETE" });
       toast("삭제되었습니다.");
       loadPayments(selector, admin);
     }));
@@ -705,7 +779,7 @@ async function adminDashboard() {
     const scope = getHotelScope();
     const visibleHotels = scope ? hotels.filter((h) => String(h.hotelId) === String(scope)) : hotels;
     const [payments, promotions, reviews] = await Promise.all([
-      request("/api/payments").then(pageItems).catch(() => []),
+      request("/api/payment").then(pageItems).catch(() => []),
       request("/api/promotion").then(pageItems).catch(() => []),
       request("/api/review?size=100").then(pageItems).catch(() => [])
     ]);
@@ -1069,7 +1143,8 @@ async function seedPage() {
       await request("/api/hoteltrans", { method: "POST", body: JSON.stringify({ hotelId: hotel.hotelId, name: "시청역", time: "도보 5분", depart: "1번 출구" }) });
       const room = await request("/api/room", { method: "POST", body: JSON.stringify({ hotelId: hotel.hotelId, name: "디럭스 더블", number: "1201", floor: 12, size: 32, basePrice: 180000, maxAdult: 2, maxChild: 1, isActive: true, roomType: "Deluxe", roomStatus: "EnableReservation", roomViewOption: "CityView", roomBedOption: "DoubleBed" }) });
       const booking = await request("/api/bookings/insert", { method: "POST", body: JSON.stringify({ userId: user.userId, roomId: room.roomId, guestName: user.name, nationality: "KOREA", guestPhone: user.phone, guestEmail: user.email, specialRequest: "고층 선호", adultCount: 2, childCount: 0, checkinDate: "2026-08-10", checkoutDate: "2026-08-12" }) });
-      const payment = await request("/api/payments/add", { method: "POST", body: JSON.stringify({ bookingId: booking.bookingId, paymentMethod: "CreditCard", paymentStatus: "Paid", totalAmount: 360000, currency: "KRW", discountAmount: 0 }) }).catch(() => null);
+      const seedOrderId = generateTossOrderId(booking.bookingId);
+      const payment = await request("/api/payment", { method: "POST", body: JSON.stringify({ bookingId: booking.bookingId, booking: { bookingId: booking.bookingId }, transactionNum: seedOrderId, orderId: seedOrderId, paymentMethod: "CreditCard", paymentStatus: "Paid", totalAmount: 360000, currency: "KRW", couponId: 0, usedPoint: 0, discountAmount: 0, provider: "TOSS" }) }).catch(() => null);
       await request("/api/promotion", { method: "POST", body: JSON.stringify({ name: "VIP 회원 등급 할인", description: "회원 등급에 따른 할인", disType: "RATE", disValue: "10", startDate: "2026-08-01T00:00:00", endDate: "2026-12-31T23:59:00", resCount: 0, status: "ACTIVE", roomId: room.roomId }) });
       log.innerHTML = `<div class="message">DB 데이터가 추가되었습니다. 호텔 ID ${hotel.hotelId}, 객실 ID ${room.roomId}, 사용자 ID ${user.userId}, 예약 ID ${booking.bookingId}${payment ? "" : "<div class=\"small\">결제 저장은 현재 백엔드 DTO 오류로 건너뛰었습니다.</div>"}</div>`;
     } catch (error) {
