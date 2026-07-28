@@ -130,13 +130,14 @@ public class TestCouponRestController {
     }
 
     @Test
-    @DisplayName("DELETE /api/coupons/{couponId}/{userId} - 쿠폰 삭제")
+    @DisplayName("DELETE /api/coupons/{couponId} - 쿠폰 삭제")
     void deleteCoupon_shouldReturnOk() throws Exception {
 
         when(couponService.deleteById(1L, 2L))
                 .thenReturn(sampleCouponDto);
 
-        mockMvc.perform(delete("/api/coupons/{couponId}/{userId}", 1L, 2L))
+        mockMvc.perform(delete("/api/coupons/{couponId}", 1L)
+                        .param("userId", "2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.responseData.couponId").value(1));
 

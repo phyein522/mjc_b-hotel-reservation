@@ -19,33 +19,34 @@ import java.time.LocalDate;
 public class CouponEntity extends BaseEntity implements ICoupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "coupon_id", comment = "기본키")
     private Long couponId;
 
-    @Column(name = "쿠폰 코드")
+    @Column(nullable = false, length = 100, comment = "쿠폰 코드")
     private String code;
 
-    @Column(name = "쿠폰 이름")
+    @Column(nullable = false, length = 200, comment = "쿠폰 이름")
     private String name;
 
-    @Column(name = "쿠폰 설명")
+    @Column(comment = "쿠폰 설명")
     private String description;
 
-    @Column(name = "할인 종류")
+    @Column(nullable = false, comment = "할인 종류")
     private CouponDiscountTypeEnum discountType;
 
-    @Column(name = "할인 값")
+    @Column(nullable = false, comment = "할인 값")
     private BigDecimal discountValue;
 
-    @Column(name = "최소 주문 금액")
+    @Column(comment = "최소 주문 금액")
     private BigDecimal minOrder;
 
-    @Column(name = "최대 할인 금액")
+    @Column(comment = "최대 할인 금액")
     private BigDecimal maxDiscount;
 
-    @Column(name = "만료일")
+    @Column(nullable = false, comment = "만료일")
     private LocalDate expirationDate;
 
-    @Column(name = "쿠폰 상태")
+    @Column(nullable = false, comment = "쿠폰 상태")
     private CouponStatusEnum status;
 
     @Transient

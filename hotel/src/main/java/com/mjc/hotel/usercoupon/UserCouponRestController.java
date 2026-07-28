@@ -20,6 +20,7 @@ public class UserCouponRestController {
     @Autowired
     private UserCouponService userCouponService;
 
+    // 사용자 쿠폰 목록을 페이지 단위로 조회한다.
     @GetMapping
     public ResponseEntity<ApiResponse<Page<UserCouponDto>>> page(
             @PageableDefault(size = 10, page = 0,
@@ -33,6 +34,8 @@ public class UserCouponRestController {
                 ApiResponse.make(ResponseCode.SELECT_OK, "ok", page)
         );
     }
+
+    // 사용자 쿠폰 ID로 사용자 쿠폰 단건 정보를 조회한다.
     @GetMapping("/{userCouponId}")
     public ResponseEntity<ApiResponse<UserCouponDto>> findById(
             @PathVariable Long userCouponId) {
@@ -44,30 +47,37 @@ public class UserCouponRestController {
         );
     }
 
+    // 관리자 권한을 확인한 뒤 사용자에게 쿠폰을 발급한다.
     @PostMapping
     public ResponseEntity<ApiResponse<UserCouponDto>> insert(
-            @RequestBody UserCouponDto requestDto) {
+            @RequestBody UserCouponDto requestDto,
+            @RequestParam Long userId) {
 
-        UserCouponDto resultDto = this.userCouponService.insert(requestDto);
+        UserCouponDto resultDto = this.userCouponService.insert(requestDto, userId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.make(ResponseCode.INSERT_OK, "ok", resultDto)
         );
     }
+
+    // 관리자 권한을 확인한 뒤 기존 사용자 쿠폰 정보를 수정한다.
     @PatchMapping
     public ResponseEntity<ApiResponse<UserCouponDto>> update(
-            @RequestBody UserCouponDto requestDto) {
+            @RequestBody UserCouponDto requestDto,
+            @RequestParam Long userId) {
 
-        UserCouponDto resultDto = this.userCouponService.update(requestDto);
+        UserCouponDto resultDto = this.userCouponService.update(requestDto, userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.make(ResponseCode.UPDATE_OK, "ok", resultDto)
         );
     }
-    @DeleteMapping("/{userCouponId}/{userId}")
+
+    // 관리자 권한을 확인한 뒤 사용자 쿠폰을 삭제한다.
+    @DeleteMapping("/{userCouponId}")
     public ResponseEntity<ApiResponse<UserCouponDto>> deleteById(
             @PathVariable Long userCouponId,
-            @PathVariable Long userId) {
+            @RequestParam Long userId) {
 
         UserCouponDto resultDto = this.userCouponService.deleteById(userCouponId, userId);
 
