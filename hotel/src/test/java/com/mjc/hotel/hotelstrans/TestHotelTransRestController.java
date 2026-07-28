@@ -95,9 +95,10 @@ public class TestHotelTransRestController {
 	@Test
 	@DisplayName("POST /api/hoteltrans - 호텔 교통 등록 성공")
 	void insertTrans_shouldReturnOk() throws Exception {
-		when(hotelTransService.insert(any(HotelTransDto.class))).thenReturn(SampleHotelTransDto);
+		when(hotelTransService.insert(any(HotelTransDto.class), eq(2L))).thenReturn(SampleHotelTransDto);
 
 		mockMvc.perform(post("/api/hoteltrans")
+						.param("userId", "2")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(SampleHotelTransDto)))
 				.andExpect(status().isCreated())
@@ -107,16 +108,17 @@ public class TestHotelTransRestController {
 				.andExpect(jsonPath("$.responseData.depart").value(SampleHotelTransDto.getDepart()))
 				.andExpect(jsonPath("$.responseData.hotelId").value(SampleHotelTransDto.getHotelId()));
 
-		verify(hotelTransService, times(1)).insert(any(HotelTransDto.class));
+		verify(hotelTransService, times(1)).insert(any(HotelTransDto.class), eq(2L));
 	}
 
 	@Test
 	@DisplayName("PATCH /api/hoteltrans - 호텔 교통 수정 성공")
 	void updateTrans_shouldReturnOk() throws Exception {
 		SampleHotelTransDto.setTime("10:00");
-		when(hotelTransService.update(any(HotelTransDto.class))).thenReturn(SampleHotelTransDto);
+		when(hotelTransService.update(any(HotelTransDto.class), eq(2L))).thenReturn(SampleHotelTransDto);
 
 		mockMvc.perform(patch("/api/hoteltrans")
+						.param("userId", "2")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(SampleHotelTransDto)))
 				.andExpect(status().isOk())
@@ -126,15 +128,16 @@ public class TestHotelTransRestController {
 				.andExpect(jsonPath("$.responseData.depart").value(SampleHotelTransDto.getDepart()))
 				.andExpect(jsonPath("$.responseData.hotelId").value(SampleHotelTransDto.getHotelId()));
 
-		verify(hotelTransService, times(1)).update(any(HotelTransDto.class));
+		verify(hotelTransService, times(1)).update(any(HotelTransDto.class), eq(2L));
 	}
 
 	@Test
 	@DisplayName("DELETE /api/hoteltrans/{transId} - 호텔 교통 삭제 성공")
 	void deleteTrans_shouldReturnNoContent() throws Exception {
-		when(hotelTransService.deleteById(1L)).thenReturn(SampleHotelTransDto);
+		when(hotelTransService.deleteById(1L, 2L)).thenReturn(SampleHotelTransDto);
 
-		mockMvc.perform(delete("/api/hoteltrans/{transId}", 1L))
+		mockMvc.perform(delete("/api/hoteltrans/{transId}", 1L)
+						.param("userId", "2"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.responseData.transId").value(SampleHotelTransDto.getTransId()))
 				.andExpect(jsonPath("$.responseData.name").value(SampleHotelTransDto.getName()))
@@ -142,6 +145,6 @@ public class TestHotelTransRestController {
 				.andExpect(jsonPath("$.responseData.depart").value(SampleHotelTransDto.getDepart()))
 				.andExpect(jsonPath("$.responseData.hotelId").value(SampleHotelTransDto.getHotelId()));
 
-		verify(hotelTransService, times(1)).deleteById(1L);
+		verify(hotelTransService, times(1)).deleteById(1L, 2L);
 	}
 }
