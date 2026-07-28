@@ -2,6 +2,10 @@ package com.mjc.hotel.hotelsimage;
 
 import com.mjc.hotel.common.FileUtil;
 import com.mjc.hotel.hotels.HotelEntity;
+import com.mjc.hotel.hotels.HotelRepository;
+import com.mjc.hotel.user.entity.Role;
+import com.mjc.hotel.user.entity.UserEntity;
+import com.mjc.hotel.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -21,6 +25,12 @@ public class HotelImageService {
 
     @Autowired
     private HotelImageRepository hotelImageRepository;
+
+    @Autowired
+    private HotelRepository hotelRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private FileUtil fileUtil;
@@ -53,7 +63,7 @@ public class HotelImageService {
     }
 
     // 업로드된 호텔 이미지 정보를 DB에 등록한다.
-    public HotelImageResponseDto insert(IHotelImage requestDto) {
+    public HotelImageResponseDto insert(IHotelImage requestDto, Long userId) {
 
         if (requestDto == null) {
             return null;
@@ -62,6 +72,7 @@ public class HotelImageService {
         HotelImageEntity insertEntity =
                 (HotelImageEntity) new HotelImageEntity().copyMembers(requestDto, true);
 
+        validateHotelManager(userId, insertEntity.getHotelId());
         insertEntity.setHotelImageId(null);
 
         HotelImageEntity insertedEntity =
@@ -73,13 +84,25 @@ public class HotelImageService {
         return resultDto;
     }
 
+    // 업로드된 호텔 이미지 정보를 DB에 등록한다.
+    public HotelImageResponseDto insert(IHotelImage requestDto) {
+        return insertWithoutValidation(requestDto);
+    }
+
     // 이미지 파일 업로드와 DB 등록을 한 번에 처리한다.
     public HotelImageResponseDto uploadAndInsert(Long hotelId, MultipartFile file) throws RuntimeException {
 
         HotelImageResponseDto uploadDto = this.upload(hotelId, file);
-        HotelImageResponseDto resultDto = this.insert(uploadDto);
+        HotelImageResponseDto resultDto = this.insertWithoutValidation(uploadDto);
 
         return resultDto;
+    }
+
+    // 관리자 권한을 확인한 뒤 이미지 파일 업로드와 DB 등록을 한 번에 처리한다.
+    public HotelImageResponseDto uploadAndInsert(Long hotelId, MultipartFile file, Long userId) throws RuntimeException {
+
+        validateHotelManager(userId, hotelId);
+        return this.uploadAndInsert(hotelId, file);
     }
 
     // 호텔 이미지 ID로 이미지 정보를 조회한다.
@@ -115,7 +138,7 @@ public class HotelImageService {
     }
 
     // 호텔 이미지의 DB 정보를 수정한다.
-    public HotelImageResponseDto update(IHotelImage requestDto) {
+    public HotelImageResponseDto update(IHotelImage requestDto, Long userId) {
 
         HotelImageResponseDto findDto = this.findById(requestDto.getHotelImageId());
 
@@ -124,6 +147,7 @@ public class HotelImageService {
         HotelImageEntity updateEntity =
                 (HotelImageEntity) new HotelImageEntity().copyMembers(findDto, true);
 
+        validateHotelManager(userId, updateEntity.getHotelId());
         HotelImageEntity updatedEntity =
                 this.hotelImageRepository.save(updateEntity);
 
@@ -134,10 +158,11 @@ public class HotelImageService {
     }
 
     // 기존 이미지 파일을 삭제한 뒤 새 파일로 교체하고 DB 정보를 수정한다.
-    public HotelImageResponseDto uploadAndUpdate(Long hotelImageId, MultipartFile file) throws RuntimeException {
+    public HotelImageResponseDto uploadAndUpdate(Long hotelImageId, MultipartFile file, Long userId) throws RuntimeException {
 
         HotelImageResponseDto findDto = this.findById(hotelImageId);
 
+        validateHotelManager(userId, findDto.getHotelId());
         this.fileUtil.deleteFile(findDto.getPath(), findDto.getStoreName());
 
         HotelImageDto upload = this.upload(findDto.getHotelId(), file);
@@ -157,10 +182,11 @@ public class HotelImageService {
     }
 
     // 이미지 파일과 DB 정보를 함께 삭제하고, 삭제 전 정보를 반환한다.
-    public HotelImageDto deleteById(Long hotelImageId) {
+    public HotelImageDto deleteById(Long hotelImageId, Long userId) {
 
         HotelImageDto findDto = this.findById(hotelImageId);
 
+        validateHotelManager(userId, findDto.getHotelId());
         this.fileUtil.deleteFile(findDto.getPath(), findDto.getStoreName());
 
         this.hotelImageRepository.deleteById(hotelImageId);
@@ -190,5 +216,54 @@ public class HotelImageService {
                 .toList();
 
         return result;
+    }
+
+    private HotelImageResponseDto insertWithoutValidation(IHotelImage requestDto) {
+
+        if (requestDto == null) {
+            return null;
+        }
+
+        HotelImageEntity insertEntity =
+                (HotelImageEntity) new HotelImageEntity().copyMembers(requestDto, true);
+
+        insertEntity.setHotelImageId(null);
+
+        HotelImageEntity insertedEntity =
+                this.hotelImageRepository.save(insertEntity);
+
+        HotelImageResponseDto resultDto =
+                (HotelImageResponseDto) new HotelImageResponseDto().copyMembers(insertedEntity, true);
+
+        return resultDto;
+    }
+
+    // 관리자 또는 해당 호텔 매니저만 호텔 이미지를 관리할 수 있게 검증한다.
+    private void validateHotelManager(Long userId, Long hotelId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("호텔 이미지를 관리할 userId가 필요합니다.");
+        }
+        if (hotelId == null) {
+            throw new IllegalArgumentException("호텔 이미지를 등록할 hotelId가 필요합니다.");
+        }
+
+        UserEntity user = this.userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        if (user.getRole() == Role.ADMIN || user.getRole() == Role.SUPER_ADMIN) {
+            return;
+        }
+
+        if (user.getRole() != Role.HOTEL_MANAGER) {
+            throw new IllegalArgumentException("호텔 관리자만 호텔 이미지를 관리할 수 있습니다.");
+        }
+
+        Long hotelManagerUserId = this.hotelRepository.findById(hotelId)
+                .orElseThrow(() -> new IllegalArgumentException("호텔을 찾을 수 없습니다."))
+                .getUserId();
+
+        if (!hotelManagerUserId.equals(userId)) {
+            throw new IllegalArgumentException("자신이 관리하는 호텔의 이미지만 관리할 수 있습니다.");
+        }
     }
 }

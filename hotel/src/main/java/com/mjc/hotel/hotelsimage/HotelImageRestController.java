@@ -25,16 +25,22 @@ public class HotelImageRestController {
     private HotelImageService hotelImageService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<HotelImageResponseDto>> insert(@RequestPart HotelImageRequestDto requestDto, @RequestPart MultipartFile file) {
-        HotelImageResponseDto resultDto = this.hotelImageService.insert(requestDto);
+    public ResponseEntity<ApiResponse<HotelImageResponseDto>> insert(
+            @RequestPart HotelImageRequestDto requestDto,
+            @RequestPart MultipartFile file,
+            @RequestParam Long userId) {
+        HotelImageResponseDto resultDto = this.hotelImageService.insert(requestDto, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.make(ResponseCode.INSERT_OK, "ok", resultDto)
         );
     }
 
     @PostMapping("/hotel/{hotelId}")
-    public ResponseEntity<ApiResponse<HotelImageResponseDto>> uploadAndInsert(@PathVariable Long hotelId, @RequestPart MultipartFile file) throws RuntimeException {
-        HotelImageResponseDto resultDto = this.hotelImageService.uploadAndInsert(hotelId, file);
+    public ResponseEntity<ApiResponse<HotelImageResponseDto>> uploadAndInsert(
+            @PathVariable Long hotelId,
+            @RequestPart MultipartFile file,
+            @RequestParam Long userId) throws RuntimeException {
+        HotelImageResponseDto resultDto = this.hotelImageService.uploadAndInsert(hotelId, file, userId);
         HotelImageResponseDto result = HotelImageResponseDto.builder().build();
         result.copyMembers(resultDto, true);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.make(ResponseCode.INSERT_OK, "ok", result)
@@ -42,8 +48,10 @@ public class HotelImageRestController {
     }
 
     @PatchMapping
-    public ResponseEntity<ApiResponse<HotelImageResponseDto>> update(@RequestBody HotelImageRequestDto requestDto) {
-        HotelImageResponseDto resultDto = this.hotelImageService.update(requestDto);
+    public ResponseEntity<ApiResponse<HotelImageResponseDto>> update(
+            @RequestBody HotelImageRequestDto requestDto,
+            @RequestParam Long userId) {
+        HotelImageResponseDto resultDto = this.hotelImageService.update(requestDto, userId);
         HotelImageResponseDto result = HotelImageResponseDto.builder().build();
         result.copyMembers(resultDto, true);
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -52,8 +60,11 @@ public class HotelImageRestController {
     }
 
     @PatchMapping("/image/{hotelImageId}")
-    public ResponseEntity<ApiResponse<HotelImageResponseDto>> uploadAndUpdate(@PathVariable Long hotelImageId, @RequestPart MultipartFile file) throws RuntimeException {
-        HotelImageResponseDto resultDto = this.hotelImageService.uploadAndUpdate(hotelImageId, file);
+    public ResponseEntity<ApiResponse<HotelImageResponseDto>> uploadAndUpdate(
+            @PathVariable Long hotelImageId,
+            @RequestPart MultipartFile file,
+            @RequestParam Long userId) throws RuntimeException {
+        HotelImageResponseDto resultDto = this.hotelImageService.uploadAndUpdate(hotelImageId, file, userId);
         HotelImageResponseDto result = HotelImageResponseDto.builder().build();
         result.copyMembers(resultDto, true);
         return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -93,8 +104,10 @@ public class HotelImageRestController {
     }
 
     @DeleteMapping("/{hotelImageId}")
-    public ResponseEntity<ApiResponse<HotelImageDto>> deleteById(@PathVariable Long hotelImageId) {
-        HotelImageDto resultDto = this.hotelImageService.deleteById(hotelImageId);
+    public ResponseEntity<ApiResponse<HotelImageDto>> deleteById(
+            @PathVariable Long hotelImageId,
+            @RequestParam Long userId) {
+        HotelImageDto resultDto = this.hotelImageService.deleteById(hotelImageId, userId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.make(ResponseCode.DELETE_OK, "ok", resultDto)
         );
