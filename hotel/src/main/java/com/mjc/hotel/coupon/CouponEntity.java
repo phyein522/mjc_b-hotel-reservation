@@ -19,6 +19,7 @@ import java.time.LocalDate;
 public class CouponEntity extends BaseEntity implements ICoupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "coupon_id", comment = "기본키")
     private Long couponId;
 
     @Column(comment = "쿠폰 코드")
