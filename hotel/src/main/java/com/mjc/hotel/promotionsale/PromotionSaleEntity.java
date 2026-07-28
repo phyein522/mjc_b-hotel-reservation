@@ -17,6 +17,7 @@ public class PromotionSaleEntity extends BaseEntity implements IPromotionSale {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JoinColumn(name = "promotionSale_id", comment = "기본키")
     private Long proSaleId;
 
     @Column(nullable = false)

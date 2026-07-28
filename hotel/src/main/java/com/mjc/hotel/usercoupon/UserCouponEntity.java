@@ -20,18 +20,19 @@ public class UserCouponEntity extends BaseEntity implements IUserCoupon {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JoinColumn(name = "userCoupon_id", comment = "기본키")
     private Long userCouponId;
 
-    @Column(name = "쿠폰 발급날짜")
+    @Column(comment = "쿠폰 발급날짜")
     private LocalDateTime issuedAt;
 
-    @Column(name = "상태")
+    @Column(comment = "상태")
     private UserCouponStatusEnum userCouponStatus;
 
-    @Column(name = "사용된 시각")
+    @Column(comment = "사용된 시각")
     private LocalDateTime usedAt;
 
-    @Column(name = "처음 결제된 id")
+    @Column(comment = "처음 결제된 id")
     private Long usedPaymentId;
 
     @Transient

@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 public class PromotionEntity extends BaseEntity implements IPromotion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "pro_id", comment = "기본키")
     private Long proId;
 
     @Column(nullable = false)
