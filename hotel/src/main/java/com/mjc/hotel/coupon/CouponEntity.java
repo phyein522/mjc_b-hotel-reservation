@@ -22,19 +22,19 @@ public class CouponEntity extends BaseEntity implements ICoupon {
     @Column(name = "coupon_id", comment = "기본키")
     private Long couponId;
 
-    @Column(comment = "쿠폰 코드")
+    @Column(nullable = false, length = 100, comment = "쿠폰 코드")
     private String code;
 
-    @Column(comment = "쿠폰 이름")
+    @Column(nullable = false, length = 200, comment = "쿠폰 이름")
     private String name;
 
     @Column(comment = "쿠폰 설명")
     private String description;
 
-    @Column(comment = "할인 종류")
+    @Column(nullable = false, comment = "할인 종류")
     private CouponDiscountTypeEnum discountType;
 
-    @Column(comment = "할인 값")
+    @Column(nullable = false, comment = "할인 값")
     private BigDecimal discountValue;
 
     @Column(comment = "최소 주문 금액")
@@ -43,17 +43,17 @@ public class CouponEntity extends BaseEntity implements ICoupon {
     @Column(comment = "최대 할인 금액")
     private BigDecimal maxDiscount;
 
-    @Column(comment = "만료일")
+    @Column(nullable = false, comment = "만료일")
     private LocalDate expirationDate;
 
-    @Column(comment = "쿠폰 상태")
+    @Column(nullable = false, comment = "쿠폰 상태")
     private CouponStatusEnum status;
 
     @Transient
     private Long userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", comment = "기본키")
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
     @Override

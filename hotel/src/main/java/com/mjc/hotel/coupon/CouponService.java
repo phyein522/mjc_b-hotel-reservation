@@ -40,16 +40,18 @@ public class CouponService {
 
         return (CouponDto) new CouponDto().copyMembers(entity, true);
     }
-    // 호텔 기본 정보를 등록하고, 등록 사용자가 호텔 매니저인지 확인한다.
+    // 쿠폰 정보를 검증하고, 요청 사용자가 관리자 권한인지 확인한 뒤 등록한다.
     public CouponDto insert(ICoupon couponDto) {
         CouponEntity insertEntity =
                 (CouponEntity) new CouponEntity().copyMembers(couponDto, true);
-        insertEntity.setCouponId(null);
         validateCoupon(insertEntity);
         validateCouponManager(insertEntity);
+        insertEntity.setCouponId(null);
         CouponEntity insertedEntity = this.couponRepository.save(insertEntity);
         return (CouponDto) new CouponDto().copyMembers(insertedEntity, true);
     }
+
+    // 기존 쿠폰 정보를 검증하고, 요청 사용자가 관리자 권한인지 확인한 뒤 수정한다.
     public CouponDto update(ICoupon couponDto) {
         if (couponDto.getCouponId() == null) {
             throw new IllegalArgumentException("쿠폰 ID가 없습니다.");
@@ -63,16 +65,25 @@ public class CouponService {
         CouponEntity updatedEntity = this.couponRepository.save(updateEntity);
         return (CouponDto) new CouponDto().copyMembers(updatedEntity, true);
     }
+
+    // 쿠폰 ID로 삭제하고, 삭제 전 정보를 반환한다.
+    public CouponDto deleteById(Long couponId) {
+        CouponDto findDto = this.findById(couponId);
+        this.couponRepository.deleteById(couponId);
+        return findDto;
+    }
+
+    // 요청 사용자가 관리자 권한일 때만 쿠폰을 삭제한다.
     public CouponDto deleteById(Long couponId, Long userId) {
 
-        CouponEntity entity = this.couponRepository.findById(couponId)
-                .orElseThrow(() ->
-                        new IllegalArgumentException("쿠폰을 찾을 수 없습니다."));
-        entity.setUserId(userId);
-        validateCouponManager(entity);
-        this.couponRepository.delete(entity);
-        return (CouponDto) new CouponDto().copyMembers(entity, true);
+        CouponDto findDto = this.findById(couponId);
+        findDto.setUserId(userId);
+        validateCouponManager(findDto);
+        this.couponRepository.deleteById(couponId);
+        return findDto;
     }
+
+    // 쿠폰 등록/수정/삭제 요청자가 ADMIN 또는 SUPER_ADMIN 권한인지 검증한다.
     private void validateCouponManager(ICoupon coupon) {
 
         if (coupon.getUserId() == null) {
@@ -91,6 +102,8 @@ public class CouponService {
 
         coupon.setUser(user);
     }
+
+    // 쿠폰 등록/수정에 필요한 필수값과 할인 값, 만료일을 검증한다.
     private void validateCoupon(ICoupon coupon) {
 
         if (coupon.getCode() == null || coupon.getCode().isBlank()) {

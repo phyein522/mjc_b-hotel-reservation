@@ -20,6 +20,7 @@ public class CouponRestController {
     @Autowired
     private CouponService couponService;
 
+    // 쿠폰 목록을 페이지 단위로 조회한다.
     @GetMapping
     public ResponseEntity<ApiResponse<Page<CouponDto>>> page(
             @PageableDefault(size = 10, page = 0,
@@ -34,6 +35,7 @@ public class CouponRestController {
         );
     }
 
+    // 쿠폰 ID로 쿠폰 단건 정보를 조회한다.
     @GetMapping("/{couponId}")
     public ResponseEntity<ApiResponse<CouponDto>> findById(
             @PathVariable Long couponId) {
@@ -45,6 +47,7 @@ public class CouponRestController {
         );
     }
 
+    // 관리자 권한을 확인한 뒤 쿠폰을 등록한다.
     @PostMapping
     public ResponseEntity<ApiResponse<CouponDto>> insert(
             @RequestBody CouponDto requestDto) {
@@ -56,6 +59,7 @@ public class CouponRestController {
         );
     }
 
+    // 관리자 권한을 확인한 뒤 기존 쿠폰 정보를 수정한다.
     @PatchMapping
     public ResponseEntity<ApiResponse<CouponDto>> update(
             @RequestBody CouponDto requestDto) {
@@ -67,10 +71,11 @@ public class CouponRestController {
         );
     }
 
-    @DeleteMapping("/{couponId}/{userId}")
+    // 관리자 권한을 확인한 뒤 쿠폰을 삭제한다.
+    @DeleteMapping("/{couponId}")
     public ResponseEntity<ApiResponse<CouponDto>> deleteById(
             @PathVariable Long couponId,
-            @PathVariable Long userId) {
+            @RequestParam Long userId) {
 
         CouponDto resultDto = this.couponService.deleteById(couponId, userId);
 
