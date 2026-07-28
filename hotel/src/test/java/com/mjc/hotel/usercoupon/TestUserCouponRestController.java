@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -90,10 +91,11 @@ public class TestUserCouponRestController {
     @DisplayName("POST /api/usercoupons - 사용자 쿠폰 등록")
     void insertUserCoupon_shouldReturnCreated() throws Exception {
 
-        when(userCouponService.insert(any(UserCouponDto.class)))
+        when(userCouponService.insert(any(UserCouponDto.class), eq(2L)))
                 .thenReturn(sampleUserCouponDto);
 
         mockMvc.perform(post("/api/usercoupons")
+                        .param("userId", "2")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(sampleUserCouponDto)))
                 .andExpect(status().isCreated())
@@ -102,7 +104,7 @@ public class TestUserCouponRestController {
                 .andExpect(jsonPath("$.responseData.couponId").value(3));
 
         verify(userCouponService, times(1))
-                .insert(any(UserCouponDto.class));
+                .insert(any(UserCouponDto.class), eq(2L));
     }
 
     @Test
@@ -111,27 +113,29 @@ public class TestUserCouponRestController {
 
         sampleUserCouponDto.setUserCouponStatus(UserCouponStatusEnum.USED);
 
-        when(userCouponService.update(any(UserCouponDto.class)))
+        when(userCouponService.update(any(UserCouponDto.class), eq(2L)))
                 .thenReturn(sampleUserCouponDto);
 
         mockMvc.perform(patch("/api/usercoupons")
+                        .param("userId", "2")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(sampleUserCouponDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.responseData.userCouponStatus").value("USED"));
 
         verify(userCouponService, times(1))
-                .update(any(UserCouponDto.class));
+                .update(any(UserCouponDto.class), eq(2L));
     }
 
     @Test
-    @DisplayName("DELETE /api/usercoupons/{userCouponId}/{userId} - 사용자 쿠폰 삭제")
+    @DisplayName("DELETE /api/usercoupons/{userCouponId} - 사용자 쿠폰 삭제")
     void deleteUserCoupon_shouldReturnOk() throws Exception {
 
         when(userCouponService.deleteById(1L, 2L))
                 .thenReturn(sampleUserCouponDto);
 
-        mockMvc.perform(delete("/api/usercoupons/{userCouponId}/{userId}", 1L, 2L))
+        mockMvc.perform(delete("/api/usercoupons/{userCouponId}", 1L)
+                        .param("userId", "2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.responseData.userCouponId").value(1));
 
