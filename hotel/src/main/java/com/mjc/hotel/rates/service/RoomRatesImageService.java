@@ -29,7 +29,7 @@ public class RoomRatesImageService {
     private final FileUtil fileUtil;
 
     // 최대 파일 크기 제한 (5MB)
-    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
+    private static final long MAX_FILE_SIZE = 5242880L;
 
     /**
      * 다중 이미지 업로드 및 DB 저장

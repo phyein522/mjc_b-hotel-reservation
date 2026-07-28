@@ -4,7 +4,6 @@ import com.mjc.hotel.room_images.dto.RoomImageResponseDto;
 import com.mjc.hotel.rooms.enums.RoomBedOption;
 import com.mjc.hotel.rooms.enums.RoomStatus;
 import com.mjc.hotel.rooms.enums.RoomType;
-import com.mjc.hotel.room_images.dto.RoomImageResponseDto;
 import com.mjc.hotel.rooms.enums.RoomViewOption;
 import lombok.*;
 
