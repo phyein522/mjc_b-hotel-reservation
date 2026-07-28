@@ -113,9 +113,10 @@ public class TestHotelAmenRestController {
 	@Test
 	@DisplayName("POST /api/hotelamenities - 호텔 편의시설 등록 성공")
 	void insertHotelAmen_shouldReturnOk() throws Exception {
-		when(hotelAmenService.insert(any(HotelAmenDto.class))).thenReturn(SampleHotelAmenDto);
+		when(hotelAmenService.insert(any(HotelAmenDto.class), eq(2L))).thenReturn(SampleHotelAmenDto);
 
 		mockMvc.perform(post("/api/hotelamenities")
+						.param("userId", "2")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(SampleHotelAmenDto)))
 				.andExpect(status().isCreated())
@@ -127,16 +128,17 @@ public class TestHotelAmenRestController {
 				.andExpect(jsonPath("$.responseData.restaurant").value(SampleHotelAmenDto.getRestaurant()))
 				.andExpect(jsonPath("$.responseData.hotelId").value(SampleHotelAmenDto.getHotelId()));
 
-		verify(hotelAmenService, times(1)).insert(any(HotelAmenDto.class));
+		verify(hotelAmenService, times(1)).insert(any(HotelAmenDto.class), eq(2L));
 	}
 
 	@Test
 	@DisplayName("PATCH /api/hotelamenities - 호텔 편의시설 수정 성공")
 	void updateHotelAmen_shouldReturnOk() throws Exception {
 		SampleHotelAmenDto.setSpa(true);
-		when(hotelAmenService.update(any(HotelAmenDto.class))).thenReturn(SampleHotelAmenDto);
+		when(hotelAmenService.update(any(HotelAmenDto.class), eq(2L))).thenReturn(SampleHotelAmenDto);
 
 		mockMvc.perform(patch("/api/hotelamenities")
+						.param("userId", "2")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(SampleHotelAmenDto)))
 				.andExpect(status().isOk())
@@ -148,15 +150,16 @@ public class TestHotelAmenRestController {
 				.andExpect(jsonPath("$.responseData.restaurant").value(SampleHotelAmenDto.getRestaurant()))
 				.andExpect(jsonPath("$.responseData.hotelId").value(SampleHotelAmenDto.getHotelId()));
 
-		verify(hotelAmenService, times(1)).update(any(HotelAmenDto.class));
+		verify(hotelAmenService, times(1)).update(any(HotelAmenDto.class), eq(2L));
 	}
 
 	@Test
 	@DisplayName("DELETE /api/hotelamenities/{hotelAmenId} - 호텔 편의시설 삭제 성공")
 	void deleteAmenImage_shouldReturnNoContent() throws Exception {
-		when(hotelAmenService.deleteById(1L)).thenReturn(SampleHotelAmenDto);
+		when(hotelAmenService.deleteById(1L, 2L)).thenReturn(SampleHotelAmenDto);
 
-		mockMvc.perform(delete("/api/hotelamenities/{hotelAmenId}", 1L))
+		mockMvc.perform(delete("/api/hotelamenities/{hotelAmenId}", 1L)
+						.param("userId", "2"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.responseData.amenId").value(SampleHotelAmenDto.getAmenId()))
 				.andExpect(jsonPath("$.responseData.wifi").value(SampleHotelAmenDto.getWifi()))
@@ -166,6 +169,6 @@ public class TestHotelAmenRestController {
 				.andExpect(jsonPath("$.responseData.restaurant").value(SampleHotelAmenDto.getRestaurant()))
 				.andExpect(jsonPath("$.responseData.hotelId").value(SampleHotelAmenDto.getHotelId()));
 
-		verify(hotelAmenService, times(1)).deleteById(1L);
+		verify(hotelAmenService, times(1)).deleteById(1L, 2L);
 	}
 }
