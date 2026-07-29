@@ -74,7 +74,7 @@ public class TestHotelImageRestController {
 	@Test
 	@DisplayName("POST /api/hotelimage - 호텔 이미지 등록 성공")
 	void insert_shouldReturnCreated() throws Exception {
-		when(hotelImageService.insert(any(HotelImageRequestDto.class))).thenReturn(SampleHotelImageResponseDto);
+		when(hotelImageService.insert(any(HotelImageRequestDto.class), eq(2L))).thenReturn(SampleHotelImageResponseDto);
 
 		MockMultipartFile requestDtoPart = new MockMultipartFile(
 				"requestDto",
@@ -90,6 +90,7 @@ public class TestHotelImageRestController {
 		);
 
 		mockMvc.perform(multipart("/api/hotelimage")
+						.param("userId", "2")
 						.file(requestDtoPart)
 						.file(filePart))
 				.andExpect(status().isCreated())
@@ -101,13 +102,13 @@ public class TestHotelImageRestController {
 				.andExpect(jsonPath("$.responseData.path").value(SampleHotelImageResponseDto.getPath()))
 				.andExpect(jsonPath("$.responseData.hotelId").value(SampleHotelImageResponseDto.getHotelId()));
 
-		verify(hotelImageService, times(1)).insert(any(HotelImageRequestDto.class));
+		verify(hotelImageService, times(1)).insert(any(HotelImageRequestDto.class), eq(2L));
 	}
 
 	@Test
 	@DisplayName("POST /api/hotelimage/hotel/{hotelId} - 업로드 후 등록 성공")
 	void uploadAndInsert_shouldReturnCreated() throws Exception {
-		when(hotelImageService.uploadAndInsert(eq(10L), any())).thenReturn(SampleHotelImageResponseDto);
+		when(hotelImageService.uploadAndInsert(eq(10L), any(), eq(2L))).thenReturn(SampleHotelImageResponseDto);
 
 		MockMultipartFile filePart = new MockMultipartFile(
 				"file",
@@ -117,6 +118,7 @@ public class TestHotelImageRestController {
 		);
 
 		mockMvc.perform(multipart("/api/hotelimage/hotel/{hotelId}", 10L)
+						.param("userId", "2")
 						.file(filePart))
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.responseData.hotelImageId").value(SampleHotelImageResponseDto.getHotelImageId()))
@@ -127,7 +129,7 @@ public class TestHotelImageRestController {
 				.andExpect(jsonPath("$.responseData.path").value(SampleHotelImageResponseDto.getPath()))
 				.andExpect(jsonPath("$.responseData.hotelId").value(SampleHotelImageResponseDto.getHotelId()));
 
-		verify(hotelImageService, times(1)).uploadAndInsert(eq(10L), any());
+		verify(hotelImageService, times(1)).uploadAndInsert(eq(10L), any(), eq(2L));
 	}
 
 	@Test
@@ -137,9 +139,10 @@ public class TestHotelImageRestController {
 		HotelImageRequestDto requestDto = new HotelImageRequestDto();
 		requestDto.copyMembers(SampleHotelImageResponseDto, true);
 
-		when(hotelImageService.update(any(HotelImageRequestDto.class))).thenReturn(SampleHotelImageResponseDto);
+		when(hotelImageService.update(any(HotelImageRequestDto.class), eq(2L))).thenReturn(SampleHotelImageResponseDto);
 
 		mockMvc.perform(patch("/api/hotelimage")
+						.param("userId", "2")
 						.contentType("application/json")
 						.content(objectMapper.writeValueAsString(requestDto)))
 				.andExpect(status().isOk())
@@ -151,13 +154,13 @@ public class TestHotelImageRestController {
 				.andExpect(jsonPath("$.responseData.path").value(SampleHotelImageResponseDto.getPath()))
 				.andExpect(jsonPath("$.responseData.hotelId").value(SampleHotelImageResponseDto.getHotelId()));
 
-		verify(hotelImageService, times(1)).update(any(HotelImageRequestDto.class));
+		verify(hotelImageService, times(1)).update(any(HotelImageRequestDto.class), eq(2L));
 	}
 
 	@Test
 	@DisplayName("PATCH /api/hotelimage/image/{hotelImageId} - 업로드 후 수정 성공")
 	void uploadAndUpdate_shouldReturnCreated() throws Exception {
-		when(hotelImageService.uploadAndUpdate(eq(1L), any())).thenReturn(SampleHotelImageResponseDto);
+		when(hotelImageService.uploadAndUpdate(eq(1L), any(), eq(2L))).thenReturn(SampleHotelImageResponseDto);
 
 		MockMultipartFile filePart = new MockMultipartFile(
 				"file",
@@ -167,6 +170,7 @@ public class TestHotelImageRestController {
 		);
 
 		mockMvc.perform(multipart(HttpMethod.PATCH, "/api/hotelimage/image/{hotelImageId}", 1L)
+						.param("userId", "2")
 						.file(filePart))
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.responseData.hotelImageId").value(SampleHotelImageResponseDto.getHotelImageId()))
@@ -177,7 +181,7 @@ public class TestHotelImageRestController {
 				.andExpect(jsonPath("$.responseData.path").value(SampleHotelImageResponseDto.getPath()))
 				.andExpect(jsonPath("$.responseData.hotelId").value(SampleHotelImageResponseDto.getHotelId()));
 
-		verify(hotelImageService, times(1)).uploadAndUpdate(eq(1L), any());
+		verify(hotelImageService, times(1)).uploadAndUpdate(eq(1L), any(), eq(2L));
 	}
 
 	@Test
@@ -235,9 +239,10 @@ public class TestHotelImageRestController {
 	@Test
 	@DisplayName("DELETE /api/hotelimage/{hotelImageId} - 삭제 성공")
 	void deleteById_shouldReturnOk() throws Exception {
-		when(hotelImageService.deleteById(1L)).thenReturn(SampleHotelImageDto);
+		when(hotelImageService.deleteById(1L, 2L)).thenReturn(SampleHotelImageDto);
 
-		mockMvc.perform(delete("/api/hotelimage/{hotelImageId}", 1L))
+		mockMvc.perform(delete("/api/hotelimage/{hotelImageId}", 1L)
+						.param("userId", "2"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.responseData.hotelImageId").value(SampleHotelImageDto.getHotelImageId()))
 				.andExpect(jsonPath("$.responseData.fileName").value(SampleHotelImageDto.getFileName()))
@@ -247,7 +252,7 @@ public class TestHotelImageRestController {
 				.andExpect(jsonPath("$.responseData.path").value(SampleHotelImageDto.getPath()))
 				.andExpect(jsonPath("$.responseData.hotelId").value(SampleHotelImageDto.getHotelId()));
 
-		verify(hotelImageService, times(1)).deleteById(1L);
+		verify(hotelImageService, times(1)).deleteById(1L, 2L);
 	}
 
 	@Test

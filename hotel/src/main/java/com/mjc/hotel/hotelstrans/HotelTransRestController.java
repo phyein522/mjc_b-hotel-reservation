@@ -26,24 +26,30 @@ public class HotelTransRestController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<HotelTransDto>> insert(@RequestBody HotelTransDto requestDto) {
-        HotelTransDto resultDto = this.hotelTransService.insert(requestDto);
+    public ResponseEntity<ApiResponse<HotelTransDto>> insert(
+            @RequestBody HotelTransDto requestDto,
+            @RequestParam Long userId) {
+        HotelTransDto resultDto = this.hotelTransService.insert(requestDto, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.make(ResponseCode.INSERT_OK, "ok", resultDto)
         );
     }
 
     @PatchMapping
-    public ResponseEntity<ApiResponse<HotelTransDto>> update(@RequestBody HotelTransDto requestDto) {
-        HotelTransDto resultDto = this.hotelTransService.update(requestDto);
+    public ResponseEntity<ApiResponse<HotelTransDto>> update(
+            @RequestBody HotelTransDto requestDto,
+            @RequestParam Long userId) {
+        HotelTransDto resultDto = this.hotelTransService.update(requestDto, userId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.make(ResponseCode.UPDATE_OK, "ok", resultDto)
         );
     }
 
     @DeleteMapping("/{transId}")
-    public ResponseEntity<ApiResponse<HotelTransDto>> deleteById(@PathVariable Long transId) {
-        HotelTransDto resultDto = this.hotelTransService.deleteById(transId);
+    public ResponseEntity<ApiResponse<HotelTransDto>> deleteById(
+            @PathVariable Long transId,
+            @RequestParam Long userId) {
+        HotelTransDto resultDto = this.hotelTransService.deleteById(transId, userId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.make(ResponseCode.DELETE_OK, "ok", resultDto)
         );
