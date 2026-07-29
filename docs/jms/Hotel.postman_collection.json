@@ -1,21 +1,21 @@
 {
   "info": {
-    "_postman_id": "19a6adef-a3dc-4ca5-99c7-f1dd11b0da9b",
+    "_postman_id": "ea2bfc6f-d249-4f18-a786-1ec1c928e2cc",
     "name": "Hotel",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "53674091"
   },
   "item": [
     {
-      "name": "promotionsale",
+      "name": "usercoupon",
       "item": [
         {
-          "name": "PromotionSale findAll",
+          "name": "UserCoupon findAll",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/promotionsale",
+              "raw": "http://localhost:8989/api/usercoupons",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -23,19 +23,19 @@
               "port": "8989",
               "path": [
                 "api",
-                "promotionsale"
+                "usercoupons"
               ]
             }
           },
           "response": []
         },
         {
-          "name": "PromotionSale findbyid",
+          "name": "UserCoupon findbyid",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/promotionsale/1",
+              "raw": "http://localhost:8989/api/usercoupons/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -43,7 +43,7 @@
               "port": "8989",
               "path": [
                 "api",
-                "promotionsale",
+                "usercoupons",
                 "1"
               ]
             }
@@ -51,13 +51,13 @@
           "response": []
         },
         {
-          "name": "PromotionSale insert",
+          "name": "UserCoupon insert",
           "request": {
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"proId\": 1,\n    \"saleDes\": \"기본 15% + 얼리버드\"\n}",
+              "raw": "{\n    \"userId\": 2,\n    \"couponId\": 1\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -65,7 +65,7 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8989/api/promotionsale",
+              "raw": "http://localhost:8989/api/usercoupons?userId=1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -73,20 +73,26 @@
               "port": "8989",
               "path": [
                 "api",
-                "promotionsale"
+                "usercoupons"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
               ]
             }
           },
           "response": []
         },
         {
-          "name": "PromotionSale Update",
+          "name": "UserCoupon Update",
           "request": {
-            "method": "PUT",
+            "method": "PATCH",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"proId\": 1,\n    \"saleDes\": \"1박당 차감\"\n}",
+              "raw": "{\n    \"userCouponId\": 1,\n    \"userId\": 2,\n    \"couponId\": 1,\n    \"issuedAt\": \"2026-07-16T10:00:00\",\n    \"userCouponStatus\": \"USED\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -94,7 +100,7 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8989/api/promotionsale/1",
+              "raw": "http://localhost:8989/api/usercoupons?userId=1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -102,20 +108,25 @@
               "port": "8989",
               "path": [
                 "api",
-                "promotionsale",
-                "1"
+                "usercoupons"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
               ]
             }
           },
           "response": []
         },
         {
-          "name": "PromotionSale deletebyid",
+          "name": "UserCoupon deletebyid",
           "request": {
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/promotionsale/1",
+              "raw": "http://localhost:8989/api/usercoupons?userId=1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -123,8 +134,13 @@
               "port": "8989",
               "path": [
                 "api",
-                "promotionsale",
-                "1"
+                "usercoupons"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -484,512 +500,6 @@
       ]
     },
     {
-      "name": "hotelsimage",
-      "item": [
-        {
-          "name": "Image findbyid",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8989/api/hotelimage/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotelimage",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Image insert",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "formdata",
-              "formdata": [
-                {
-                  "key": "file",
-                  "type": "file",
-                  "uuid": "d95c0f7b-1783-490f-a70b-f3ae714d21d2",
-                  "src": "/C:/Temp/hotel_test/room2.jpeg"
-                }
-              ]
-            },
-            "url": {
-              "raw": "http://localhost:8989/api/hotelimage/hotel/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotelimage",
-                "hotel",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Image Update",
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "body": {
-              "mode": "formdata",
-              "formdata": [
-                {
-                  "key": "file",
-                  "type": "file",
-                  "uuid": "978339d6-114e-4f21-9b31-7ea6b61eb3bf",
-                  "src": "/Users/minsang/Desktop/hotel2.jpg"
-                }
-              ]
-            },
-            "url": {
-              "raw": "http://localhost:8989/api/hotelimage/image/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotelimage",
-                "image",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Image deletebyid",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8989/api/hotelimage/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotelimage",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "hoteltrans",
-      "item": [
-        {
-          "name": "transfindAll",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8989/api/hoteltrans",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hoteltrans"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "transfindbyid",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8989/api/hoteltrans/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hoteltrans",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "transinsert",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"transName\": \"지하철\",\n    \"transDepart\": \"서울역\",\n    \"transTime\": \"10분\",\n    \"hotelId\": 1\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "http://localhost:8989/api/hoteltrans",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hoteltrans"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "transUpdate",
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"transName\": \"자동차\",\n    \"transDepart\": \"용산역\",\n    \"transTime\": \"30분\",\n    \"hotelId\": 1\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "http://localhost:8989/api/hoteltrans/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hoteltrans",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "deletebyid",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8989/api/hotelimage/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotelimage",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "hotelAttr",
-      "item": [
-        {
-          "name": "attrfindAll",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8989/api/hotelattr",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotelattr"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "attrfindbyid",
-          "protocolProfileBehavior": {
-            "disableBodyPruning": true
-          },
-          "request": {
-            "method": "GET",
-            "header": [],
-            "body": {
-              "mode": "formdata",
-              "formdata": [
-                {
-                  "key": "",
-                  "type": "file",
-                  "uuid": "d95c0f7b-1783-490f-a70b-f3ae714d21d2",
-                  "src": "/Users/minsang/Desktop/hotel1.jpg"
-                }
-              ]
-            },
-            "url": {
-              "raw": "http://localhost:8989/api/hotelattr/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotelattr",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "attrinsert",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"context\": \"무료취소\",\n    \"hotelId\": 1\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "http://localhost:8989/api/hotelattr",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotelattr"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "attrUpdate",
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"context\": \"한강뷰\",\n    \"hotelId\": 1\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "http://localhost:8989/api/hotelattr/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotelattr",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "attrdeletebyid",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8989/api/hotelattr/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotelattr",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "hotelsamen",
-      "item": [
-        {
-          "name": "amenfindAll",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:33000/api/hotelimages/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "33000",
-              "path": [
-                "api",
-                "hotelimages",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "amenfindbyid",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8989/api/hotelamenities/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotelamenities",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "ameninsert",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"wifi\": true,\n    \"pool\": true,\n    \"health\": true,\n    \"spa\": true,\n    \"restaurant\": true,\n    \"balletParking\": true,\n    \"bar\": true,\n    \"hotelId\": 1\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "http://localhost:8989/api/hotelamenities",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotelamenities"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "amenUpdate",
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"wifi\": false,\n    \"pool\": true,\n    \"health\": false,\n    \"spa\": true,\n    \"restaurant\": false,\n    \"balletParking\": false,\n    \"bar\": true,\n    \"hotelId\": 1\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "http://localhost:8989/api/hotelamenities/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotelamenities",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "amendeletebyid",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8989/api/hotelamenities/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "hotelamenities",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
       "name": "Reviews",
       "item": [
         {
@@ -1327,124 +837,6 @@
               ]
             },
             "description": "Generated from cURL: curl -X DELETE http://localhost:8181/api/user/1"
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "promotion",
-      "item": [
-        {
-          "name": "Promotion findAll",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8989/api/promotion",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "promotion"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Promotion findbyid",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8989/api/promotion/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "promotion",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Promotion insert",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"roomId\": 1,\n    \"name\": \"여름 성수기 특가\",\n    \"description\": \"얼리버드 예약 시 최대 30% 할인\",\n    \"disType\": \"RATE\",\n    \"disValue\": 30,\n    \"startDate\": \"2026-07-01T00:00:00\",\n    \"endDate\": \"2026-08-31T23:59:59\",\n    \"resCount\": 0,\n    \"status\": \"ACTIVE\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "http://localhost:8989/api/promotion/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "promotion",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Promotion Update",
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8989/api/promotion/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "promotion",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Promotion deletebyid",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8989/api/promotion/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8989",
-              "path": [
-                "api",
-                "promotion",
-                "1"
-              ]
-            }
           },
           "response": []
         }
@@ -2026,6 +1418,585 @@
       ]
     },
     {
+      "name": "payment",
+      "item": [
+        {
+          "name": "getPayments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:8989/api/payment",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "payment"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "payment insert",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"paymentId\":null\r\n    , \"bookingId\": 4\r\n    , \"transactionNum\":\"1234567890123456789\"\r\n    , \"paymentMethod\":\"CreditCard\"\r\n    , \"paymentStatus\":\"Paid\"\r\n    , \"totalAmount\":\"99000\"\r\n    , \"currency\":\"KRW\"\r\n    , \"approvedAt\":\"2026-07-22T00:00:00\"\r\n    , \"cancelledAt\":\"\"\r\n    , \"cardCompany\":\"\"\r\n    , \"cardNumber\":\"12345678****1234\"\r\n    , \"couponId\":\"\"\r\n    , \"usedPoint\":\"0\"\r\n    , \"discountAmount\":\"0\"\r\n    , \"pgTransactionId\":\"\"\r\n    , \"orderId\":\"123456785122478987\"\r\n    , \"paymentKey\":\"SN-2026-0724-9925\"\r\n    , \"provider\":\"\"\r\n    , \"receiptUrl\":\"http://www.www.com\"\r\n    , \"failCode\":\"\"\r\n    , \"failMessage\": \"\"\r\n    , \"createdAt\": \"\"\r\n    , \"modifiedAt\": \"\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:8989/api/payment",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "payment"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "payment findById",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:8989/api/payment/1",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "payment",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "payment update",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"paymentId\": 1\r\n    , \"bookingId\": 1\r\n    , \"transactionNum\":\"1234567890123456789\"\r\n    , \"paymentMethod\":\"CreditCard\"\r\n    , \"paymentStatus\":\"Paid\"\r\n    , \"totalAmount\":\"35000\"\r\n    , \"currency\":\"KRW\"\r\n    , \"approvedAt\":\"2026-07-22T00:00:00\"\r\n    , \"cancelledAt\":\"\"\r\n    , \"cardCompany\":\"\"\r\n    , \"cardNumber\":\"12345678****1234\"\r\n    , \"couponId\":\"\"\r\n    , \"usedPoint\":\"0\"\r\n    , \"discountAmount\":\"0\"\r\n    , \"pgTransactionId\":\"\"\r\n    , \"orderId\":\"123456789000123456\"\r\n    , \"paymentKey\":\"123456789000123456\"\r\n    , \"provider\":\"\"\r\n    , \"receiptUrl\":\"http://www.www.com\"\r\n    , \"failCode\":\"\"\r\n    , \"failMessage\": \"\"\r\n    , \"createdAt\": \"\"\r\n    , \"modifiedAt\": \"\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:8989/api/payment",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "payment"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "toss payment confirm",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"bookingId\": 4\r\n    , \"paymentKey\": \"SN-2026-0724-9925\"\r\n    , \"orderId\": \"123456785122478987\"\r\n    , \"amount\": 99000\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:8989/api/payment/toss/confirm",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "payment",
+                "toss",
+                "confirm"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "coupon",
+      "item": [
+        {
+          "name": "Coupon findAll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/coupons",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "coupons"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Coupon findbyid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/coupons/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "coupons",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Coupon insert",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"code\": \"SUMMER2026\",\n    \"name\": \"여름 할인\",\n    \"description\": \"여름 이벤트 쿠폰\",\n    \"discountType\": \"RATE\",\n    \"discountValue\": 10,\n    \"minOrder\": 50000,\n    \"maxDiscount\": 20000,\n    \"expirationDate\": \"2026-12-31\",\n    \"status\": \"ACTIVE\",\n    \"userId\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/coupons",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "coupons"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Coupon Update",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"couponId\": 1,\n    \"code\": \"SUMMER2026\",\n    \"name\": \"여름 할인 수정\",\n    \"description\": \"수정된 쿠폰\",\n    \"discountType\": \"RATE\",\n    \"discountValue\": 15,\n    \"minOrder\": 50000,\n    \"maxDiscount\": 30000,\n    \"expirationDate\": \"2026-12-31\",\n    \"status\": \"ACTIVE\",\n    \"userId\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/coupons",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "coupons"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Coupon deletebyid",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/coupons/1?userId=1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "coupons",
+                "1"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "promotion",
+      "item": [
+        {
+          "name": "Promotion findAll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/promotion",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotion"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Promotion findbyid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/promotion/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotion",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Promotion insert",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"여름 할인 이벤트\",\n  \"description\": \"여름 시즌 10% 할인\",\n  \"disType\": \"RATE\",\n  \"disValue\": \"10\",\n  \"startDate\": \"2026-07-20T00:00:00\",\n  \"endDate\": \"2026-08-20T23:59:59\",\n  \"resCount\": 0,\n  \"status\": \"ACTIVE\",\n  \"roomId\": 1,\n  \"userId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/promotion/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotion",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Promotion Update",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"여름 이벤트\",\n  \"description\": \"여름 시즌 10% 할인\",\n  \"disType\": \"RATE\",\n  \"disValue\": \"10\",\n  \"startDate\": \"2026-07-20T00:00:00\",\n  \"endDate\": \"2026-08-20T23:59:59\",\n  \"resCount\": 0,\n  \"status\": \"ACTIVE\",\n  \"roomId\": 1,\n  \"userId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/promotion/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotion",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Promotion deletebyid",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/promotion/1?userId=1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotion",
+                "1"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Promotion findbyidwithroom",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/promotion/room/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotion",
+                "room",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "promotionsale",
+      "item": [
+        {
+          "name": "PromotionSale findAll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/promotionsale",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotionsale"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PromotionSale findbyid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/promotionsale/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotionsale",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PromotionSale insert",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"saleDes\": \"무료 조식 제공\",\n  \"proId\": 1,\n  \"userId\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/promotionsale",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotionsale"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PromotionSale Update",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"proSaleId\": 1,\n  \"saleDes\": \"무료 조식 + 객실 업그레이드\",\n  \"proId\": 1,\n  \"userId\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/promotionsale",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotionsale"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PromotionSale deletebyid",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/promotionsale/1?userId=2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "promotionsale",
+                "1"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PromotionSale findbyidwithpromotion",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/promotionsale/promotion/1?page=0&size=10",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "promotionsale",
+                "promotion",
+                "1"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "hotels",
       "item": [
         {
@@ -2190,6 +2161,12 @@
                   "type": "file",
                   "uuid": "43a79799-985d-4246-8501-29a7c7082a71",
                   "src": "/Users/minsang/Desktop/hotel1.jpg"
+                },
+                {
+                  "key": "requestDto",
+                  "value": "{\n  \"name\": \"구름호텔\",\n  \"description\": \"남산 전망 호텔\",\n  \"address\": \"서울특별시 중구 세종대로 1\",\n  \"city\": \"서울\",\n  \"zipCode\": \"04524\",\n  \"phone\": \"02-1234-5678\",\n  \"email\": \"hotel@test.com\",\n  \"checkIn\": \"15:00:00\",\n  \"checkOut\": \"11:00:00\",\n  \"starRate\": 5,\n  \"isActive\": true,\n  \"latitude\": 37.5665,\n  \"longitude\": 126.9780,\n  \"type\": \"HOTEL\",\n  \"userId\": 1\n}",
+                  "type": "text",
+                  "uuid": "1e502b55-8e21-4f7a-9f10-9068fdd0d9fd"
                 }
               ]
             },
@@ -2204,6 +2181,423 @@
                 "api",
                 "hotels",
                 "image"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "hotelsimage",
+      "item": [
+        {
+          "name": "Image findbyid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/hotelimage/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelimage",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Image insert",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "d95c0f7b-1783-490f-a70b-f3ae714d21d2",
+                  "src": "/Users/minsang/Desktop/hotel1.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/hotelimage/hotel/1?userId=1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelimage",
+                "hotel",
+                "1"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Image Update",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "978339d6-114e-4f21-9b31-7ea6b61eb3bf",
+                  "src": "/Users/minsang/Desktop/hotel2.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/hotelimage/image?userId=1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelimage",
+                "image"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Image deletebyid",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/hotelimage/1?userId=1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelimage",
+                "1"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "hoteltrans",
+      "item": [
+        {
+          "name": "transfindAll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/hoteltrans",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hoteltrans"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "transfindbyid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/hoteltrans/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hoteltrans",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "transinsert",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"transName\": \"지하철\",\n    \"transDepart\": \"서울역\",\n    \"transTime\": \"10분\",\n    \"hotelId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/hoteltrans?userId=1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hoteltrans"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "transUpdate",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"transId\": 1,\n  \"name\": \"공항리무진\",\n  \"time\": \"약 50분\",\n  \"depart\": \"인천국제공항\",\n  \"hotelId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/hoteltrans?userId=1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hoteltrans"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "deletebyid",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/hotelimage/1?userId=1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelimage",
+                "1"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "hotelsamen",
+      "item": [
+        {
+          "name": "amenfindAll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:33000/api/hotelimages/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "33000",
+              "path": [
+                "api",
+                "hotelimages",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "amenfindbyid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/hotelamenities/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelamenities",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ameninsert",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hotelId\": 1,\n  \"wifi\": true,\n  \"pool\": true,\n  \"fitnessCenter\": true,\n  \"spa\": false,\n  \"restaurant\": true,\n  \"valetParking\": false,\n  \"freeParking\": true,\n  \"concierge\": true,\n  \"bar\": true,\n  \"breakfast\": true,\n  \"airportShuttle\": false,\n  \"roomService\": true,\n  \"laundry\": true,\n  \"lounge\": false,\n  \"sauna\": false,\n  \"freeCancel\": true,\n  \"petFriendly\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/hotelamenities?userId=1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelamenities"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "amenUpdate",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amenId\": 1,\n  \"hotelId\": 1,\n  \"wifi\": true,\n  \"pool\": false,\n  \"fitnessCenter\": true,\n  \"spa\": true,\n  \"restaurant\": true,\n  \"valetParking\": true,\n  \"freeParking\": true,\n  \"concierge\": true,\n  \"bar\": true,\n  \"breakfast\": true,\n  \"airportShuttle\": true,\n  \"roomService\": true,\n  \"laundry\": true,\n  \"lounge\": true,\n  \"sauna\": true,\n  \"freeCancel\": true,\n  \"petFriendly\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8989/api/hotelamenities?userId=1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelamenities"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "amendeletebyid",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8989/api/hotelamenities/1?userId=1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8989",
+              "path": [
+                "api",
+                "hotelamenities",
+                "1"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
               ]
             }
           },
