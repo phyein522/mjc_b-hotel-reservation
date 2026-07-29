@@ -493,6 +493,9 @@ async function paymentPage() {
         statusEl.textContent = "이미 결제가 완료된 예약입니다.";
         return;
       }
+      const couponId = discount > 0
+        ? Number(couponSelect.selectedOptions?.[0]?.dataset.couponId || 0)
+        : 0;
       const draftPayload = {
         ...(existingPayment || {}),
         paymentId: existingPayment?.paymentId,
@@ -503,7 +506,7 @@ async function paymentPage() {
         paymentStatus: "Ready",
         totalAmount: finalAmount,
         currency: "KRW",
-        couponId: existingPayment?.couponId || 0,
+        couponId,
         usedPoint: existingPayment?.usedPoint || 0,
         discountAmount: discount,
         orderId,
@@ -558,7 +561,7 @@ async function loadPaymentCoupons(userId) {
     const userCoupons = pageItems(await request("/api/usercoupons?size=100"))
       .filter((item) => String(item.userId || item.user?.userId) === String(userId))
       .filter((item) => !item.userCouponStatus || item.userCouponStatus === "AVAILABLE");
-    document.querySelector("#paymentCouponSelect").innerHTML = `<option value="">사용 안 함</option>${userCoupons.map((item) => `<option value="${item.userCouponId}" data-discount-type="${escapeHtml(item.coupon?.discountType || "FIXED")}" data-discount-value="${escapeHtml(item.coupon?.discountValue || 0)}" data-min-order="${escapeHtml(item.coupon?.minOrder || 0)}" data-max-discount="${escapeHtml(item.coupon?.maxDiscount || 0)}">${escapeHtml(item.coupon?.name || `쿠폰 ${item.couponId}`)}</option>`).join("")}`;
+    document.querySelector("#paymentCouponSelect").innerHTML = `<option value="">사용 안 함</option>${userCoupons.map((item) => `<option value="${item.userCouponId}" data-coupon-id="${escapeHtml(item.couponId || item.coupon?.couponId || 0)}" data-discount-type="${escapeHtml(item.coupon?.discountType || "FIXED")}" data-discount-value="${escapeHtml(item.coupon?.discountValue || 0)}" data-min-order="${escapeHtml(item.coupon?.minOrder || 0)}" data-max-discount="${escapeHtml(item.coupon?.maxDiscount || 0)}">${escapeHtml(item.coupon?.name || `쿠폰 ${item.couponId}`)}</option>`).join("")}`;
   } catch {
     document.querySelector("#paymentCouponSelect").innerHTML = `<option value="">쿠폰 불러오기 실패</option>`;
   }
@@ -642,8 +645,14 @@ async function loadPayments(selector, admin = false) {
 }
 
 async function bookingsPage() {
-  userShell("bookings", `${title("예약내역", "사용자 ID별 예약 조회는 백엔드 API에 연결")}<div class="filters"><input id="bookingUserId" type="number" placeholder="사용자 ID"><button class="btn primary" id="bookingLookup">조회</button></div><section class="section" id="bookingList"></section><section class="section card"><div class="card-body"><div class="toolbar" style="margin:0 0 10px"><h2>예약 상세 흐름</h2>${screenOnlyBadge()}</div><div class="grid cols-3"><div class="metric">예약 접수<strong>일정/인원</strong></div><div class="metric">결제 대기<strong>쿠폰 선택</strong></div><div class="metric">투숙 완료<strong>리뷰 작성</strong></div></div></div></section>`);
-  document.querySelector("#bookingLookup").addEventListener("click", () => loadBookings("#bookingList", document.querySelector("#bookingUserId").value, false));
+  const currentUser = getCurrentUser();
+  if (!currentUser?.userId) {
+    const redirect = encodeURIComponent("bookings.html");
+    location.href = `login.html?reason=bookings&redirect=${redirect}`;
+    return;
+  }
+  userShell("bookings", `${title("내 예약내역", `${currentUser.name || currentUser.email || "로그인 회원"}님의 예약을 조회합니다.`)}<section class="section" id="bookingList">${empty("예약 내역을 불러오는 중입니다.")}</section><section class="section card"><div class="card-body"><div class="toolbar" style="margin:0 0 10px"><h2>예약 상세 흐름</h2>${screenOnlyBadge()}</div><div class="grid cols-3"><div class="metric">예약 접수<strong>일정/인원</strong></div><div class="metric">결제 대기<strong>쿠폰 선택</strong></div><div class="metric">투숙 완료<strong>리뷰 작성</strong></div></div></div></section>`);
+  await loadBookings("#bookingList", currentUser.userId, false);
 }
 
 async function couponsPage() {
@@ -653,7 +662,7 @@ async function couponsPage() {
     location.href = `login.html?reason=coupons&redirect=${redirect}`;
     return;
   }
-  userShell("coupons", `${title("쿠폰함", "구현된 쿠폰/회원쿠폰 API에 연결합니다.")}<section class="grid cols-2"><section class="card card-body"><div class="toolbar" style="margin:0 0 10px"><h2>내 쿠폰</h2><span class="status ok">API 연결</span></div><div id="myCoupons">${empty("쿠폰을 불러오는 중입니다.")}</div></section><section class="card card-body"><div class="toolbar" style="margin:0 0 10px"><h2>발급 가능한 쿠폰</h2><span class="status ok">API 연결</span></div><div id="couponCatalog">${empty("쿠폰을 불러오는 중입니다.")}</div></section></section>`);
+  userShell("coupons", `${title("쿠폰함", "관리자가 발급한 내 쿠폰과 전체 쿠폰 정보를 조회합니다.")}<section class="grid cols-2"><section class="card card-body"><div class="toolbar" style="margin:0 0 10px"><h2>내 쿠폰</h2><span class="status ok">API 연결</span></div><div id="myCoupons">${empty("쿠폰을 불러오는 중입니다.")}</div></section><section class="card card-body"><div class="toolbar" style="margin:0 0 10px"><h2>쿠폰 안내</h2><span class="status ok">조회 전용</span></div><div id="couponCatalog">${empty("쿠폰을 불러오는 중입니다.")}</div></section></section>`);
   await loadCoupons(currentUser.userId);
 }
 
@@ -664,18 +673,8 @@ async function loadCoupons(userId) {
       request("/api/usercoupons?size=100").then(pageItems)
     ]);
     const mine = userCoupons.filter((item) => String(item.userId || item.user?.userId) === String(userId));
-    document.querySelector("#myCoupons").innerHTML = mine.length ? `<div class="table-wrap"><table><thead><tr><th>쿠폰</th><th>상태</th><th>발급일</th><th></th></tr></thead><tbody>${mine.map((item) => `<tr><td>${escapeHtml(item.coupon?.name || item.couponId || "-")}</td><td>${escapeHtml(item.userCouponStatus || "-")}</td><td>${escapeHtml(item.issuedAt || "-")}</td><td><button class="btn danger" data-delete-user-coupon="${item.userCouponId}">삭제</button></td></tr>`).join("")}</tbody></table></div>` : empty("보유 쿠폰이 없습니다.");
-    document.querySelector("#couponCatalog").innerHTML = coupons.length ? `<div class="grid">${coupons.map((coupon) => `<article class="message"><div class="toolbar" style="margin:0 0 8px"><strong>${escapeHtml(coupon.name)}</strong><span class="status ${coupon.status === "ACTIVE" ? "ok" : "warn"}">${escapeHtml(coupon.status || "-")}</span></div><p class="muted">${escapeHtml(coupon.description || coupon.code || "")}</p><div class="small">${escapeHtml(coupon.discountType || "-")} ${escapeHtml(coupon.discountValue ?? "-")} · 최소 ${money(coupon.minOrder)} · 만료 ${escapeHtml(coupon.expirationDate || "-")}</div><div class="section"><button class="btn primary" data-issue-coupon="${coupon.couponId}">내 쿠폰으로 등록</button></div></article>`).join("")}</div>` : empty("등록된 쿠폰이 없습니다.");
-    document.querySelectorAll("[data-issue-coupon]").forEach((btn) => btn.addEventListener("click", async () => {
-      await request("/api/usercoupons", { method: "POST", body: JSON.stringify({ userId: Number(userId), couponId: Number(btn.dataset.issueCoupon), userCouponStatus: "AVAILABLE" }) });
-      toast("쿠폰이 등록되었습니다.");
-      loadCoupons(userId);
-    }));
-    document.querySelectorAll("[data-delete-user-coupon]").forEach((btn) => btn.addEventListener("click", async () => {
-      await request(`/api/usercoupons/${btn.dataset.deleteUserCoupon}/${userId}`, { method: "DELETE" });
-      toast("쿠폰이 삭제되었습니다.");
-      loadCoupons(userId);
-    }));
+    document.querySelector("#myCoupons").innerHTML = mine.length ? `<div class="table-wrap"><table><thead><tr><th>쿠폰</th><th>상태</th><th>발급일</th><th>사용일</th><th>결제 ID</th></tr></thead><tbody>${mine.map((item) => `<tr><td>${escapeHtml(item.coupon?.name || item.couponId || "-")}</td><td>${escapeHtml(item.userCouponStatus || "-")}</td><td>${escapeHtml(item.issuedAt || "-")}</td><td>${escapeHtml(item.usedAt || "-")}</td><td>${escapeHtml(item.usedPaymentId || "-")}</td></tr>`).join("")}</tbody></table></div>` : empty("보유 쿠폰이 없습니다.");
+    document.querySelector("#couponCatalog").innerHTML = coupons.length ? `<div class="grid">${coupons.map((coupon) => `<article class="message"><div class="toolbar" style="margin:0 0 8px"><strong>${escapeHtml(coupon.name)}</strong><span class="status ${coupon.status === "ACTIVE" ? "ok" : "warn"}">${escapeHtml(coupon.status || "-")}</span></div><p class="muted">${escapeHtml(coupon.description || coupon.code || "")}</p><div class="small">${escapeHtml(coupon.discountType || "-")} ${escapeHtml(coupon.discountValue ?? "-")} · 최소 ${money(coupon.minOrder)} · 만료 ${escapeHtml(coupon.expirationDate || "-")}</div><div class="small muted section">쿠폰 발급과 상태 변경은 관리자만 처리할 수 있습니다.</div></article>`).join("")}</div>` : empty("등록된 쿠폰이 없습니다.");
   } catch (error) {
     document.querySelector("#myCoupons").innerHTML = errorMessage(error);
     document.querySelector("#couponCatalog").innerHTML = errorMessage(error);
@@ -686,7 +685,7 @@ function loginPage() {
   const params = new URLSearchParams(location.search);
   const redirect = params.get("redirect") || "index.html";
   const reason = params.get("reason");
-  userShell("login", `${title("로그인", "예약은 로그인 상태에서만 진행 가능")}<section class="grid cols-2"><form class="card card-body grid" id="loginForm"><div class="toolbar" style="margin:0"><h2>사용자 ID 로그인</h2><span class="status ok">회원조회 API</span></div>${reason === "booking" ? `<div class="message error">로그인되어 있지 않아 예약을 진행할 수 없습니다. 로그인 후 예약 화면으로 돌아갑니다.</div>` : ""}<label><span>사용자 ID</span><input name="userId" type="number" placeholder="예: 10" required></label><button class="btn primary">로그인</button><a class="small muted" href="signup.html">아직 회원이 아니면 회원가입</a></form><article class="card"><div class="card-body"><h2>예약에 사용되는 정보</h2><p class="muted">로그인하면 회원 API에서 가져온 이름, 전화번호, 이메일이 예약자 정보로 자동 입력됩니다.</p><div class="grid"><span class="pill">사용자 ID</span><span class="pill">이름</span><span class="pill">연락처</span><span class="pill">이메일</span></div></div></article></section><div class="section" id="loginResult"></div>`);
+  userShell("login", `${title("로그인", "예약은 로그인 상태에서만 진행 가능")}<section class="grid cols-2"><form class="card card-body grid" id="loginForm"><div class="toolbar" style="margin:0"><h2>사용자 ID 로그인</h2><span class="status ok">회원조회 API</span></div>${reason === "booking" ? `<div class="message error">로그인되어 있지 않아 예약을 진행할 수 없습니다. 로그인 후 예약 화면으로 돌아갑니다.</div>` : ""}${reason === "bookings" ? `<div class="message error">예약 내역은 로그인한 회원만 확인할 수 있습니다. 로그인 후 내 예약내역으로 돌아갑니다.</div>` : ""}<label><span>사용자 ID</span><input name="userId" type="number" placeholder="예: 10" required></label><button class="btn primary">로그인</button><a class="small muted" href="signup.html">아직 회원이 아니면 회원가입</a></form><article class="card"><div class="card-body"><h2>예약에 사용되는 정보</h2><p class="muted">로그인하면 회원 API에서 가져온 이름, 전화번호, 이메일이 예약자 정보로 자동 입력됩니다.</p><div class="grid"><span class="pill">사용자 ID</span><span class="pill">이름</span><span class="pill">연락처</span><span class="pill">이메일</span></div></div></article></section><div class="section" id="loginResult"></div>`);
   document.querySelector("#loginForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const { userId } = qs(event.currentTarget);
@@ -962,7 +961,8 @@ async function adminSettlement() {
 }
 
 async function adminPromotions() {
-  await adminShell("promotions", `${title("프로모션 관리", "프로모션과 적용 대상 API를 연결합니다.")}<div class="grid cols-2"><form class="card card-body grid" id="promoForm"><div class="toolbar" style="margin:0"><h2>프로모션 추가</h2><span class="status ok">API 연결</span></div><label><span>이름</span><input name="name" required></label><label><span>설명</span><textarea name="description" placeholder="VIP 등급 할인 또는 장기 투숙 할인"></textarea></label><label><span>할인 타입</span><select name="disType"><option>RATE</option><option>AMOUNT</option><option>PACKAGE</option></select></label><label><span>할인값</span><input name="disValue" required></label><label><span>시작</span><input name="startDate" type="datetime-local"></label><label><span>종료</span><input name="endDate" type="datetime-local"></label><label><span>예약횟수</span><input name="resCount" type="number" value="0"></label><label><span>상태</span><select name="status"><option>ACTIVE</option><option>INACTIVE</option><option>EXPIRED</option></select></label><label><span>객실 ID</span><input name="roomId" type="number"></label><label><span>관리자 사용자 ID</span><input name="userId" type="number" value="1"></label><button class="btn primary">프로모션 추가</button></form><section id="promoList">${empty("불러오는 중입니다.")}</section><form class="card card-body grid" id="promoSaleForm"><div class="toolbar" style="margin:0"><h2>프로모션 적용 대상</h2><span class="status ok">API 연결</span></div><label><span>프로모션</span><select name="proId" id="promoSaleProId"></select></label><label><span>대상 설명</span><input name="saleDes" placeholder="VIP 회원, 7박 이상 등" required></label><label><span>사용자 ID</span><input name="userId" type="number" value="1"></label><button class="btn primary">적용 대상 추가</button></form><section id="promoSaleList">${empty("불러오는 중입니다.")}</section><form class="card card-body grid" id="couponForm"><div class="toolbar" style="margin:0"><h2>쿠폰 등록</h2><span class="status ok">API 연결</span></div><label><span>코드</span><input name="code" required></label><label><span>이름</span><input name="name" required></label><label><span>설명</span><textarea name="description"></textarea></label><label><span>할인 타입</span><select name="discountType"><option>FIXED</option><option>RATE</option></select></label><label><span>할인값</span><input name="discountValue" type="number" required></label><label><span>최소 주문</span><input name="minOrder" type="number" value="0"></label><label><span>최대 할인</span><input name="maxDiscount" type="number" value="0"></label><label><span>만료일</span><input name="expirationDate" type="date"></label><label><span>상태</span><select name="status"><option>ACTIVE</option><option>USED</option><option>EXPIRED</option></select></label><label><span>관리자 사용자 ID</span><input name="userId" type="number" value="1"></label><button class="btn primary">쿠폰 등록</button></form><section id="adminCouponList">${empty("불러오는 중입니다.")}</section></div>`);
+  const managerUserId = getCurrentUser()?.userId || 1;
+  await adminShell("promotions", `${title("프로모션 관리", "프로모션, 쿠폰, 회원별 쿠폰 API를 연결합니다.")}<div class="grid cols-2"><form class="card card-body grid" id="promoForm"><div class="toolbar" style="margin:0"><h2>프로모션 추가</h2><span class="status ok">API 연결</span></div><label><span>이름</span><input name="name" required></label><label><span>설명</span><textarea name="description" placeholder="VIP 등급 할인 또는 장기 투숙 할인"></textarea></label><label><span>할인 타입</span><select name="disType"><option>RATE</option><option>AMOUNT</option><option>PACKAGE</option></select></label><label><span>할인값</span><input name="disValue" required></label><label><span>시작</span><input name="startDate" type="datetime-local"></label><label><span>종료</span><input name="endDate" type="datetime-local"></label><label><span>예약횟수</span><input name="resCount" type="number" value="0"></label><label><span>상태</span><select name="status"><option>ACTIVE</option><option>INACTIVE</option><option>EXPIRED</option></select></label><label><span>객실 ID</span><input name="roomId" type="number"></label><label><span>관리자 사용자 ID</span><input name="userId" type="number" value="${managerUserId}"></label><button class="btn primary">프로모션 추가</button></form><section id="promoList">${empty("불러오는 중입니다.")}</section><form class="card card-body grid" id="promoSaleForm"><div class="toolbar" style="margin:0"><h2>프로모션 적용 대상</h2><span class="status ok">API 연결</span></div><label><span>프로모션</span><select name="proId" id="promoSaleProId"></select></label><label><span>대상 설명</span><input name="saleDes" placeholder="VIP 회원, 7박 이상 등" required></label><label><span>사용자 ID</span><input name="userId" type="number" value="${managerUserId}"></label><button class="btn primary">적용 대상 추가</button></form><section id="promoSaleList">${empty("불러오는 중입니다.")}</section><form class="card card-body grid" id="couponForm"><div class="toolbar" style="margin:0"><h2>쿠폰 등록</h2><span class="status ok">API 연결</span></div><label><span>코드</span><input name="code" required></label><label><span>이름</span><input name="name" required></label><label><span>설명</span><textarea name="description"></textarea></label><label><span>할인 타입</span><select name="discountType"><option>FIXED</option><option>RATE</option></select></label><label><span>할인값</span><input name="discountValue" type="number" min="1" required></label><label><span>최소 주문</span><input name="minOrder" type="number" value="0"></label><label><span>최대 할인</span><input name="maxDiscount" type="number" value="0"></label><label><span>만료일</span><input name="expirationDate" type="date" required></label><label><span>상태</span><select name="status"><option>ACTIVE</option><option>USED</option><option>EXPIRED</option></select></label><label><span>관리자 사용자 ID</span><input name="userId" type="number" min="1" value="${managerUserId}" required></label><button class="btn primary">쿠폰 등록</button></form><section id="adminCouponList">${empty("불러오는 중입니다.")}</section><form class="card card-body grid" id="userCouponForm"><div class="toolbar" style="margin:0"><h2>회원 쿠폰 발급</h2><span class="status ok">관리자 API</span></div><label><span>대상 사용자 ID</span><input name="targetUserId" type="number" min="1" required></label><label><span>쿠폰</span><select name="couponId" id="userCouponCouponId" required></select></label><label><span>관리자 사용자 ID</span><input name="managerUserId" id="userCouponManagerId" type="number" min="1" value="${managerUserId}" required></label><button class="btn primary">회원에게 발급</button></form><section id="adminUserCouponList">${empty("회원 쿠폰을 불러오는 중입니다.")}</section></div>`);
   document.querySelector("#promoForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const data = qs(event.currentTarget);
@@ -993,23 +993,43 @@ async function adminPromotions() {
     toast("쿠폰이 등록되었습니다.");
     loadPromotions();
   });
+  document.querySelector("#userCouponForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const data = qs(event.currentTarget);
+    await request(`/api/usercoupons?userId=${encodeURIComponent(data.managerUserId)}`, {
+      method: "POST",
+      body: JSON.stringify({
+        userId: Number(data.targetUserId),
+        couponId: Number(data.couponId)
+      })
+    });
+    toast("회원에게 쿠폰이 발급되었습니다.");
+    event.currentTarget.elements.targetUserId.value = "";
+    loadPromotions();
+  });
   loadPromotions();
 }
 
 async function loadPromotions() {
   try {
-    const [promotions, promotionSales, coupons] = await Promise.all([
+    const [promotions, promotionSales, coupons, userCoupons] = await Promise.all([
       request("/api/promotion?size=100").then(pageItems),
       request("/api/promotionsale?size=100").then(pageItems),
-      request("/api/coupons?size=100").then(pageItems)
+      request("/api/coupons?size=100").then(pageItems),
+      request("/api/usercoupons?size=100").then(pageItems)
     ]);
     const saleSelect = document.querySelector("#promoSaleProId");
     if (saleSelect) {
       saleSelect.innerHTML = promotions.map((p) => `<option value="${p.proId}">${escapeHtml(p.name)}</option>`).join("");
     }
+    const userCouponSelect = document.querySelector("#userCouponCouponId");
+    if (userCouponSelect) {
+      userCouponSelect.innerHTML = coupons.map((coupon) => `<option value="${coupon.couponId}">${escapeHtml(coupon.name)} (${escapeHtml(coupon.code || "-")})</option>`).join("");
+    }
     document.querySelector("#promoList").innerHTML = promotions.length ? `<div class="table-wrap"><table><thead><tr><th>ID</th><th>이름</th><th>할인</th><th>상태</th><th></th></tr></thead><tbody>${promotions.map((p) => `<tr><td>${p.proId}</td><td>${escapeHtml(p.name)}</td><td>${escapeHtml(p.disType)} ${escapeHtml(p.disValue)}</td><td>${escapeHtml(p.status)}</td><td><button class="btn danger" data-delete-promo="${p.proId}">삭제</button></td></tr>`).join("")}</tbody></table></div>` : empty("프로모션 데이터가 없습니다.");
     document.querySelector("#promoSaleList").innerHTML = promotionSales.length ? `<div class="table-wrap"><table><thead><tr><th>ID</th><th>프로모션</th><th>대상</th><th>사용자</th><th></th></tr></thead><tbody>${promotionSales.map((sale) => `<tr><td>${sale.proSaleId}</td><td>${escapeHtml(sale.promotion?.name || sale.proId || "-")}</td><td>${escapeHtml(sale.saleDes || "-")}</td><td>${escapeHtml(sale.userId || "-")}</td><td><button class="btn danger" data-delete-promo-sale="${sale.proSaleId}" data-user-id="${sale.userId || 1}">삭제</button></td></tr>`).join("")}</tbody></table></div>` : empty("프로모션 적용 대상이 없습니다.");
-    document.querySelector("#adminCouponList").innerHTML = coupons.length ? `<div class="table-wrap"><table><thead><tr><th>ID</th><th>쿠폰</th><th>할인</th><th>만료</th><th>상태</th><th></th></tr></thead><tbody>${coupons.map((coupon) => `<tr><td>${coupon.couponId}</td><td>${escapeHtml(coupon.name)}<div class="small muted">${escapeHtml(coupon.code || "")}</div></td><td>${escapeHtml(coupon.discountType)} ${escapeHtml(coupon.discountValue)}</td><td>${escapeHtml(coupon.expirationDate || "-")}</td><td>${escapeHtml(coupon.status || "-")}</td><td><button class="btn danger" data-delete-coupon="${coupon.couponId}" data-user-id="${coupon.userId || 1}">삭제</button></td></tr>`).join("")}</tbody></table></div>` : empty("등록된 쿠폰이 없습니다.");
+    document.querySelector("#adminCouponList").innerHTML = coupons.length ? `<div class="table-wrap"><table><thead><tr><th>ID</th><th>쿠폰</th><th>할인</th><th>만료</th><th>상태</th><th></th></tr></thead><tbody>${coupons.map((coupon) => `<tr><td>${coupon.couponId}</td><td>${escapeHtml(coupon.name)}<div class="small muted">${escapeHtml(coupon.code || "")}</div></td><td>${escapeHtml(coupon.discountType)} ${escapeHtml(coupon.discountValue)}</td><td>${escapeHtml(coupon.expirationDate || "-")}</td><td>${escapeHtml(coupon.status || "-")}</td><td><div class="actions"><button class="btn" data-edit-coupon="${coupon.couponId}">수정</button><button class="btn danger" data-delete-coupon="${coupon.couponId}" data-user-id="${coupon.userId || 1}">삭제</button></div></td></tr>`).join("")}</tbody></table></div>` : empty("등록된 쿠폰이 없습니다.");
+    document.querySelector("#adminUserCouponList").innerHTML = userCoupons.length ? `<div class="table-wrap"><table><thead><tr><th>ID</th><th>회원</th><th>쿠폰</th><th>상태</th><th>사용 결제 ID</th><th></th></tr></thead><tbody>${userCoupons.map((item) => `<tr><td>${item.userCouponId}</td><td>${escapeHtml(item.user?.name || item.userId || "-")}<div class="small muted">ID ${escapeHtml(item.userId || item.user?.userId || "-")}</div></td><td>${escapeHtml(item.coupon?.name || item.couponId || "-")}</td><td><select data-user-coupon-status="${item.userCouponId}"><option ${item.userCouponStatus === "AVAILABLE" ? "selected" : ""}>AVAILABLE</option><option ${item.userCouponStatus === "USED" ? "selected" : ""}>USED</option><option ${item.userCouponStatus === "EXPIRED" ? "selected" : ""}>EXPIRED</option></select></td><td><input data-used-payment-id="${item.userCouponId}" type="number" min="1" value="${escapeHtml(item.usedPaymentId || "")}" placeholder="선택"></td><td><div class="actions"><button class="btn" data-update-user-coupon="${item.userCouponId}" data-target-user-id="${item.userId || item.user?.userId || ""}" data-coupon-id="${item.couponId || item.coupon?.couponId || ""}">상태 저장</button><button class="btn danger" data-delete-user-coupon="${item.userCouponId}">삭제</button></div></td></tr>`).join("")}</tbody></table></div>` : empty("발급된 회원 쿠폰이 없습니다.");
     document.querySelectorAll("[data-delete-promo]").forEach((btn) => btn.addEventListener("click", async () => {
       await request(`/api/promotion/${btn.dataset.deletePromo}?userId=1`, { method: "DELETE" });
       loadPromotions();
@@ -1019,13 +1039,63 @@ async function loadPromotions() {
       loadPromotions();
     }));
     document.querySelectorAll("[data-delete-coupon]").forEach((btn) => btn.addEventListener("click", async () => {
-      await request(`/api/coupons/${btn.dataset.deleteCoupon}/${btn.dataset.userId}`, { method: "DELETE" });
+      await request(`/api/coupons/${btn.dataset.deleteCoupon}?userId=${encodeURIComponent(btn.dataset.userId)}`, { method: "DELETE" });
+      loadPromotions();
+    }));
+    document.querySelectorAll("[data-edit-coupon]").forEach((btn) => btn.addEventListener("click", async () => {
+      const coupon = await request(`/api/coupons/${btn.dataset.editCoupon}`);
+      const name = prompt("쿠폰 이름", coupon.name);
+      if (name == null) return;
+      const discountValue = prompt("할인값", coupon.discountValue);
+      if (discountValue == null) return;
+      const expirationDate = prompt("만료일 (YYYY-MM-DD)", coupon.expirationDate);
+      if (expirationDate == null) return;
+      await request("/api/coupons", {
+        method: "PATCH",
+        body: JSON.stringify({
+          ...coupon,
+          name,
+          discountValue: Number(discountValue),
+          expirationDate,
+          userId: Number(document.querySelector("#userCouponManagerId")?.value || coupon.userId || 1)
+        })
+      });
+      toast("쿠폰이 수정되었습니다.");
+      loadPromotions();
+    }));
+    document.querySelectorAll("[data-update-user-coupon]").forEach((btn) => btn.addEventListener("click", async () => {
+      const userCouponId = btn.dataset.updateUserCoupon;
+      const status = document.querySelector(`[data-user-coupon-status="${userCouponId}"]`).value;
+      const usedPaymentId = document.querySelector(`[data-used-payment-id="${userCouponId}"]`).value;
+      const managerId = document.querySelector("#userCouponManagerId").value;
+      const localNow = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 19);
+      await request(`/api/usercoupons?userId=${encodeURIComponent(managerId)}`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          userCouponId: Number(userCouponId),
+          userId: Number(btn.dataset.targetUserId),
+          couponId: Number(btn.dataset.couponId),
+          userCouponStatus: status,
+          ...(status === "USED" ? { usedAt: localNow } : {}),
+          ...(usedPaymentId ? { usedPaymentId: Number(usedPaymentId) } : {})
+        })
+      });
+      toast("회원 쿠폰 상태가 저장되었습니다.");
+      loadPromotions();
+    }));
+    document.querySelectorAll("[data-delete-user-coupon]").forEach((btn) => btn.addEventListener("click", async () => {
+      const managerId = document.querySelector("#userCouponManagerId").value;
+      await request(`/api/usercoupons/${btn.dataset.deleteUserCoupon}?userId=${encodeURIComponent(managerId)}`, { method: "DELETE" });
+      toast("회원 쿠폰이 삭제되었습니다.");
       loadPromotions();
     }));
   } catch (error) {
     document.querySelector("#promoList").innerHTML = errorMessage(error);
     document.querySelector("#promoSaleList").innerHTML = errorMessage(error);
     document.querySelector("#adminCouponList").innerHTML = errorMessage(error);
+    document.querySelector("#adminUserCouponList").innerHTML = errorMessage(error);
   }
 }
 

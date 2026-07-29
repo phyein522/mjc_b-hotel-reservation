@@ -9,7 +9,12 @@ export async function request(path, options = {}) {
   const text = await response.text();
   const payload = text ? JSON.parse(text) : null;
   if (!response.ok) {
-    const message = payload?.message || payload?.error || response.statusText || "API request failed";
+    const responseDetail = typeof payload?.responseData === "string"
+      ? payload.responseData
+      : typeof payload?.data === "string"
+        ? payload.data
+        : "";
+    const message = responseDetail || payload?.message || payload?.error || response.statusText || "API request failed";
     throw new Error(`${response.status} ${message}`);
   }
   return unwrap(payload);
