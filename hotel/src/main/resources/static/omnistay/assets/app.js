@@ -831,7 +831,9 @@ async function loadAdminHotels() {
     document.querySelectorAll("[data-trans-hotel]").forEach((btn) => btn.addEventListener("click", () => addTrans(btn.dataset.transHotel)));
     document.querySelectorAll("[data-hotel-image-form]").forEach((form) => form.addEventListener("submit", async (event) => {
       event.preventDefault();
-      await uploadImage(`/api/hotelimage/hotel/${form.dataset.hotelImageForm}`, form.elements.file.files[0]);
+      const userId = requireHotelManagerUserId();
+      if (!userId) return;
+      await uploadImage(`/api/hotelimage/hotel/${form.dataset.hotelImageForm}?userId=${encodeURIComponent(userId)}`, form.elements.file.files[0]);
       toast("호텔 이미지가 업로드되었습니다.");
     }));
   } catch (error) {
@@ -839,28 +841,54 @@ async function loadAdminHotels() {
   }
 }
 
-async function uploadImage(path, file) {
+async function uploadImage(path, file, method = "POST") {
   const body = new FormData();
   body.append("file", file);
-  return request(path, { method: "POST", body });
+  return request(path, { method, body });
 }
 
 async function legacyAddAmen(hotelId) {
   const selected = prompt("편의시설 태그를 쉼표로 입력: wifi,pool,breakfast,freeParking");
   if (!selected) return;
+  const userId = requireHotelManagerUserId();
+  if (!userId) return;
   const body = { hotelId: Number(hotelId) };
   selected.split(",").map((v) => v.trim()).filter(Boolean).forEach((key) => body[key] = true);
-  await request("/api/hotelamenities", { method: "POST", body: JSON.stringify(body) });
+  await request(`/api/hotelamenities?userId=${encodeURIComponent(userId)}`, { method: "POST", body: JSON.stringify(body) });
   toast("편의시설이 저장되었습니다.");
 }
 
-async function addTrans(hotelId) {
+function resolveHotelManagerUserId(candidate) {
+  const currentUser = getCurrentUser();
+  const managementRoles = ["ADMIN", "SUPER_ADMIN", "HOTEL_MANAGER"];
+  if (currentUser?.userId && managementRoles.includes(currentUser.role)) {
+    return currentUser.userId;
+  }
+  return candidate || "";
+}
+
+function requireHotelManagerUserId(candidate) {
+  const userId = resolveHotelManagerUserId(candidate);
+  if (!userId) {
+    toast("호텔 관리 작업에는 관리자 사용자 ID가 필요합니다.");
+    return null;
+  }
+  return userId;
+}
+
+async function addTrans(hotelId, managerUserId) {
+  const userId = requireHotelManagerUserId(managerUserId);
+  if (!userId) return;
   const name = prompt("교통 이름");
   if (!name) return;
   const time = prompt("소요 시간") || "";
   const depart = prompt("출발/위치") || "";
-  await request("/api/hoteltrans", { method: "POST", body: JSON.stringify({ hotelId: Number(hotelId), name, time, depart }) });
+  await request(`/api/hoteltrans?userId=${encodeURIComponent(userId)}`, {
+    method: "POST",
+    body: JSON.stringify({ hotelId: Number(hotelId), name, time, depart })
+  });
   toast("교통 정보가 저장되었습니다.");
+  loadAdminHotelsV2();
 }
 
 async function legacyAdminRooms() {
@@ -1207,15 +1235,15 @@ async function seedPage() {
     const log = document.querySelector("#seedLog");
     log.innerHTML = empty("시드 데이터를 추가하는 중입니다.");
     try {
-      const user = await request("/api/users/signup", { method: "POST", body: JSON.stringify({ email: `guest${Date.now()}@omnistay.test`, password: "1234", name: "테스트 고객", phone: "010-0000-0000", role: "CUSTOMER", status: "ACTIVE", membership: "NEW_MEMBER", marketingAgreed: false, point: 0 }) });
+      const user = await request("/api/users/signup", { method: "POST", body: JSON.stringify({ email: `manager${Date.now()}@omnistay.test`, password: "1234", name: "테스트 호텔 관리자", phone: "010-0000-0000", role: "HOTEL_MANAGER", status: "ACTIVE", membership: "NEW_MEMBER", marketingAgreed: false, point: 0 }) });
       const hotel = await request("/api/hotels", { method: "POST", body: JSON.stringify({ name: "그랜드 서울", description: "서울 중심의 비즈니스 호텔", address: "서울 중구 세종대로 1", city: "서울", zipCode: "04524", phone: "02-1000-1000", email: "grand@omnistay.test", checkIn: "15:00", checkOut: "11:00", starRate: 5, isActive: true, latitude: 37.5665, longitude: 126.978, type: "HOTEL", userId: user.userId }) });
-      await request("/api/hotelamenities", { method: "POST", body: JSON.stringify({ hotelId: hotel.hotelId, wifi: true, breakfast: true, fitnessCenter: true, freeParking: true, concierge: true }) });
-      await request("/api/hoteltrans", { method: "POST", body: JSON.stringify({ hotelId: hotel.hotelId, name: "시청역", time: "도보 5분", depart: "1번 출구" }) });
+      await request(`/api/hotelamenities?userId=${encodeURIComponent(user.userId)}`, { method: "POST", body: JSON.stringify({ hotelId: hotel.hotelId, wifi: true, breakfast: true, fitnessCenter: true, freeParking: true, concierge: true }) });
+      await request(`/api/hoteltrans?userId=${encodeURIComponent(user.userId)}`, { method: "POST", body: JSON.stringify({ hotelId: hotel.hotelId, name: "시청역", time: "도보 5분", depart: "1번 출구" }) });
       const room = await request("/api/room", { method: "POST", body: JSON.stringify({ hotelId: hotel.hotelId, name: "디럭스 더블", number: "1201", floor: 12, size: 32, basePrice: 180000, maxAdult: 2, maxChild: 1, isActive: true, roomType: "Deluxe", roomStatus: "EnableReservation", roomViewOption: "CityView", roomBedOption: "DoubleBed" }) });
       const booking = await request("/api/bookings/insert", { method: "POST", body: JSON.stringify({ userId: user.userId, roomId: room.roomId, guestName: user.name, nationality: "KOREA", guestPhone: user.phone, guestEmail: user.email, specialRequest: "고층 선호", adultCount: 2, childCount: 0, checkinDate: "2026-08-10", checkoutDate: "2026-08-12" }) });
       const seedOrderId = generateTossOrderId(booking.bookingId);
       const payment = await request("/api/payment", { method: "POST", body: JSON.stringify({ bookingId: booking.bookingId, booking: { bookingId: booking.bookingId }, transactionNum: seedOrderId, orderId: seedOrderId, paymentMethod: "CreditCard", paymentStatus: "Paid", totalAmount: 360000, currency: "KRW", couponId: 0, usedPoint: 0, discountAmount: 0, provider: "TOSS" }) }).catch(() => null);
-      await request("/api/promotion", { method: "POST", body: JSON.stringify({ name: "VIP 회원 등급 할인", description: "회원 등급에 따른 할인", disType: "RATE", disValue: "10", startDate: "2026-08-01T00:00:00", endDate: "2026-12-31T23:59:00", resCount: 0, status: "ACTIVE", roomId: room.roomId }) });
+      await request("/api/promotion", { method: "POST", body: JSON.stringify({ name: "VIP 회원 등급 할인", description: "회원 등급에 따른 할인", disType: "RATE", disValue: "10", startDate: "2026-08-01T00:00:00", endDate: "2026-12-31T23:59:00", resCount: 0, status: "ACTIVE", roomId: room.roomId, userId: user.userId }) });
       log.innerHTML = `<div class="message">DB 데이터가 추가되었습니다. 호텔 ID ${hotel.hotelId}, 객실 ID ${room.roomId}, 사용자 ID ${user.userId}, 예약 ID ${booking.bookingId}${payment ? "" : "<div class=\"small\">결제 저장은 현재 백엔드 DTO 오류로 건너뛰었습니다.</div>"}</div>`;
     } catch (error) {
       log.innerHTML = errorMessage(error);
@@ -1306,15 +1334,70 @@ async function adminRates() {
 
 const hotelAmenityKeys = ["wifi", "pool", "fitnessCenter", "spa", "restaurant", "valetParking", "freeParking", "concierge", "bar", "breakfast", "airportShuttle", "roomService", "laundry", "lounge", "sauna", "freeCancel", "petFriendly"];
 
-async function addAmen(hotelId) {
+async function addAmen(hotelId, managerUserId) {
+  const userId = requireHotelManagerUserId(managerUserId);
+  if (!userId) return;
   const selected = prompt("편의시설 태그를 쉼표로 입력하세요: wifi,pool,breakfast,freeParking");
   if (!selected) return;
   const existing = pageItems(await request(`/api/hotelamenities/hotel/${hotelId}?size=1`))[0];
   const body = { ...(existing || {}), hotelId: Number(hotelId) };
   hotelAmenityKeys.forEach((key) => body[key] = false);
   selected.split(",").map((value) => value.trim()).filter((value) => hotelAmenityKeys.includes(value)).forEach((key) => body[key] = true);
-  await request("/api/hotelamenities", { method: existing?.amenId ? "PATCH" : "POST", body: JSON.stringify(body) });
+  await request(`/api/hotelamenities?userId=${encodeURIComponent(userId)}`, {
+    method: existing?.amenId ? "PATCH" : "POST",
+    body: JSON.stringify(body)
+  });
   toast("편의시설 태그가 저장되었습니다.");
+  loadAdminHotelsV2();
+}
+
+async function deleteAmenity(amenId, managerUserId) {
+  const userId = requireHotelManagerUserId(managerUserId);
+  if (!userId) return;
+  await request(`/api/hotelamenities/${amenId}?userId=${encodeURIComponent(userId)}`, { method: "DELETE" });
+  toast("편의시설이 삭제되었습니다.");
+  loadAdminHotelsV2();
+}
+
+async function editTransport(transId, managerUserId) {
+  const userId = requireHotelManagerUserId(managerUserId);
+  if (!userId) return;
+  const transport = await request(`/api/hoteltrans/${transId}`);
+  const name = prompt("교통 이름", transport.name || "");
+  if (name == null) return;
+  const time = prompt("소요 시간", transport.time || "");
+  if (time == null) return;
+  const depart = prompt("출발/위치", transport.depart || "");
+  if (depart == null) return;
+  await request(`/api/hoteltrans?userId=${encodeURIComponent(userId)}`, {
+    method: "PATCH",
+    body: JSON.stringify({ ...transport, name, time, depart })
+  });
+  toast("교통 정보가 수정되었습니다.");
+  loadAdminHotelsV2();
+}
+
+async function deleteTransport(transId, managerUserId) {
+  const userId = requireHotelManagerUserId(managerUserId);
+  if (!userId) return;
+  await request(`/api/hoteltrans/${transId}?userId=${encodeURIComponent(userId)}`, { method: "DELETE" });
+  toast("교통 정보가 삭제되었습니다.");
+  loadAdminHotelsV2();
+}
+
+async function replaceHotelImage(hotelImageId, file, managerUserId) {
+  const userId = requireHotelManagerUserId(managerUserId);
+  if (!userId || !file) return;
+  await uploadImage(`/api/hotelimage/image/${hotelImageId}?userId=${encodeURIComponent(userId)}`, file, "PATCH");
+  toast("호텔 이미지가 교체되었습니다.");
+  loadAdminHotelsV2();
+}
+
+async function deleteHotelImage(hotelImageId, managerUserId) {
+  const userId = requireHotelManagerUserId(managerUserId);
+  if (!userId) return;
+  await request(`/api/hotelimage/${hotelImageId}?userId=${encodeURIComponent(userId)}`, { method: "DELETE" });
+  toast("호텔 이미지가 삭제되었습니다.");
   loadAdminHotelsV2();
 }
 
@@ -1338,24 +1421,67 @@ async function editHotel(hotelId) {
 async function loadAdminHotelsV2() {
   try {
     const hotels = pageItems(await request("/api/hotels?size=100"));
-    const details = await Promise.all(hotels.map(async (hotel) => ({ hotel, amenities: pageItems(await request(`/api/hotelamenities/hotel/${hotel.hotelId}?size=1`).catch(() => []))[0] })));
+    const scope = getHotelScope();
+    const visibleHotels = scope
+      ? hotels.filter((hotel) => String(hotel.hotelId) === String(scope))
+      : hotels;
+    const details = await Promise.all(visibleHotels.map(async (hotel) => {
+      const [amenityResponse, transportResponse, imageResponse] = await Promise.all([
+        request(`/api/hotelamenities/hotel/${hotel.hotelId}?size=1`).catch(() => []),
+        request(`/api/hoteltrans/hotel/${hotel.hotelId}?size=100`).catch(() => []),
+        request(`/api/hotelimage/hotel/${hotel.hotelId}?size=100`).catch(() => [])
+      ]);
+      return {
+        hotel,
+        amenities: pageItems(amenityResponse)[0],
+        transports: pageItems(transportResponse),
+        images: pageItems(imageResponse)
+      };
+    }));
     const labels = { wifi: "Wi-Fi", pool: "수영장", fitnessCenter: "피트니스", spa: "스파", restaurant: "레스토랑", valetParking: "발렛", freeParking: "무료 주차", concierge: "컨시어지", bar: "바", breakfast: "조식", airportShuttle: "공항 셔틀", roomService: "룸서비스", laundry: "세탁", lounge: "라운지", sauna: "사우나", freeCancel: "무료 취소", petFriendly: "반려동물" };
-    document.querySelector("#hotelList").innerHTML = details.length ? `<div class="grid">${details.map(({ hotel, amenities }) => { const tags = Object.entries(labels).filter(([key]) => amenities?.[key]).map(([, label]) => `<span class="pill">${label}</span>`).join(""); return `<article class="card"><div class="card-body"><div class="toolbar" style="margin:0"><h3>${escapeHtml(hotel.name)}</h3><div class="form-row"><button class="btn" data-edit-hotel="${hotel.hotelId}">수정</button><button class="btn danger" data-delete-hotel="${hotel.hotelId}" data-manager-id="${hotel.userId || ""}">삭제</button></div></div><p class="muted">${escapeHtml(hotel.address || "")}</p><div class="form-row">${tags || `<span class="small muted">편의시설 태그 없음</span>`}</div><div class="form-row section"><a class="btn" href="rooms.html?hotelId=${hotel.hotelId}">객실</a><button class="btn" data-amen-hotel="${hotel.hotelId}">편의시설 태그</button><button class="btn" data-trans-hotel="${hotel.hotelId}">교통 추가</button></div><form class="form-row section" data-hotel-image-form="${hotel.hotelId}"><input type="file" name="file" accept="image/*" required><button class="btn" type="submit">호텔 이미지</button></form></div></article>`; }).join("")}</div>` : empty("등록된 호텔이 없습니다.");
+    document.querySelector("#hotelList").innerHTML = details.length ? `<div class="grid">${details.map(({ hotel, amenities, transports, images }) => {
+      const managerUserId = resolveHotelManagerUserId(hotel.userId || hotel.user?.userId);
+      const tags = Object.entries(labels).filter(([key]) => amenities?.[key]).map(([, label]) => `<span class="pill">${label}</span>`).join("");
+      const transportRows = transports.length
+        ? transports.map((transport) => `<div class="hotel-resource-row"><div><strong>${escapeHtml(transport.name || "-")}</strong><div class="small muted">${escapeHtml(transport.time || "-")} · ${escapeHtml(transport.depart || "-")}</div></div><div class="form-row"><button class="btn" data-edit-transport="${transport.transId}" data-manager-id="${escapeHtml(managerUserId)}">수정</button><button class="btn danger" data-delete-transport="${transport.transId}" data-manager-id="${escapeHtml(managerUserId)}">삭제</button></div></div>`).join("")
+        : `<span class="small muted">등록된 교통 정보가 없습니다.</span>`;
+      const imageItems = images.length
+        ? images.map((image) => `<div class="hotel-image-item"><img class="hotel-image-thumb" src="/api/hotelimage/image/${image.hotelImageId}" alt="${escapeHtml(image.fileName || hotel.name)}"><div class="small muted">${escapeHtml(image.fileName || `이미지 ${image.hotelImageId}`)}</div><form class="form-row" data-replace-hotel-image="${image.hotelImageId}" data-manager-id="${escapeHtml(managerUserId)}"><input type="file" name="file" accept="image/*" required><button class="btn" type="submit">교체</button><button class="btn danger" type="button" data-delete-hotel-image="${image.hotelImageId}" data-manager-id="${escapeHtml(managerUserId)}">삭제</button></form></div>`).join("")
+        : `<span class="small muted">등록된 호텔 이미지가 없습니다.</span>`;
+      return `<article class="card"><div class="card-body">
+        <div class="toolbar" style="margin:0"><h3>${escapeHtml(hotel.name)}</h3><div class="form-row"><button class="btn" data-edit-hotel="${hotel.hotelId}">수정</button><button class="btn danger" data-delete-hotel="${hotel.hotelId}" data-manager-id="${escapeHtml(managerUserId)}">삭제</button></div></div>
+        <p class="muted">${escapeHtml(hotel.address || "")}</p>
+        <div class="hotel-resource"><div class="toolbar"><h4>편의시설</h4><div class="form-row"><button class="btn" data-amen-hotel="${hotel.hotelId}" data-manager-id="${escapeHtml(managerUserId)}">태그 수정</button>${amenities?.amenId ? `<button class="btn danger" data-delete-amenity="${amenities.amenId}" data-manager-id="${escapeHtml(managerUserId)}">삭제</button>` : ""}</div></div><div class="form-row">${tags || `<span class="small muted">편의시설 태그 없음</span>`}</div></div>
+        <div class="hotel-resource"><div class="toolbar"><h4>교통 정보</h4><button class="btn" data-trans-hotel="${hotel.hotelId}" data-manager-id="${escapeHtml(managerUserId)}">추가</button></div><div class="hotel-resource-list">${transportRows}</div></div>
+        <div class="hotel-resource"><div class="toolbar"><h4>호텔 이미지</h4><a class="btn" href="rooms.html?hotelId=${hotel.hotelId}">객실 관리</a></div><div class="hotel-image-grid">${imageItems}</div><form class="form-row section" data-hotel-image-form="${hotel.hotelId}" data-manager-id="${escapeHtml(managerUserId)}"><input type="file" name="file" accept="image/*" required><button class="btn" type="submit">새 이미지 추가</button></form></div>
+      </div></article>`;
+    }).join("")}</div>` : empty(scope ? "선택한 호텔을 찾을 수 없습니다." : "등록된 호텔이 없습니다.");
     document.querySelectorAll("[data-edit-hotel]").forEach((button) => button.addEventListener("click", () => editHotel(button.dataset.editHotel)));
     document.querySelectorAll("[data-delete-hotel]").forEach((button) => button.addEventListener("click", async () => {
-      const userId = button.dataset.managerId || getCurrentUser()?.userId;
+      const userId = requireHotelManagerUserId(button.dataset.managerId);
       if (!userId) { toast("호텔 삭제에는 관리자 사용자 ID가 필요합니다."); return; }
       await request(`/api/hotels/${button.dataset.deleteHotel}?userId=${encodeURIComponent(userId)}`, { method: "DELETE" });
       toast("호텔이 삭제되었습니다.");
       loadAdminHotelsV2();
     }));
-    document.querySelectorAll("[data-amen-hotel]").forEach((button) => button.addEventListener("click", () => addAmen(button.dataset.amenHotel)));
-    document.querySelectorAll("[data-trans-hotel]").forEach((button) => button.addEventListener("click", () => addTrans(button.dataset.transHotel)));
+    document.querySelectorAll("[data-amen-hotel]").forEach((button) => button.addEventListener("click", () => addAmen(button.dataset.amenHotel, button.dataset.managerId)));
+    document.querySelectorAll("[data-delete-amenity]").forEach((button) => button.addEventListener("click", () => deleteAmenity(button.dataset.deleteAmenity, button.dataset.managerId)));
+    document.querySelectorAll("[data-trans-hotel]").forEach((button) => button.addEventListener("click", () => addTrans(button.dataset.transHotel, button.dataset.managerId)));
+    document.querySelectorAll("[data-edit-transport]").forEach((button) => button.addEventListener("click", () => editTransport(button.dataset.editTransport, button.dataset.managerId)));
+    document.querySelectorAll("[data-delete-transport]").forEach((button) => button.addEventListener("click", () => deleteTransport(button.dataset.deleteTransport, button.dataset.managerId)));
     document.querySelectorAll("[data-hotel-image-form]").forEach((form) => form.addEventListener("submit", async (event) => {
       event.preventDefault();
-      await uploadImage(`/api/hotelimage/hotel/${form.dataset.hotelImageForm}`, form.elements.file.files[0]);
+      const userId = requireHotelManagerUserId(form.dataset.managerId);
+      if (!userId) return;
+      await uploadImage(`/api/hotelimage/hotel/${form.dataset.hotelImageForm}?userId=${encodeURIComponent(userId)}`, form.elements.file.files[0]);
       toast("호텔 이미지가 업로드되었습니다.");
+      loadAdminHotelsV2();
     }));
+    document.querySelectorAll("[data-replace-hotel-image]").forEach((form) => form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      await replaceHotelImage(form.dataset.replaceHotelImage, form.elements.file.files[0], form.dataset.managerId);
+    }));
+    document.querySelectorAll("[data-delete-hotel-image]").forEach((button) => button.addEventListener("click", () => deleteHotelImage(button.dataset.deleteHotelImage, button.dataset.managerId)));
   } catch (error) {
     document.querySelector("#hotelList").innerHTML = errorMessage(error);
   }
