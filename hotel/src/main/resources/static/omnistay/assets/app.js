@@ -571,8 +571,11 @@ async function paymentPage() {
       const orderId = data.bookingNo;
       statusEl.className = "toss-note";
       statusEl.textContent = "결제 정보를 DB에 먼저 저장하는 중입니다.";
-      const existingPayments = pageItems(await request("/api/payment"));
-      const existingPayment = existingPayments.find((item) => String(paymentBookingId(item)) === String(data.bookingId));
+      const existingPayments = pageItems(await request("/api/payment").catch(() => []));
+      const draftStorageKey = `omnistayPaymentDraft:${data.bookingId}`;
+      const storedDraftPaymentId = Number(localStorage.getItem(draftStorageKey) || 0) || null;
+      const existingPayment = existingPayments.find((item) => String(paymentBookingId(item)) === String(data.bookingId))
+        || (storedDraftPaymentId ? { paymentId: storedDraftPaymentId } : null);
       if (existingPayment?.paymentStatus === "Paid") {
         statusEl.className = "message error toss-note";
         statusEl.textContent = "이미 결제가 완료된 예약입니다.";
@@ -598,10 +601,21 @@ async function paymentPage() {
         paymentKey: null,
         provider: "TOSS"
       };
-      const draftPayment = await request("/api/payment", {
-        method: existingPayment?.paymentId ? "PATCH" : "POST",
-        body: JSON.stringify(draftPayload)
-      });
+      let draftPayment;
+      try {
+        draftPayment = await request("/api/payment", {
+          method: existingPayment?.paymentId ? "PATCH" : "POST",
+          body: JSON.stringify(draftPayload)
+        });
+      } catch (error) {
+        if (!existingPayment?.paymentId) throw error;
+        localStorage.removeItem(draftStorageKey);
+        draftPayload.paymentId = undefined;
+        draftPayment = await request("/api/payment", { method: "POST", body: JSON.stringify(draftPayload) });
+      }
+      if (draftPayment.paymentId) {
+        localStorage.setItem(draftStorageKey, String(draftPayment.paymentId));
+      }
       const query = new URLSearchParams({
         bookingId: data.bookingId,
         paymentId: String(draftPayment.paymentId || ""),
@@ -686,6 +700,7 @@ async function paymentResultPage(status) {
           provider: "TOSS"
         })
       });
+      localStorage.removeItem(`omnistayPaymentDraft:${bookingId}`);
       document.querySelector("#paymentConfirmResult").textContent = `결제 승인이 저장되었습니다. 결제 ID: ${saved.paymentId || result.paymentId || "-"}`;
     } else {
       if (!params.get("orderId")) {
