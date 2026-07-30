@@ -4,8 +4,9 @@ import com.mjc.hotel.user.dto.UserDto;
 import com.mjc.hotel.user.entity.UserEntity;
 import com.mjc.hotel.user.repository.UserRepository;
 import com.mjc.hotel.user.service.UserService;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,17 +22,24 @@ import static org.mockito.Mockito.when;
 class UserServicePasswordTest {
     @Mock UserRepository userRepository;
 
-    @Test
-    void insertStoresBcryptPassword() {
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "member@gmail.com",
+            "member@naver.com",
+            "member@daum.net",
+            "member@outlook.com",
+            "member@hotel.example"
+    })
+    void insertAcceptsAnyValidEmailDomainAndStoresBcryptPassword(String email) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         UserService userService = new UserService(this.userRepository, passwordEncoder);
         UserDto request = UserDto.builder()
-                .email("user@example.com")
+                .email(email)
                 .password("plain-password")
                 .name("User")
                 .phone("010-1234-5678")
                 .build();
-        when(this.userRepository.existsByEmailIgnoreCase("user@example.com")).thenReturn(false);
+        when(this.userRepository.existsByEmailIgnoreCase(email)).thenReturn(false);
         when(this.userRepository.save(any(UserEntity.class))).thenAnswer(invocation -> {
             UserEntity entity = invocation.getArgument(0);
             entity.setUserId(1L);

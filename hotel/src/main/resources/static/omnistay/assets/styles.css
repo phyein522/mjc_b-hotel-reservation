@@ -159,6 +159,26 @@ button, input, select, textarea {
   justify-content: center;
   overflow: hidden;
 }
+.google-login-fallback {
+  width: min(320px, 100%);
+  min-height: 44px;
+  border: 1px solid #747775;
+  border-radius: 4px;
+  background: #fff;
+  color: #1f1f1f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font: 500 14px Arial, sans-serif;
+  cursor: pointer;
+}
+.google-login-fallback:hover { background: #f8fafd; }
+.google-login-mark {
+  color: #4285f4;
+  font-size: 18px;
+  font-weight: 700;
+}
 .auth-status {
   min-height: 18px;
   margin: 0;

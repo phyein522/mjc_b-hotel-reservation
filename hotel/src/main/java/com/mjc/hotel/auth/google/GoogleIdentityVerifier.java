@@ -46,7 +46,19 @@ public class GoogleIdentityVerifier {
             String name = payload.get("name") instanceof String value && StringUtils.hasText(value)
                     ? value
                     : email.substring(0, email.indexOf('@'));
-            return new GoogleProfile(payload.getSubject(), email.trim().toLowerCase(), name, true);
+            String normalizedEmail = email.trim().toLowerCase();
+            String hostedDomain = payload.get("hd") instanceof String hostedDomainValue
+                    ? hostedDomainValue
+                    : "";
+            boolean emailAuthoritative = normalizedEmail.endsWith("@gmail.com")
+                    || StringUtils.hasText(hostedDomain);
+            return new GoogleProfile(
+                    payload.getSubject(),
+                    normalizedEmail,
+                    name,
+                    true,
+                    emailAuthoritative
+            );
         } catch (GeneralSecurityException | IOException ex) {
             throw new IllegalArgumentException("Google ID 토큰 검증에 실패했습니다.", ex);
         }

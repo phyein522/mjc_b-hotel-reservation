@@ -138,6 +138,31 @@ class AuthServiceTest {
     }
 
     @Test
+    void sendEmailCodeWithoutMailConfigurationUsesClientErrorInsteadOfServiceUnavailable() {
+        AuthService serviceWithoutMail = new AuthService(
+                this.emailVerificationRepository,
+                this.userRepository,
+                this.userService,
+                this.mailSender,
+                this.googleIdentityVerifier,
+                this.passwordEncoder,
+                "",
+                "test-secret",
+                10,
+                30,
+                60,
+                5
+        );
+        when(this.userRepository.existsByEmailIgnoreCase("user@naver.com")).thenReturn(false);
+
+        assertThatThrownBy(() -> serviceWithoutMail.sendEmailCode(
+                new EmailCodeRequest("user@naver.com")
+        )).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("일반 이메일 회원가입");
+        verify(this.mailSender, never()).send(any(SimpleMailMessage.class));
+    }
+
+    @Test
     void verifyEmailCodeRejectsExpiredCode() {
         EmailVerificationEntity expired = EmailVerificationEntity.builder()
                 .email("user@example.com")
@@ -157,7 +182,13 @@ class AuthServiceTest {
 
     @Test
     void googleLoginCreatesUserFromVerifiedGoogleProfile() {
-        GoogleProfile profile = new GoogleProfile("google-subject", "user@example.com", "테스트 사용자", true);
+        GoogleProfile profile = new GoogleProfile(
+                "google-subject",
+                "user@example.com",
+                "테스트 사용자",
+                true,
+                false
+        );
         when(this.googleIdentityVerifier.verify("credential")).thenReturn(profile);
         when(this.userRepository.findByGoogleSubject("google-subject")).thenReturn(Optional.empty());
         when(this.userRepository.findByEmailIgnoreCase("user@example.com")).thenReturn(Optional.empty());
@@ -179,16 +210,52 @@ class AuthServiceTest {
     }
 
     @Test
-    void googleLoginDoesNotAutoLinkExistingEmailAccount() {
-        GoogleProfile profile = new GoogleProfile("google-subject", "user@example.com", "테스트 사용자", true);
+    void googleLoginLinksExistingAuthoritativeGoogleEmailAccount() {
+        GoogleProfile profile = new GoogleProfile(
+                "google-subject",
+                "user@gmail.com",
+                "테스트 사용자",
+                true,
+                true
+        );
+        UserEntity existingUser = UserEntity.builder()
+                .userId(9L)
+                .email("user@gmail.com")
+                .password(this.passwordEncoder.encode("password"))
+                .status(Status.ACTIVE)
+                .emailVerified(true)
+                .build();
         when(this.googleIdentityVerifier.verify("credential")).thenReturn(profile);
         when(this.userRepository.findByGoogleSubject("google-subject")).thenReturn(Optional.empty());
-        when(this.userRepository.findByEmailIgnoreCase("user@example.com"))
-                .thenReturn(Optional.of(UserEntity.builder().email("user@example.com").build()));
+        when(this.userRepository.findByEmailIgnoreCase("user@gmail.com"))
+                .thenReturn(Optional.of(existingUser));
+        when(this.userRepository.save(existingUser)).thenReturn(existingUser);
+
+        UserDto result = this.authService.loginWithGoogle(new GoogleLoginRequest("credential"));
+
+        assertThat(result.getUserId()).isEqualTo(9L);
+        assertThat(existingUser.getGoogleSubject()).isEqualTo("google-subject");
+        assertThat(existingUser.getEmailVerified()).isTrue();
+        verify(this.userRepository).save(existingUser);
+    }
+
+    @Test
+    void googleLoginDoesNotAutoLinkNonAuthoritativeThirdPartyEmail() {
+        GoogleProfile profile = new GoogleProfile(
+                "google-subject",
+                "user@naver.com",
+                "테스트 사용자",
+                true,
+                false
+        );
+        when(this.googleIdentityVerifier.verify("credential")).thenReturn(profile);
+        when(this.userRepository.findByGoogleSubject("google-subject")).thenReturn(Optional.empty());
+        when(this.userRepository.findByEmailIgnoreCase("user@naver.com"))
+                .thenReturn(Optional.of(UserEntity.builder().email("user@naver.com").build()));
 
         assertThatThrownBy(() -> this.authService.loginWithGoogle(new GoogleLoginRequest("credential")))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("같은 이메일");
+                .hasMessageContaining("이메일과 비밀번호");
         verify(this.userRepository, never()).save(any());
     }
 }

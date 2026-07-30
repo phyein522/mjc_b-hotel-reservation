@@ -80,7 +80,9 @@ public class AuthService {
             throw new DuplicateEmailException("이미 가입된 이메일입니다.");
         }
         if (!StringUtils.hasText(this.mailFrom)) {
-            throw new AuthenticationServiceException("메일 발신 설정이 없습니다. MAIL_USERNAME 또는 MAIL_FROM을 설정해주세요.");
+            throw new IllegalArgumentException(
+                    "메일 발신 설정이 없어 인증번호를 보낼 수 없습니다. 일반 이메일 회원가입을 이용해주세요."
+            );
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -214,10 +216,23 @@ public class AuthService {
             return sanitize(this.userRepository.save(user));
         }
 
-        if (this.userRepository.findByEmailIgnoreCase(profile.email()).isPresent()) {
-            throw new IllegalArgumentException(
-                    "같은 이메일로 가입된 계정이 있습니다. 기존 사용자 ID 로그인 방식을 이용해주세요."
-            );
+        UserEntity emailUser = this.userRepository.findByEmailIgnoreCase(profile.email()).orElse(null);
+        if (emailUser != null) {
+            if (!profile.emailAuthoritative()) {
+                throw new IllegalArgumentException(
+                        "이 이메일은 기존 이메일과 비밀번호로 로그인해주세요."
+                );
+            }
+            if (StringUtils.hasText(emailUser.getGoogleSubject())
+                    && !emailUser.getGoogleSubject().equals(profile.subject())) {
+                throw new IllegalArgumentException("이미 다른 Google 계정과 연결된 이메일입니다.");
+            }
+            if (emailUser.getStatus() != Status.ACTIVE) {
+                throw new IllegalArgumentException("현재 로그인할 수 없는 계정입니다.");
+            }
+            emailUser.setGoogleSubject(profile.subject());
+            emailUser.setEmailVerified(true);
+            return sanitize(this.userRepository.save(emailUser));
         }
 
         UserEntity newUser = UserEntity.builder()
