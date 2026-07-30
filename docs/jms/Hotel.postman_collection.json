@@ -57,7 +57,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"userId\": 2,\n    \"couponId\": 1\n}",
+              "raw": "{\n    \"userId\": 2,\n    \"couponId\": 2\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -126,7 +126,7 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/usercoupons?userId=1",
+              "raw": "http://localhost:8989/api/usercoupons/1?userId=1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -134,7 +134,8 @@
               "port": "8989",
               "path": [
                 "api",
-                "usercoupons"
+                "usercoupons",
+                "1"
               ],
               "query": [
                 {
@@ -158,7 +159,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"name\": \"구름4\"\r\n, \"number\": \"204\"\r\n, \"floor\": 2\r\n, \"size\": 14\r\n, \"basePrice\": 99000\r\n, \"maxAdult\": 3\r\n, \"maxChild\": 2\r\n, \"isActive\": true\r\n, \"roomType\": \"Standard\"\r\n, \"roomStatus\": \"EnableReservation\"\r\n, \"roomBedOption\": \"DoubleBed\"\r\n, \"roomViewOption\": \"MountainView\"\r\n, \"hotelId\": 1\r\n}",
+              "raw": "{\r\n  \"name\": \"구름4\"\r\n, \"number\": \"204\"\r\n, \"floor\": 2\r\n, \"size\": 14\r\n, \"basePrice\": 99000\r\n, \"maxAdult\": 3\r\n, \"maxChild\": 2\r\n, \"isActive\": true\r\n, \"roomType\": \"Standard\"\r\n, \"roomStatus\": \"EnableReservation\"\r\n, \"roomBedOption\": \"DoubleBed\"\r\n, \"roomViewOption\": \"MountainView\"\r\n, \"hotelId\": 2\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -902,7 +903,7 @@
             "method": "PATCH",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/bookings/cancel/1",
+              "raw": "http://localhost:8989/api/bookings/cancel/2",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -912,7 +913,7 @@
                 "api",
                 "bookings",
                 "cancel",
-                "1"
+                "2"
               ]
             }
           },
@@ -1598,7 +1599,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"code\": \"SUMMER2026\",\n    \"name\": \"여름 할인\",\n    \"description\": \"여름 이벤트 쿠폰\",\n    \"discountType\": \"RATE\",\n    \"discountValue\": 10,\n    \"minOrder\": 50000,\n    \"maxDiscount\": 20000,\n    \"expirationDate\": \"2026-12-31\",\n    \"status\": \"ACTIVE\",\n    \"userId\": 2\n}",
+              "raw": "{\n    \"code\": \"SPRING2026\",\n    \"name\": \"봄 할인\",\n    \"description\": \"봄 이벤트 쿠폰\",\n    \"discountType\": \"RATE\",\n    \"discountValue\": 13,\n    \"minOrder\": 60000,\n    \"maxDiscount\": 30000,\n    \"expirationDate\": \"2026-12-31\",\n    \"status\": \"ACTIVE\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1606,7 +1607,7 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8989/api/coupons",
+              "raw": "http://localhost:8989/api/coupons?userId=1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -1615,6 +1616,12 @@
               "path": [
                 "api",
                 "coupons"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -1627,7 +1634,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"couponId\": 1,\n    \"code\": \"SUMMER2026\",\n    \"name\": \"여름 할인 수정\",\n    \"description\": \"수정된 쿠폰\",\n    \"discountType\": \"RATE\",\n    \"discountValue\": 15,\n    \"minOrder\": 50000,\n    \"maxDiscount\": 30000,\n    \"expirationDate\": \"2026-12-31\",\n    \"status\": \"ACTIVE\",\n    \"userId\": 2\n}",
+              "raw": "{\n    \"couponId\": 2,\n    \"code\": \"SUMMER2026\",\n    \"name\": \"여름 할인 수정\",\n    \"description\": \"수정된 쿠폰\",\n    \"discountType\": \"RATE\",\n    \"discountValue\": 15,\n    \"minOrder\": 50000,\n    \"maxDiscount\": 30000,\n    \"expirationDate\": \"2026-12-31\",\n    \"status\": \"ACTIVE\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1635,7 +1642,7 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8989/api/coupons",
+              "raw": "http://localhost:8989/api/coupons?userId=1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -1644,6 +1651,12 @@
               "path": [
                 "api",
                 "coupons"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
               ]
             }
           },
@@ -1655,7 +1668,7 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/coupons/1?userId=1",
+              "raw": "http://localhost:8989/api/coupons/3?userId=1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -1664,7 +1677,7 @@
               "path": [
                 "api",
                 "coupons",
-                "1"
+                "3"
               ],
               "query": [
                 {
@@ -1729,7 +1742,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"여름 할인 이벤트\",\n  \"description\": \"여름 시즌 10% 할인\",\n  \"disType\": \"RATE\",\n  \"disValue\": \"10\",\n  \"startDate\": \"2026-07-20T00:00:00\",\n  \"endDate\": \"2026-08-20T23:59:59\",\n  \"resCount\": 0,\n  \"status\": \"ACTIVE\",\n  \"roomId\": 1,\n  \"userId\": 1\n}",
+              "raw": "{\n  \"name\": \"여름 할인 이벤트\",\n  \"description\": \"여름 시즌 10% 할인\",\n  \"disType\": \"RATE\",\n  \"disValue\": \"10\",\n  \"startDate\": \"2026-07-20T00:00:00\",\n  \"endDate\": \"2026-08-20T23:59:59\",\n  \"resCount\": 0,\n  \"status\": \"ACTIVE\",\n  \"roomId\": 2,\n  \"userId\": 1\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1737,7 +1750,7 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8989/api/promotion/1",
+              "raw": "http://localhost:8989/api/promotion",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -1745,8 +1758,7 @@
               "port": "8989",
               "path": [
                 "api",
-                "promotion",
-                "1"
+                "promotion"
               ]
             }
           },
@@ -1788,7 +1800,7 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/promotion/1?userId=1",
+              "raw": "http://localhost:8989/api/promotion/2?userId=1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -1797,7 +1809,7 @@
               "path": [
                 "api",
                 "promotion",
-                "1"
+                "2"
               ],
               "query": [
                 {
@@ -2106,7 +2118,7 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/hotels/1?userId=1",
+              "raw": "http://localhost:8989/api/hotels/2?userId=1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -2115,7 +2127,7 @@
               "path": [
                 "api",
                 "hotels",
-                "1"
+                "2"
               ],
               "query": [
                 {
@@ -2157,7 +2169,7 @@
               "mode": "formdata",
               "formdata": [
                 {
-                  "key": "file",
+                  "key": "files",
                   "type": "file",
                   "uuid": "43a79799-985d-4246-8501-29a7c7082a71",
                   "src": "/Users/minsang/Desktop/hotel1.jpg"
@@ -2166,7 +2178,8 @@
                   "key": "requestDto",
                   "value": "{\n  \"name\": \"구름호텔\",\n  \"description\": \"남산 전망 호텔\",\n  \"address\": \"서울특별시 중구 세종대로 1\",\n  \"city\": \"서울\",\n  \"zipCode\": \"04524\",\n  \"phone\": \"02-1234-5678\",\n  \"email\": \"hotel@test.com\",\n  \"checkIn\": \"15:00:00\",\n  \"checkOut\": \"11:00:00\",\n  \"starRate\": 5,\n  \"isActive\": true,\n  \"latitude\": 37.5665,\n  \"longitude\": 126.9780,\n  \"type\": \"HOTEL\",\n  \"userId\": 1\n}",
                   "type": "text",
-                  "uuid": "1e502b55-8e21-4f7a-9f10-9068fdd0d9fd"
+                  "uuid": "1e502b55-8e21-4f7a-9f10-9068fdd0d9fd",
+                  "contentType": "application/json"
                 }
               ]
             },
@@ -2229,7 +2242,7 @@
               ]
             },
             "url": {
-              "raw": "http://localhost:8989/api/hotelimage/hotel/1?userId=1",
+              "raw": "http://localhost:8989/api/hotelimage/hotel/2?userId=1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -2239,7 +2252,7 @@
                 "api",
                 "hotelimage",
                 "hotel",
-                "1"
+                "2"
               ],
               "query": [
                 {
@@ -2295,7 +2308,7 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/hotelimage/1?userId=1",
+              "raw": "http://localhost:8989/api/hotelimage/6?userId=1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -2304,7 +2317,7 @@
               "path": [
                 "api",
                 "hotelimage",
-                "1"
+                "6"
               ],
               "query": [
                 {
@@ -2369,7 +2382,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"transName\": \"지하철\",\n    \"transDepart\": \"서울역\",\n    \"transTime\": \"10분\",\n    \"hotelId\": 1\n}",
+              "raw": "{\n    \"transName\": \"지하철\",\n    \"transDepart\": \"서울역\",\n    \"transTime\": \"10분\",\n    \"hotelId\": 2\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2398,13 +2411,13 @@
           "response": []
         },
         {
-          "name": "transUpdate",
+          "name": "trans Update",
           "request": {
             "method": "PATCH",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"transId\": 1,\n  \"name\": \"공항리무진\",\n  \"time\": \"약 50분\",\n  \"depart\": \"인천국제공항\",\n  \"hotelId\": 1\n}",
+              "raw": "{\n  \"transId\": 2,\n  \"name\": \"공항리무진\",\n  \"time\": \"약 50분\",\n  \"depart\": \"인천국제공항\",\n  \"hotelId\": 2\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2433,12 +2446,12 @@
           "response": []
         },
         {
-          "name": "deletebyid",
+          "name": "trans deletebyid",
           "request": {
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8989/api/hotelimage/1?userId=1",
+              "raw": "http://localhost:8989/api/hoteltrans/2?userId=1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -2446,8 +2459,8 @@
               "port": "8989",
               "path": [
                 "api",
-                "hotelimage",
-                "1"
+                "hoteltrans",
+                "2"
               ],
               "query": [
                 {
@@ -2513,7 +2526,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"hotelId\": 1,\n  \"wifi\": true,\n  \"pool\": true,\n  \"fitnessCenter\": true,\n  \"spa\": false,\n  \"restaurant\": true,\n  \"valetParking\": false,\n  \"freeParking\": true,\n  \"concierge\": true,\n  \"bar\": true,\n  \"breakfast\": true,\n  \"airportShuttle\": false,\n  \"roomService\": true,\n  \"laundry\": true,\n  \"lounge\": false,\n  \"sauna\": false,\n  \"freeCancel\": true,\n  \"petFriendly\": false\n}",
+              "raw": "{\n  \"hotelId\": 2,\n  \"wifi\": true,\n  \"pool\": true,\n  \"fitnessCenter\": true,\n  \"spa\": false,\n  \"restaurant\": true,\n  \"valetParking\": false,\n  \"freeParking\": true,\n  \"concierge\": true,\n  \"bar\": true,\n  \"breakfast\": true,\n  \"airportShuttle\": false,\n  \"roomService\": true,\n  \"laundry\": true,\n  \"lounge\": false,\n  \"sauna\": false,\n  \"freeCancel\": true,\n  \"petFriendly\": false\n}",
               "options": {
                 "raw": {
                   "language": "json"
