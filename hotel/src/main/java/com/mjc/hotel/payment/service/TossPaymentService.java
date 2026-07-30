@@ -8,6 +8,7 @@ import com.mjc.hotel.bookings.BookingRepository;
 import com.mjc.hotel.payment.dto.*;
 import com.mjc.hotel.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TossPaymentService {
@@ -91,12 +93,16 @@ public class TossPaymentService {
         PaymentEntity payment = paymentRepository.findByOrderId(dto.getOrderId())
                 .orElseThrow(() -> new IllegalArgumentException("결제 요청 정보를 찾을 수 없습니다. orderId=" + dto.getOrderId()));
 
-        if (!payment.getBooking().getBookingNo().equals(dto.getPaymentKey())) {
+        if (!payment.getBooking().getBookingNo().equals(dto.getOrderId())) {
+            log.error("예약 정보와 결제 요청 정보가 일치하지 않습니다. getBookingNo() = {}, getPaymentKey() = {}"
+                    , payment.getBooking().getBookingNo(), dto.getPaymentKey());
             throw new IllegalArgumentException("예약 정보와 결제 요청 정보가 일치하지 않습니다.");
         }
 
         BigDecimal amount = requirePositiveAmount(dto.getAmount());
         if (payment.getTotalAmount().compareTo(amount) != 0) {
+            log.error("결제 요청 금액과 승인 금액이 일치하지 않습니다.. getTotalAmount() = {}, amount = {}"
+                    , payment.getTotalAmount(), amount);
             throw new IllegalArgumentException("결제 요청 금액과 승인 금액이 일치하지 않습니다.");
         }
 
