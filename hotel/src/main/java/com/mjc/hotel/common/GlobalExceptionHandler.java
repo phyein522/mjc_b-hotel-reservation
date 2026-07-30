@@ -1,5 +1,6 @@
 package com.mjc.hotel.common;
 
+import com.mjc.hotel.auth.exception.AuthenticationServiceException;
 import lombok.extern.slf4j.Slf4j;
 import com.mjc.hotel.user.exception.DuplicateEmailException;
 import com.mjc.hotel.user.exception.UserNotFoundException;
@@ -48,6 +49,12 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ApiResponse<String>> handleIllegalArgument(IllegalArgumentException ex) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(ApiResponse.make(ResponseCode.OTHER_ERROR, "bad_request", ex.getMessage()));
+	}
+
+	@ExceptionHandler(AuthenticationServiceException.class)
+	public ResponseEntity<ApiResponse<String>> handleAuthenticationService(AuthenticationServiceException ex) {
+		return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+				.body(ApiResponse.make(ResponseCode.AUTHENTICATION_ERROR, "service_unavailable", ex.getMessage()));
 	}
 
 	// 그 외 모든 예외 500
