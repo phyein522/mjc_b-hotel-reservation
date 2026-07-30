@@ -7,6 +7,7 @@ const TOSS_SDK_URL = "https://js.tosspayments.com/v2/standard";
 const TOSS_SAMPLE_CLIENT_KEY = "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq";
 let hotelsCache = [];
 let tossSdkPromise = null;
+let googleIdentitySdkPromise = null;
 
 const userNav = [
   ["home", "홈", "index.html"],
@@ -32,6 +33,72 @@ function clearCurrentUser() {
   localStorage.removeItem("omnistayCurrentUser");
 }
 
+function safeRedirect(defaultPage = "index.html") {
+  const redirect = new URLSearchParams(location.search).get("redirect");
+  if (!redirect || redirect.startsWith("//") || /^[a-z][a-z0-9+.-]*:/i.test(redirect)) {
+    return defaultPage;
+  }
+  return redirect;
+}
+
+function setAuthStatus(selector, message, type = "") {
+  const node = document.querySelector(selector);
+  if (!node) return;
+  node.className = `auth-status ${type}`.trim();
+  node.textContent = message;
+}
+
+function loadGoogleIdentitySdk() {
+  if (window.google?.accounts?.id) return Promise.resolve(window.google);
+  if (googleIdentitySdkPromise) return googleIdentitySdkPromise;
+  googleIdentitySdkPromise = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client?hl=ko";
+    script.async = true;
+    script.onload = () => resolve(window.google);
+    script.onerror = () => reject(new Error("Google 로그인 SDK를 불러오지 못했습니다."));
+    document.head.appendChild(script);
+  });
+  return googleIdentitySdkPromise;
+}
+
+async function initGoogleLogin(buttonSelector, statusSelector, buttonText = "signin_with") {
+  try {
+    const config = await request("/api/auth/config");
+    if (!config.googleLoginEnabled || !config.googleClientId) {
+      document.querySelector(buttonSelector).hidden = true;
+      setAuthStatus(statusSelector, "Google 로그인을 사용하려면 서버에 GOOGLE_CLIENT_ID를 설정해야 합니다.", "warn");
+      return;
+    }
+
+    await loadGoogleIdentitySdk();
+    window.google.accounts.id.initialize({
+      client_id: config.googleClientId,
+      callback: async ({ credential }) => {
+        setAuthStatus(statusSelector, "Google 계정을 확인하는 중입니다.");
+        try {
+          const user = await request("/api/auth/google", {
+            method: "POST",
+            body: JSON.stringify({ credential })
+          });
+          setCurrentUser(user);
+          toast("Google 계정으로 로그인되었습니다.");
+          location.href = safeRedirect();
+        } catch (error) {
+          setAuthStatus(statusSelector, error.message, "error");
+        }
+      }
+    });
+    window.google.accounts.id.renderButton(
+      document.querySelector(buttonSelector),
+      { theme: "outline", size: "large", shape: "rectangular", text: buttonText, width: 320 }
+    );
+    setAuthStatus(statusSelector, "");
+  } catch (error) {
+    setAuthStatus(statusSelector, error.message, "error");
+  }
+}
+
 function loadTossPaymentsSdk() {
   if (window.TossPayments) return Promise.resolve(window.TossPayments);
   if (tossSdkPromise) return tossSdkPromise;
@@ -44,11 +111,6 @@ function loadTossPaymentsSdk() {
     document.head.appendChild(script);
   });
   return tossSdkPromise;
-}
-
-function generateTossOrderId(bookingId) {
-  const suffix = Math.random().toString(36).slice(2, 10).toUpperCase();
-  return `OMNISTAY-${bookingId || "ORDER"}-${Date.now()}-${suffix}`;
 }
 
 function tossMethodToPaymentMethod(method) {
@@ -93,6 +155,7 @@ function userShell(active, body) {
   `;
   document.querySelector("#logoutBtn")?.addEventListener("click", () => {
     clearCurrentUser();
+    window.google?.accounts?.id?.disableAutoSelect();
     location.href = `${rel}index.html`;
   });
 }
@@ -412,8 +475,12 @@ async function submitBooking(event) {
     const nights = Math.max(1, Math.ceil((new Date(data.checkoutDate) - new Date(data.checkinDate)) / 86400000));
     const paymentAmount = paymentBaseAmount * nights;
     const orderName = paymentOrderName || `${roomText} 예약`.trim() || "OmniStay 호텔 예약";
+    if (!booking.bookingNo) {
+      throw new Error("예약번호가 생성되지 않아 결제를 진행할 수 없습니다.");
+    }
     const paymentParams = new URLSearchParams({
       bookingId: String(booking.bookingId),
+      bookingNo: String(booking.bookingNo),
       amount: String(paymentAmount),
       orderName
     });
@@ -427,13 +494,14 @@ async function paymentPage() {
   const currentUser = getCurrentUser();
   const params = new URLSearchParams(location.search);
   const bookingId = params.get("bookingId") || "";
+  const bookingNo = params.get("bookingNo") || "";
   const totalAmount = Number(params.get("amount") || params.get("totalAmount") || 0);
   const orderName = params.get("orderName") || "OmniStay 호텔 예약";
   const customerName = currentUser?.name || currentUser?.email || "비회원";
   const customerEmail = currentUser?.email || "";
   const customerPhone = (currentUser?.phone || "").replaceAll("-", "");
   const couponNote = currentUser ? "" : `<div class="toss-note">로그인하지 않아도 결제할 수 있습니다. 쿠폰은 로그인 회원에게만 표시됩니다.</div>`;
-  userShell("bookings", `<section class="toss-page"><div class="toss-wrapper"><form class="toss-box" id="paymentForm"><h1>일반 결제</h1><input name="bookingId" type="hidden" value="${escapeHtml(bookingId)}"><input name="totalAmount" type="hidden" value="${escapeHtml(totalAmount)}"><input name="orderName" type="hidden" value="${escapeHtml(orderName)}"><input name="customerName" type="hidden" value="${escapeHtml(customerName)}"><input name="customerEmail" type="hidden" value="${escapeHtml(customerEmail)}"><input name="customerMobilePhone" type="hidden" value="${escapeHtml(customerPhone)}"><div class="toss-summary"><div class="toss-row"><span>결제자</span><strong>${escapeHtml(customerName)}</strong></div><div class="toss-row"><span>예약 금액</span><strong>${totalAmount ? money(totalAmount) : "예약 금액 없음"}</strong></div><div class="toss-row"><span>쿠폰 할인</span><strong id="paymentDiscount">${money(0)}</strong></div><div class="toss-row total"><span>최종 결제금액</span><strong id="paymentFinalAmount">${totalAmount ? money(totalAmount) : "-"}</strong></div></div><label class="toss-field"><span>쿠폰 선택</span><select name="userCouponId" id="paymentCouponSelect"><option value="">사용 안 함</option></select></label>${couponNote}<div class="toss-methods" id="payment-method"><button class="toss-method active" type="button" data-payment-method="CARD">카드</button><button class="toss-method" type="button" data-payment-method="TRANSFER">계좌이체</button><button class="toss-method" type="button" data-payment-method="VIRTUAL_ACCOUNT">가상계좌</button><button class="toss-method" type="button" data-payment-method="MOBILE_PHONE">휴대폰</button><button class="toss-method" type="button" data-payment-method="CULTURE_GIFT_CERTIFICATE">문화상품권</button></div><button class="toss-button" id="openTossPayment" type="submit">결제하기</button><div class="toss-note" id="tossPaymentStatus">토스페이먼츠 샘플 결제창을 사용합니다. 결제 금액은 예약 정보에서 자동으로 들어갑니다.</div></form></div></section>`);
+  userShell("bookings", `<section class="toss-page"><div class="toss-wrapper"><form class="toss-box" id="paymentForm"><h1>일반 결제</h1><input name="bookingId" type="hidden" value="${escapeHtml(bookingId)}"><input name="bookingNo" type="hidden" value="${escapeHtml(bookingNo)}"><input name="totalAmount" type="hidden" value="${escapeHtml(totalAmount)}"><input name="orderName" type="hidden" value="${escapeHtml(orderName)}"><input name="customerName" type="hidden" value="${escapeHtml(customerName)}"><input name="customerEmail" type="hidden" value="${escapeHtml(customerEmail)}"><input name="customerMobilePhone" type="hidden" value="${escapeHtml(customerPhone)}"><div class="toss-summary"><div class="toss-row"><span>결제자</span><strong>${escapeHtml(customerName)}</strong></div><div class="toss-row"><span>예약 금액</span><strong>${totalAmount ? money(totalAmount) : "예약 금액 없음"}</strong></div><div class="toss-row"><span>쿠폰 할인</span><strong id="paymentDiscount">${money(0)}</strong></div><div class="toss-row total"><span>최종 결제금액</span><strong id="paymentFinalAmount">${totalAmount ? money(totalAmount) : "-"}</strong></div></div><label class="toss-field"><span>쿠폰 선택</span><select name="userCouponId" id="paymentCouponSelect"><option value="">사용 안 함</option></select></label>${couponNote}<div class="toss-methods" id="payment-method"><button class="toss-method active" type="button" data-payment-method="CARD">카드</button><button class="toss-method" type="button" data-payment-method="TRANSFER">계좌이체</button><button class="toss-method" type="button" data-payment-method="VIRTUAL_ACCOUNT">가상계좌</button><button class="toss-method" type="button" data-payment-method="MOBILE_PHONE">휴대폰</button><button class="toss-method" type="button" data-payment-method="CULTURE_GIFT_CERTIFICATE">문화상품권</button></div><button class="toss-button" id="openTossPayment" type="submit">결제하기</button><div class="toss-note" id="tossPaymentStatus">토스페이먼츠 샘플 결제창을 사용합니다. 결제 금액은 예약 정보에서 자동으로 들어갑니다.</div></form></div></section>`);
   if (currentUser?.userId) {
     await loadPaymentCoupons(currentUser.userId);
   }
@@ -474,16 +542,16 @@ async function paymentPage() {
     event.preventDefault();
     const data = qs(event.currentTarget);
     const { discount, finalAmount } = updateAmount();
-    if (!data.bookingId || !totalAmount || finalAmount <= 0) {
+    if (!data.bookingId || !data.bookingNo || !totalAmount || finalAmount <= 0) {
       statusEl.className = "message error toss-note";
-      statusEl.textContent = "예약에서 결제 화면으로 이동해야 결제 정보가 자동 입력됩니다.";
+      statusEl.textContent = "예약번호와 결제 금액이 없습니다. 예약에서 결제 화면으로 이동해주세요.";
       return;
     }
     try {
       const TossPayments = await loadTossPaymentsSdk();
       const customerKey = currentUser?.userId ? `USER_${currentUser.userId}` : TossPayments.ANONYMOUS;
       const payment = TossPayments(window.OMNISTAY_TOSS_CLIENT_KEY || TOSS_SAMPLE_CLIENT_KEY).payment({ customerKey });
-      const orderId = generateTossOrderId(data.bookingId);
+      const orderId = data.bookingNo;
       statusEl.className = "toss-note";
       statusEl.textContent = "결제 정보를 DB에 먼저 저장하는 중입니다.";
       const existingPayments = pageItems(await request("/api/payment"));
@@ -683,14 +751,24 @@ async function loadCoupons(userId) {
 
 function loginPage() {
   const params = new URLSearchParams(location.search);
-  const redirect = params.get("redirect") || "index.html";
+  const redirect = safeRedirect();
   const reason = params.get("reason");
-  userShell("login", `${title("로그인", "예약은 로그인 상태에서만 진행 가능")}<section class="grid cols-2"><form class="card card-body grid" id="loginForm"><div class="toolbar" style="margin:0"><h2>사용자 ID 로그인</h2><span class="status ok">회원조회 API</span></div>${reason === "booking" ? `<div class="message error">로그인되어 있지 않아 예약을 진행할 수 없습니다. 로그인 후 예약 화면으로 돌아갑니다.</div>` : ""}${reason === "bookings" ? `<div class="message error">예약 내역은 로그인한 회원만 확인할 수 있습니다. 로그인 후 내 예약내역으로 돌아갑니다.</div>` : ""}<label><span>사용자 ID</span><input name="userId" type="number" placeholder="예: 10" required></label><button class="btn primary">로그인</button><a class="small muted" href="signup.html">아직 회원이 아니면 회원가입</a></form><article class="card"><div class="card-body"><h2>예약에 사용되는 정보</h2><p class="muted">로그인하면 회원 API에서 가져온 이름, 전화번호, 이메일이 예약자 정보로 자동 입력됩니다.</p><div class="grid"><span class="pill">사용자 ID</span><span class="pill">이름</span><span class="pill">연락처</span><span class="pill">이메일</span></div></div></article></section><div class="section" id="loginResult"></div>`);
+  const reasonMessage = reason === "booking"
+    ? "로그인되어 있지 않아 예약을 진행할 수 없습니다. 로그인 후 예약 화면으로 돌아갑니다."
+    : reason === "bookings"
+      ? "예약 내역은 로그인한 회원만 확인할 수 있습니다. 로그인 후 내 예약내역으로 돌아갑니다."
+      : reason === "review"
+        ? "리뷰 작성은 로그인한 회원만 이용할 수 있습니다."
+        : "";
+  userShell("login", `${title("로그인", "이메일 또는 Google 계정으로 로그인하세요.")}<section class="auth-layout"><form class="card card-body grid auth-card" id="loginForm"><div class="toolbar" style="margin:0"><h2>이메일 로그인</h2><span class="status ok">이메일 로그인 API</span></div>${reasonMessage ? `<div class="message error">${reasonMessage}</div>` : ""}<label><span>이메일</span><input name="email" type="email" autocomplete="email" required></label><label><span>비밀번호</span><input name="password" type="password" autocomplete="current-password" required></label><button class="btn primary">이메일로 로그인</button><div class="auth-divider"><span>또는</span></div><div class="google-login-button" id="googleLoginButton"></div><p class="auth-status" id="googleLoginStatus"></p><a class="small muted auth-link" href="signup.html">아직 회원이 아니면 회원가입</a></form><article class="card auth-info"><div class="card-body"><h2>Google 간편 로그인</h2><p class="muted">Google이 인증한 이메일과 계정 고유 식별자를 백엔드에서 검증합니다. 처음 로그인하면 일반 회원 계정이 자동으로 생성됩니다.</p><div class="grid"><span class="pill">Google ID 토큰 검증</span><span class="pill">이메일 인증 확인</span><span class="pill">신규 회원 자동 생성</span></div></div></article></section><div class="section" id="loginResult"></div>`);
   document.querySelector("#loginForm").addEventListener("submit", async (event) => {
     event.preventDefault();
-    const { userId } = qs(event.currentTarget);
+    const data = qs(event.currentTarget);
     try {
-      const user = await request(`/api/users/${userId}`);
+      const user = await request("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify(data)
+      });
       setCurrentUser(user);
       toast("로그인되었습니다.");
       location.href = redirect;
@@ -698,6 +776,7 @@ function loginPage() {
       document.querySelector("#loginResult").innerHTML = errorMessage(error);
     }
   });
+  initGoogleLogin("#googleLoginButton", "#googleLoginStatus");
 }
 
 async function loadBookings(selector, userId, adminMode) {
@@ -757,18 +836,83 @@ async function loadReviews(adminMode = false) {
 }
 
 function signupPage() {
-  userShell("signup", `${title("회원가입", "구현된 /api/users/signup API에 연결")}<form class="card card-body grid" id="signupForm"><label><span>이메일</span><input name="email" type="email" required></label><label><span>비밀번호</span><input name="password" type="password" required></label><label><span>이름</span><input name="name" required></label><label><span>전화번호</span><input name="phone"></label><button class="btn primary">가입</button></form><div class="section" id="signupResult"></div>`);
+  userShell("signup", `${title("회원가입", "이메일 인증을 완료한 후 회원가입할 수 있습니다.")}<section class="auth-layout"><form class="card card-body grid auth-card" id="signupForm"><h2>이메일로 회원가입</h2><input name="verificationToken" type="hidden"><div class="field-group"><label for="signupEmail">이메일</label><div class="verification-row"><input id="signupEmail" name="email" type="email" autocomplete="email" required><button class="btn" id="sendEmailCode" type="button">인증번호 받기</button></div></div><p class="auth-status" id="emailSendStatus"></p><div class="field-group"><label for="signupVerificationCode">인증번호</label><div class="verification-row"><input id="signupVerificationCode" name="verificationCode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="숫자 6자리" required><button class="btn" id="verifyEmailCode" type="button">인증 확인</button></div></div><p class="auth-status" id="emailVerifyStatus"></p><label><span>비밀번호</span><input name="password" type="password" autocomplete="new-password" minlength="4" required disabled></label><label><span>이름</span><input name="name" autocomplete="name" required disabled></label><label><span>전화번호</span><input name="phone" type="tel" autocomplete="tel" required disabled></label><button class="btn primary" id="signupSubmit" disabled>가입</button><div class="auth-divider"><span>또는</span></div><div class="google-login-button" id="googleSignupButton"></div><p class="auth-status" id="googleSignupStatus"></p><a class="small muted auth-link" href="login.html">이미 회원이면 로그인</a></form><article class="card auth-info"><div class="card-body"><h2>안전한 가입 절차</h2><p class="muted">인증번호는 10분 동안 유효하며, 인증 완료 후 발급되는 가입 토큰은 한 번만 사용할 수 있습니다.</p><div class="grid"><span class="pill">60초 재발송 제한</span><span class="pill">최대 5회 확인</span><span class="pill">인증번호 해시 저장</span></div></div></article></section><div class="section" id="signupResult"></div>`);
+  const form = document.querySelector("#signupForm");
+  const emailInput = form.elements.email;
+  const verificationTokenInput = form.elements.verificationToken;
+  const signupFields = ["password", "name", "phone"].map((name) => form.elements[name]);
+  const submitButton = document.querySelector("#signupSubmit");
+
+  const resetVerification = () => {
+    verificationTokenInput.value = "";
+    signupFields.forEach((field) => field.disabled = true);
+    submitButton.disabled = true;
+    setAuthStatus("#emailVerifyStatus", "");
+  };
+
+  emailInput.addEventListener("input", resetVerification);
+  document.querySelector("#sendEmailCode").addEventListener("click", async () => {
+    if (!emailInput.reportValidity()) return;
+    const button = document.querySelector("#sendEmailCode");
+    button.disabled = true;
+    setAuthStatus("#emailSendStatus", "인증 메일을 전송하는 중입니다.");
+    try {
+      await request("/api/auth/email/send-code", {
+        method: "POST",
+        body: JSON.stringify({ email: emailInput.value })
+      });
+      setAuthStatus("#emailSendStatus", "인증번호를 전송했습니다. 메일함을 확인해주세요.", "success");
+      form.elements.verificationCode.focus();
+    } catch (error) {
+      setAuthStatus("#emailSendStatus", error.message, "error");
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  document.querySelector("#verifyEmailCode").addEventListener("click", async () => {
+    if (!emailInput.reportValidity() || !form.elements.verificationCode.reportValidity()) return;
+    try {
+      const result = await request("/api/auth/email/verify", {
+        method: "POST",
+        body: JSON.stringify({ email: emailInput.value, code: form.elements.verificationCode.value })
+      });
+      verificationTokenInput.value = result.verificationToken;
+      emailInput.readOnly = true;
+      form.elements.verificationCode.readOnly = true;
+      signupFields.forEach((field) => field.disabled = false);
+      submitButton.disabled = false;
+      setAuthStatus("#emailVerifyStatus", "이메일 인증이 완료되었습니다.", "success");
+      form.elements.password.focus();
+    } catch (error) {
+      setAuthStatus("#emailVerifyStatus", error.message, "error");
+    }
+  });
+
   document.querySelector("#signupForm").addEventListener("submit", async (event) => {
     event.preventDefault();
-    const data = { ...qs(event.currentTarget), role: "CUSTOMER", status: "ACTIVE", membership: "NEW_MEMBER", marketingAgreed: false, point: 0 };
+    const data = qs(event.currentTarget);
+    delete data.verificationCode;
     try {
-      const user = await request("/api/users/signup", { method: "POST", body: JSON.stringify(data) });
+      const user = await request("/api/auth/signup", { method: "POST", body: JSON.stringify(data) });
       setCurrentUser(user);
-      document.querySelector("#signupResult").innerHTML = `<div class="message">회원이 저장되고 로그인되었습니다. 사용자 ID: ${user.userId} <a class="btn primary" href="booking.html">예약하기</a></div>`;
+      document.querySelector("#signupResult").innerHTML = `<div class="message">이메일 인증 회원가입이 완료되고 로그인되었습니다. <a class="btn primary" href="index.html">호텔 둘러보기</a></div>`;
     } catch (error) {
       document.querySelector("#signupResult").innerHTML = errorMessage(error);
     }
   });
+  request("/api/auth/config").then((config) => {
+    if (!config.emailVerificationEnabled) {
+      document.querySelector("#sendEmailCode").disabled = true;
+      document.querySelector("#verifyEmailCode").disabled = true;
+      setAuthStatus(
+        "#emailSendStatus",
+        "이메일 인증을 사용하려면 서버에 MAIL_USERNAME 또는 MAIL_FROM을 설정해야 합니다.",
+        "warn"
+      );
+    }
+  }).catch((error) => setAuthStatus("#emailSendStatus", error.message, "error"));
+  initGoogleLogin("#googleSignupButton", "#googleSignupStatus", "continue_with");
 }
 
 async function adminDashboard() {
@@ -1241,7 +1385,7 @@ async function seedPage() {
       await request(`/api/hoteltrans?userId=${encodeURIComponent(user.userId)}`, { method: "POST", body: JSON.stringify({ hotelId: hotel.hotelId, name: "시청역", time: "도보 5분", depart: "1번 출구" }) });
       const room = await request("/api/room", { method: "POST", body: JSON.stringify({ hotelId: hotel.hotelId, name: "디럭스 더블", number: "1201", floor: 12, size: 32, basePrice: 180000, maxAdult: 2, maxChild: 1, isActive: true, roomType: "Deluxe", roomStatus: "EnableReservation", roomViewOption: "CityView", roomBedOption: "DoubleBed" }) });
       const booking = await request("/api/bookings/insert", { method: "POST", body: JSON.stringify({ userId: user.userId, roomId: room.roomId, guestName: user.name, nationality: "KOREA", guestPhone: user.phone, guestEmail: user.email, specialRequest: "고층 선호", adultCount: 2, childCount: 0, checkinDate: "2026-08-10", checkoutDate: "2026-08-12" }) });
-      const seedOrderId = generateTossOrderId(booking.bookingId);
+      const seedOrderId = String(booking.bookingNo);
       const payment = await request("/api/payment", { method: "POST", body: JSON.stringify({ bookingId: booking.bookingId, booking: { bookingId: booking.bookingId }, transactionNum: seedOrderId, orderId: seedOrderId, paymentMethod: "CreditCard", paymentStatus: "Paid", totalAmount: 360000, currency: "KRW", couponId: 0, usedPoint: 0, discountAmount: 0, provider: "TOSS" }) }).catch(() => null);
       await request("/api/promotion", { method: "POST", body: JSON.stringify({ name: "VIP 회원 등급 할인", description: "회원 등급에 따른 할인", disType: "RATE", disValue: "10", startDate: "2026-08-01T00:00:00", endDate: "2026-12-31T23:59:00", resCount: 0, status: "ACTIVE", roomId: room.roomId, userId: user.userId }) });
       log.innerHTML = `<div class="message">DB 데이터가 추가되었습니다. 호텔 ID ${hotel.hotelId}, 객실 ID ${room.roomId}, 사용자 ID ${user.userId}, 예약 ID ${booking.bookingId}${payment ? "" : "<div class=\"small\">결제 저장은 현재 백엔드 DTO 오류로 건너뛰었습니다.</div>"}</div>`;
