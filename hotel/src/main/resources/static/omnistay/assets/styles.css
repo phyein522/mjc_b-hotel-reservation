@@ -123,6 +123,42 @@ button, input, select, textarea {
 }
 .section { margin-top: 22px; }
 
+.hotel-resource {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.hotel-resource .toolbar { margin: 0 0 10px; }
+.hotel-resource h4 { margin: 0; }
+.hotel-resource-list { display: grid; gap: 8px; }
+.hotel-resource-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.hotel-resource-row:last-child { border-bottom: 0; }
+.hotel-image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 12px;
+}
+.hotel-image-item {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+.hotel-image-thumb {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.hotel-image-item input[type="file"] { min-width: 0; max-width: 100%; }
+
 .pill, .status {
   display: inline-flex;
   align-items: center;
