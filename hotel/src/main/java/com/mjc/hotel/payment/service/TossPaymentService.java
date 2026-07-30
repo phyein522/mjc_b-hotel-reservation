@@ -125,8 +125,10 @@ public class TossPaymentService {
 
     @Transactional
     public PaymentDto failTossPayment(TossPaymentFailRequestDto dto) {
-        PaymentEntity payment = paymentRepository.findByOrderId(dto.getOrderId())
-                .orElseThrow(() -> new IllegalArgumentException("결제 요청 정보를 찾을 수 없습니다. orderId=" + dto.getOrderId()));
+        PaymentEntity payment = paymentRepository.findByPaymentKey(dto.getPaymentKey())
+                .orElseThrow(() -> new IllegalArgumentException("결제 정보를 찾을 수 없습니다. orderId=" + dto.getPaymentKey()));
+//        PaymentEntity payment = paymentRepository.findByOrderId(dto.getOrderId())
+//                .orElseThrow(() -> new IllegalArgumentException("주문 정보를 찾을 수 없습니다. orderId=" + dto.getOrderId()));
 
         PaymentDto result = (PaymentDto) new PaymentDto().copyMembers(payment, true);
         result.setPaymentStatus(PaymentStatus.Failed);
@@ -139,18 +141,22 @@ public class TossPaymentService {
     @Transactional
     public String refundPayment(PaymentEntity payment, BigDecimal refundAmount, String reason) {
         if (payment == null) {
+            log.error("환불할 결제 정보가 없습니다.");
             throw new IllegalArgumentException("환불할 결제 정보가 없습니다.");
         }
 
         if (refundAmount == null || refundAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            log.warn("refundAmount is null or minus");
             return null;
         }
 
         if (!"TOSS".equalsIgnoreCase(payment.getProvider())) {
+            log.error("토스 결제가 아니어서 자동 환불할 수 없습니다. provider={}", payment.getProvider());
             throw new IllegalStateException("토스 결제가 아니어서 자동 환불할 수 없습니다. provider=" + payment.getProvider());
         }
 
         if (payment.getPaymentKey() == null || payment.getPaymentKey().isBlank()) {
+            log.error("토스 결제 취소에 필요한 paymentKey가 없습니다.");
             throw new IllegalStateException("토스 결제 취소에 필요한 paymentKey가 없습니다.");
         }
 
@@ -233,9 +239,15 @@ public class TossPaymentService {
             JsonNode body = objectMapper.readTree(response.body());
 
             if (response.statusCode() < 200 || response.statusCode() >= 300) {
+                log.error("Http Toss response error = {}", body.toPrettyString());
+                try {
+                    TossPaymentFailRequestDto failRequestDto = new TossPaymentFailRequestDto(dto.getPaymentKey(), body.get("code").asText(), body.get("message").asText());
+                    this.failTossPayment(failRequestDto);
+                } catch (Exception e) {
+                }
                 throw new IllegalStateException(body.path("message").asText("토스 결제 승인에 실패했습니다."));
             }
-
+            log.info("Http Toss confirm response = {}", body.toPrettyString());
             return body;
         } catch (IllegalStateException e) {
             throw e;
@@ -270,9 +282,10 @@ public class TossPaymentService {
             JsonNode body = objectMapper.readTree(response.body());
 
             if (response.statusCode() < 200 || response.statusCode() >= 300) {
+                log.error("Http Toss response error = {}", body.toPrettyString());
                 throw new IllegalStateException(body.path("message").asText("토스 결제 취소에 실패했습니다."));
             }
-
+            log.info("Http Toss cancel response = {}", body.toPrettyString());
             return body;
         } catch (IllegalStateException e) {
             throw e;
