@@ -44,4 +44,11 @@ public class UserEntity extends BaseEntity implements IUser {
 
     @Column(name = "point", nullable = false, comment = "보유 포인트")
     private Integer point;
+
+    @Column(name = "email_verified", nullable = false, columnDefinition = "boolean default false", comment = "이메일 인증 여부")
+    @Builder.Default
+    private Boolean emailVerified = false;
+
+    @Column(name = "google_subject", unique = true, length = 255, comment = "Google 계정 고유 식별자")
+    private String googleSubject;
 }

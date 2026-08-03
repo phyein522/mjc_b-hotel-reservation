@@ -1,4 +1,8 @@
 spring:
+  config:
+    import:
+      - "optional:file:.env[.properties]"
+      - "optional:file:hotel/.env[.properties]"
   application:
     name: hotel
   servlet:
@@ -21,6 +25,20 @@ spring:
       hibernate:
         format_sql: true
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
 
 server:
   port: 8989
@@ -42,3 +60,14 @@ mybatis:
 toss:
   payments:
     secret-key: ${TOSS_SECRET_KEY:test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6}
+
+auth:
+  email:
+    from: ${MAIL_FROM:${MAIL_USERNAME:}}
+    code-expiration-minutes: 10
+    token-expiration-minutes: 30
+    resend-cooldown-seconds: 60
+    max-attempts: 5
+    hash-secret: ${EMAIL_VERIFICATION_SECRET:change-this-email-verification-secret}
+  google:
+    client-id: ${GOOGLE_CLIENT_ID:}

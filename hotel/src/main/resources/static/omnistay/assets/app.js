@@ -62,16 +62,33 @@ function loadGoogleIdentitySdk() {
   return googleIdentitySdkPromise;
 }
 
+function renderGoogleSetupButton(buttonSelector, statusSelector, message) {
+  const container = document.querySelector(buttonSelector);
+  if (!container) return;
+  container.hidden = false;
+  container.innerHTML = `<button class="google-login-fallback" type="button"><span class="google-login-mark">G</span><span>Google로 로그인</span></button>`;
+  container.querySelector("button").addEventListener("click", () => {
+    setAuthStatus(statusSelector, message, "warn");
+  });
+  setAuthStatus(statusSelector, message, "warn");
+}
+
 async function initGoogleLogin(buttonSelector, statusSelector, buttonText = "signin_with") {
   try {
     const config = await request("/api/auth/config");
     if (!config.googleLoginEnabled || !config.googleClientId) {
-      document.querySelector(buttonSelector).hidden = true;
-      setAuthStatus(statusSelector, "Google 로그인을 사용하려면 서버에 GOOGLE_CLIENT_ID를 설정해야 합니다.", "warn");
+      renderGoogleSetupButton(
+        buttonSelector,
+        statusSelector,
+        "Google 로그인을 사용하려면 서버의 GOOGLE_CLIENT_ID 설정이 필요합니다."
+      );
       return;
     }
 
     await loadGoogleIdentitySdk();
+    const container = document.querySelector(buttonSelector);
+    container.hidden = false;
+    container.innerHTML = "";
     window.google.accounts.id.initialize({
       client_id: config.googleClientId,
       callback: async ({ credential }) => {
@@ -95,7 +112,7 @@ async function initGoogleLogin(buttonSelector, statusSelector, buttonText = "sig
     );
     setAuthStatus(statusSelector, "");
   } catch (error) {
-    setAuthStatus(statusSelector, error.message, "error");
+    renderGoogleSetupButton(buttonSelector, statusSelector, error.message);
   }
 }
 
@@ -554,8 +571,11 @@ async function paymentPage() {
       const orderId = data.bookingNo;
       statusEl.className = "toss-note";
       statusEl.textContent = "결제 정보를 DB에 먼저 저장하는 중입니다.";
-      const existingPayments = pageItems(await request("/api/payment"));
-      const existingPayment = existingPayments.find((item) => String(paymentBookingId(item)) === String(data.bookingId));
+      const existingPayments = pageItems(await request("/api/payment").catch(() => []));
+      const draftStorageKey = `omnistayPaymentDraft:${data.bookingId}`;
+      const storedDraftPaymentId = Number(localStorage.getItem(draftStorageKey) || 0) || null;
+      const existingPayment = existingPayments.find((item) => String(paymentBookingId(item)) === String(data.bookingId))
+        || (storedDraftPaymentId ? { paymentId: storedDraftPaymentId } : null);
       if (existingPayment?.paymentStatus === "Paid") {
         statusEl.className = "message error toss-note";
         statusEl.textContent = "이미 결제가 완료된 예약입니다.";
@@ -581,10 +601,21 @@ async function paymentPage() {
         paymentKey: null,
         provider: "TOSS"
       };
-      const draftPayment = await request("/api/payment", {
-        method: existingPayment?.paymentId ? "PATCH" : "POST",
-        body: JSON.stringify(draftPayload)
-      });
+      let draftPayment;
+      try {
+        draftPayment = await request("/api/payment", {
+          method: existingPayment?.paymentId ? "PATCH" : "POST",
+          body: JSON.stringify(draftPayload)
+        });
+      } catch (error) {
+        if (!existingPayment?.paymentId) throw error;
+        localStorage.removeItem(draftStorageKey);
+        draftPayload.paymentId = undefined;
+        draftPayment = await request("/api/payment", { method: "POST", body: JSON.stringify(draftPayload) });
+      }
+      if (draftPayment.paymentId) {
+        localStorage.setItem(draftStorageKey, String(draftPayment.paymentId));
+      }
       const query = new URLSearchParams({
         bookingId: data.bookingId,
         paymentId: String(draftPayment.paymentId || ""),
@@ -669,6 +700,7 @@ async function paymentResultPage(status) {
           provider: "TOSS"
         })
       });
+      localStorage.removeItem(`omnistayPaymentDraft:${bookingId}`);
       document.querySelector("#paymentConfirmResult").textContent = `결제 승인이 저장되었습니다. 결제 ID: ${saved.paymentId || result.paymentId || "-"}`;
     } else {
       if (!params.get("orderId")) {
@@ -836,25 +868,65 @@ async function loadReviews(adminMode = false) {
 }
 
 function signupPage() {
-  userShell("signup", `${title("회원가입", "이메일 인증을 완료한 후 회원가입할 수 있습니다.")}<section class="auth-layout"><form class="card card-body grid auth-card" id="signupForm"><h2>이메일로 회원가입</h2><input name="verificationToken" type="hidden"><div class="field-group"><label for="signupEmail">이메일</label><div class="verification-row"><input id="signupEmail" name="email" type="email" autocomplete="email" required><button class="btn" id="sendEmailCode" type="button">인증번호 받기</button></div></div><p class="auth-status" id="emailSendStatus"></p><div class="field-group"><label for="signupVerificationCode">인증번호</label><div class="verification-row"><input id="signupVerificationCode" name="verificationCode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="숫자 6자리" required><button class="btn" id="verifyEmailCode" type="button">인증 확인</button></div></div><p class="auth-status" id="emailVerifyStatus"></p><label><span>비밀번호</span><input name="password" type="password" autocomplete="new-password" minlength="4" required disabled></label><label><span>이름</span><input name="name" autocomplete="name" required disabled></label><label><span>전화번호</span><input name="phone" type="tel" autocomplete="tel" required disabled></label><button class="btn primary" id="signupSubmit" disabled>가입</button><div class="auth-divider"><span>또는</span></div><div class="google-login-button" id="googleSignupButton"></div><p class="auth-status" id="googleSignupStatus"></p><a class="small muted auth-link" href="login.html">이미 회원이면 로그인</a></form><article class="card auth-info"><div class="card-body"><h2>안전한 가입 절차</h2><p class="muted">인증번호는 10분 동안 유효하며, 인증 완료 후 발급되는 가입 토큰은 한 번만 사용할 수 있습니다.</p><div class="grid"><span class="pill">60초 재발송 제한</span><span class="pill">최대 5회 확인</span><span class="pill">인증번호 해시 저장</span></div></div></article></section><div class="section" id="signupResult"></div>`);
+  userShell("signup", `${title("회원가입", "이메일과 비밀번호로 가입할 수 있습니다.")}<section class="auth-layout"><form class="card card-body grid auth-card" id="signupForm"><h2>이메일로 회원가입</h2><input name="verificationToken" type="hidden"><div class="field-group"><label for="signupEmail">이메일</label><div class="verification-row"><input id="signupEmail" name="email" type="email" autocomplete="email" required><button class="btn" id="sendEmailCode" type="button" hidden disabled>인증번호 받기</button></div></div><p class="auth-status" id="emailSendStatus"></p><div class="field-group" id="emailVerificationCodeGroup" hidden><label for="signupVerificationCode">인증번호</label><div class="verification-row"><input id="signupVerificationCode" name="verificationCode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="숫자 6자리" required disabled><button class="btn" id="verifyEmailCode" type="button" disabled>인증 확인</button></div></div><p class="auth-status" id="emailVerifyStatus"></p><label><span>비밀번호</span><input name="password" type="password" autocomplete="new-password" minlength="4" required disabled></label><label><span>이름</span><input name="name" autocomplete="name" required disabled></label><label><span>전화번호</span><input name="phone" type="tel" autocomplete="tel" required disabled></label><button class="btn primary" id="signupSubmit" disabled>가입</button><div class="auth-divider"><span>또는</span></div><div class="google-login-button" id="googleSignupButton"></div><p class="auth-status" id="googleSignupStatus"></p><a class="small muted auth-link" href="login.html">이미 회원이면 로그인</a></form><article class="card auth-info"><div class="card-body"><h2>회원가입 안내</h2><p class="muted">메일 발송 설정이 있으면 인증번호를 확인하고, 설정이 없어도 일반 이메일 회원가입은 계속 이용할 수 있습니다.</p><div class="grid"><span class="pill">이메일 중복 확인</span><span class="pill">비밀번호 암호화</span><span class="pill">가입 후 자동 로그인</span></div></div></article></section><div class="section" id="signupResult"></div>`);
   const form = document.querySelector("#signupForm");
   const emailInput = form.elements.email;
   const verificationTokenInput = form.elements.verificationToken;
+  const verificationCodeInput = form.elements.verificationCode;
   const signupFields = ["password", "name", "phone"].map((name) => form.elements[name]);
   const submitButton = document.querySelector("#signupSubmit");
+  const sendCodeButton = document.querySelector("#sendEmailCode");
+  const verifyCodeButton = document.querySelector("#verifyEmailCode");
+  const verificationCodeGroup = document.querySelector("#emailVerificationCodeGroup");
+  let emailVerificationEnabled = false;
+
+  const setSignupEnabled = (enabled) => {
+    signupFields.forEach((field) => field.disabled = !enabled);
+    submitButton.disabled = !enabled;
+  };
+
+  const useStandardSignup = (message) => {
+    emailVerificationEnabled = false;
+    sendCodeButton.hidden = true;
+    verifyCodeButton.disabled = true;
+    verificationCodeGroup.hidden = true;
+    verificationCodeInput.disabled = true;
+    verificationCodeInput.required = false;
+    setSignupEnabled(true);
+    setAuthStatus("#emailSendStatus", message, "warn");
+  };
 
   const resetVerification = () => {
+    if (!emailVerificationEnabled) return;
     verificationTokenInput.value = "";
-    signupFields.forEach((field) => field.disabled = true);
-    submitButton.disabled = true;
+    setSignupEnabled(false);
     setAuthStatus("#emailVerifyStatus", "");
   };
 
+  const authConfigPromise = request("/api/auth/config").then((config) => {
+    emailVerificationEnabled = Boolean(config.emailVerificationEnabled);
+    if (!emailVerificationEnabled) {
+      useStandardSignup("메일 인증 설정이 없어 일반 이메일 회원가입으로 진행합니다.");
+      return;
+    }
+    sendCodeButton.hidden = false;
+    sendCodeButton.disabled = false;
+    verifyCodeButton.disabled = false;
+    verificationCodeGroup.hidden = false;
+    verificationCodeInput.disabled = false;
+    verificationCodeInput.required = true;
+    resetVerification();
+    setAuthStatus("#emailSendStatus", "이메일 인증 후 회원가입할 수 있습니다.");
+  }).catch(() => {
+    useStandardSignup("인증 설정을 확인할 수 없어 일반 이메일 회원가입으로 진행합니다.");
+  });
+
   emailInput.addEventListener("input", resetVerification);
-  document.querySelector("#sendEmailCode").addEventListener("click", async () => {
+  sendCodeButton.addEventListener("click", async () => {
+    await authConfigPromise;
+    if (!emailVerificationEnabled) return;
     if (!emailInput.reportValidity()) return;
-    const button = document.querySelector("#sendEmailCode");
-    button.disabled = true;
+    sendCodeButton.disabled = true;
     setAuthStatus("#emailSendStatus", "인증 메일을 전송하는 중입니다.");
     try {
       await request("/api/auth/email/send-code", {
@@ -866,22 +938,21 @@ function signupPage() {
     } catch (error) {
       setAuthStatus("#emailSendStatus", error.message, "error");
     } finally {
-      button.disabled = false;
+      sendCodeButton.disabled = false;
     }
   });
 
-  document.querySelector("#verifyEmailCode").addEventListener("click", async () => {
-    if (!emailInput.reportValidity() || !form.elements.verificationCode.reportValidity()) return;
+  verifyCodeButton.addEventListener("click", async () => {
+    if (!emailInput.reportValidity() || !verificationCodeInput.reportValidity()) return;
     try {
       const result = await request("/api/auth/email/verify", {
         method: "POST",
-        body: JSON.stringify({ email: emailInput.value, code: form.elements.verificationCode.value })
+        body: JSON.stringify({ email: emailInput.value, code: verificationCodeInput.value })
       });
       verificationTokenInput.value = result.verificationToken;
       emailInput.readOnly = true;
-      form.elements.verificationCode.readOnly = true;
-      signupFields.forEach((field) => field.disabled = false);
-      submitButton.disabled = false;
+      verificationCodeInput.readOnly = true;
+      setSignupEnabled(true);
       setAuthStatus("#emailVerifyStatus", "이메일 인증이 완료되었습니다.", "success");
       form.elements.password.focus();
     } catch (error) {
@@ -891,27 +962,24 @@ function signupPage() {
 
   document.querySelector("#signupForm").addEventListener("submit", async (event) => {
     event.preventDefault();
+    await authConfigPromise;
     const data = qs(event.currentTarget);
     delete data.verificationCode;
     try {
-      const user = await request("/api/auth/signup", { method: "POST", body: JSON.stringify(data) });
-      setCurrentUser(user);
-      document.querySelector("#signupResult").innerHTML = `<div class="message">이메일 인증 회원가입이 완료되고 로그인되었습니다. <a class="btn primary" href="index.html">호텔 둘러보기</a></div>`;
+      let endpoint = "/api/auth/signup";
+      if (!emailVerificationEnabled) {
+        endpoint = "/api/users/signup";
+        delete data.verificationToken;
+      }
+      const user = await request(endpoint, { method: "POST", body: JSON.stringify(data) });
+      const safeUser = { ...user };
+      delete safeUser.password;
+      setCurrentUser(safeUser);
+      document.querySelector("#signupResult").innerHTML = `<div class="message">회원가입이 완료되고 로그인되었습니다. <a class="btn primary" href="index.html">호텔 둘러보기</a></div>`;
     } catch (error) {
       document.querySelector("#signupResult").innerHTML = errorMessage(error);
     }
   });
-  request("/api/auth/config").then((config) => {
-    if (!config.emailVerificationEnabled) {
-      document.querySelector("#sendEmailCode").disabled = true;
-      document.querySelector("#verifyEmailCode").disabled = true;
-      setAuthStatus(
-        "#emailSendStatus",
-        "이메일 인증을 사용하려면 서버에 MAIL_USERNAME 또는 MAIL_FROM을 설정해야 합니다.",
-        "warn"
-      );
-    }
-  }).catch((error) => setAuthStatus("#emailSendStatus", error.message, "error"));
   initGoogleLogin("#googleSignupButton", "#googleSignupStatus", "continue_with");
 }
 
