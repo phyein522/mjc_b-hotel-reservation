@@ -7,6 +7,7 @@ import com.mjc.hotel.bookings.BookingEntity;
 import com.mjc.hotel.bookings.BookingRepository;
 import com.mjc.hotel.payment.dto.*;
 import com.mjc.hotel.payment.repository.PaymentRepository;
+import com.mjc.hotel.usercoupon.UserCouponService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +35,7 @@ public class TossPaymentService {
 
     private final PaymentRepository paymentRepository;
     private final BookingRepository bookingRepository;
+    private final UserCouponService userCouponService;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
@@ -50,8 +52,15 @@ public class TossPaymentService {
         return (PaymentDto) new PaymentDto().copyMembers(result, true);
     }
 
+    @Transactional
     public PaymentDto insertPayment(PaymentDto dto) {
+        BookingEntity booking = bookingRepository.findById(dto.getBookingId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 예약입니다. bookingId=" + dto.getBookingId()));
+        if (dto.getCouponId() != null && dto.getCouponId() > 0) {
+            userCouponService.validateAvailableForPayment(booking.getUserId(), dto.getCouponId());
+        }
         PaymentEntity entity = (PaymentEntity) new PaymentEntity().copyMembers(dto, true);
+        entity.setBooking(booking);
         PaymentEntity result = paymentRepository.save(entity);
         return (PaymentDto) new PaymentDto().copyMembers(result, true);
     }
@@ -167,6 +176,7 @@ public class TossPaymentService {
         return pgTransactionKey;
     }
 
+    @Transactional
     public PaymentDto updatePayment(Long paymentId, PaymentDto dto) {
         PaymentDto find = getPayment(paymentId);
         if (dto.getBookingId() != null) {
@@ -175,6 +185,10 @@ public class TossPaymentService {
         find.copyMembers(dto, false);
         PaymentEntity update = (PaymentEntity) new PaymentEntity().copyMembers(find, true);
         PaymentEntity result = this.paymentRepository.save(update);
+        if (result.getPaymentStatus() == PaymentStatus.Paid
+                && result.getCouponId() != null && result.getCouponId() > 0) {
+            userCouponService.useForPayment(result.getBooking().getUserId(), result.getCouponId(), result.getPaymentId());
+        }
         return (PaymentDto) new PaymentDto().copyMembers(result, true);
     }
 

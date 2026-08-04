@@ -2,6 +2,7 @@ package com.mjc.hotel.usercoupon;
 
 import com.mjc.hotel.coupon.CouponEntity;
 import com.mjc.hotel.coupon.CouponRepository;
+import com.mjc.hotel.coupon.CouponStatusEnum;
 import com.mjc.hotel.user.entity.Role;
 import com.mjc.hotel.user.entity.UserEntity;
 import com.mjc.hotel.user.repository.UserRepository;
@@ -10,9 +11,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UserCouponService {
@@ -99,6 +103,35 @@ public class UserCouponService {
         return findDto;
     }
 
+    @Transactional(readOnly = true)
+    public void validateAvailableForPayment(Long userId, Long couponId) {
+        requireAvailableCoupon(userId, couponId);
+    }
+
+    @Transactional
+    public UserCouponDto useForPayment(Long userId, Long couponId, Long paymentId) {
+        if (paymentId == null) {
+            throw new IllegalArgumentException("쿠폰 사용에 필요한 결제 ID가 없습니다.");
+        }
+
+        UserCouponEntity userCoupon = this.userCouponRepository
+                .findByUser_UserIdAndCoupon_CouponId(userId, couponId)
+                .orElseThrow(() -> new IllegalArgumentException("회원에게 발급된 쿠폰이 아닙니다."));
+
+        if (userCoupon.getUserCouponStatus() == UserCouponStatusEnum.USED
+                && Objects.equals(userCoupon.getUsedPaymentId(), paymentId)) {
+            return (UserCouponDto) new UserCouponDto().copyMembers(userCoupon, true);
+        }
+
+        validateAvailableCoupon(userCoupon);
+        userCoupon.setUserCouponStatus(UserCouponStatusEnum.USED);
+        userCoupon.setUsedAt(LocalDateTime.now());
+        userCoupon.setUsedPaymentId(paymentId);
+
+        UserCouponEntity saved = this.userCouponRepository.save(userCoupon);
+        return (UserCouponDto) new UserCouponDto().copyMembers(saved, true);
+    }
+
     // 사용자 쿠폰 등록/수정/삭제 요청자가 ADMIN 또는 SUPER_ADMIN 권한인지 검증한다.
     private void validateCouponManager(Long userId) {
 
@@ -143,5 +176,30 @@ public class UserCouponService {
 
         userCoupon.setUser(user);
         userCoupon.setCoupon(coupon);
+    }
+
+    private UserCouponEntity requireAvailableCoupon(Long userId, Long couponId) {
+        if (userId == null || couponId == null || couponId <= 0) {
+            throw new IllegalArgumentException("사용할 쿠폰 정보가 없습니다.");
+        }
+
+        UserCouponEntity userCoupon = this.userCouponRepository
+                .findByUser_UserIdAndCoupon_CouponId(userId, couponId)
+                .orElseThrow(() -> new IllegalArgumentException("회원에게 발급된 쿠폰이 아닙니다."));
+        validateAvailableCoupon(userCoupon);
+        return userCoupon;
+    }
+
+    private void validateAvailableCoupon(UserCouponEntity userCoupon) {
+        CouponEntity coupon = userCoupon.getCoupon();
+        if (userCoupon.getUserCouponStatus() != UserCouponStatusEnum.AVAILABLE) {
+            throw new IllegalArgumentException("이미 사용했거나 만료된 쿠폰입니다.");
+        }
+        if (coupon == null || coupon.getStatus() != CouponStatusEnum.ACTIVE) {
+            throw new IllegalArgumentException("현재 사용할 수 없는 쿠폰입니다.");
+        }
+        if (coupon.getExpirationDate() == null || coupon.getExpirationDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("만료된 쿠폰입니다.");
+        }
     }
 }

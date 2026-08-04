@@ -124,6 +124,24 @@
   border-radius: 7px;
 }
 
+.coupon-apply-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.coupon-apply-row .btn {
+  min-height: 42px;
+  white-space: nowrap;
+}
+
+.coupon-apply-status {
+  min-height: 18px;
+  color: #4e5968;
+  font-size: 12px;
+}
+
 .toss-note {
   max-width: 560px;
   margin: 18px auto 0;
@@ -172,6 +190,10 @@
 
   .toss-method {
     flex: 1 1 140px;
+  }
+
+  .coupon-apply-row {
+    grid-template-columns: 1fr;
   }
 
   .toss-row {
