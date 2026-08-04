@@ -23,4 +23,9 @@ public class UserDto extends BaseDto implements IUser {
     private Membership membership;
     private Boolean marketingAgreed;
     private Integer point;
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
 }

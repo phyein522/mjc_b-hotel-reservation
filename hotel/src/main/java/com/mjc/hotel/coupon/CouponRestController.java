@@ -50,7 +50,10 @@ public class CouponRestController {
     // 관리자 권한을 확인한 뒤 쿠폰을 등록한다.
     @PostMapping
     public ResponseEntity<ApiResponse<CouponDto>> insert(
-            @RequestBody CouponDto requestDto) {
+            @RequestBody CouponDto requestDto,
+            @RequestParam Long userId) {
+
+        requestDto.setUserId(userId);
 
         CouponDto resultDto = this.couponService.insert(requestDto);
 
@@ -62,7 +65,10 @@ public class CouponRestController {
     // 관리자 권한을 확인한 뒤 기존 쿠폰 정보를 수정한다.
     @PatchMapping
     public ResponseEntity<ApiResponse<CouponDto>> update(
-            @RequestBody CouponDto requestDto) {
+            @RequestBody CouponDto requestDto,
+            @RequestParam Long userId) {
+
+        requestDto.setUserId(userId);
 
         CouponDto resultDto = this.couponService.update(requestDto);
 

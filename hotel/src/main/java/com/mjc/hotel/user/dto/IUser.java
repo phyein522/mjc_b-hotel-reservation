@@ -4,9 +4,16 @@ import com.mjc.hotel.common.dto.IBase;
 import com.mjc.hotel.user.entity.Membership;
 import com.mjc.hotel.user.entity.Role;
 import com.mjc.hotel.user.entity.Status;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @tools.jackson.databind.annotation.JsonDeserialize(as = UserDto.class)
-public interface IUser extends IBase {
+public interface IUser extends IBase, UserDetails {
     Long getUserId();
     void setUserId(Long userId);
 
@@ -73,5 +80,11 @@ public interface IUser extends IBase {
             this.setPoint(src.getPoint());
         }
         return this;
+    }
+    @Override
+    default Collection<? extends GrantedAuthority> getAuthorities() {
+        List<SimpleGrantedAuthority> list = new ArrayList<>();
+        list.add(new SimpleGrantedAuthority(this.getRole().toString()));
+        return list;
     }
 }

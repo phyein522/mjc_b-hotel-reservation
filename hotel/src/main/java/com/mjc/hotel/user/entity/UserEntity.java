@@ -51,4 +51,9 @@ public class UserEntity extends BaseEntity implements IUser {
 
     @Column(name = "google_subject", unique = true, length = 255, comment = "Google 계정 고유 식별자")
     private String googleSubject;
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
 }

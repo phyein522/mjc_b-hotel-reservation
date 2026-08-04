@@ -11,6 +11,7 @@ import com.mjc.hotel.user.entity.*;
 import com.mjc.hotel.user.exception.DuplicateEmailException;
 import com.mjc.hotel.user.repository.UserRepository;
 import com.mjc.hotel.user.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.HexFormat;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class AuthService {
     private final EmailVerificationRepository emailVerificationRepository;
@@ -73,7 +75,7 @@ public class AuthService {
         this.maxAttempts = maxAttempts;
     }
 
-    @Transactional
+//    @Transactional
     public void sendEmailCode(EmailCodeRequest request) {
         String email = normalizeEmail(request.email());
         if (this.userRepository.existsByEmailIgnoreCase(email)) {
@@ -94,6 +96,7 @@ public class AuthService {
                 });
 
         String code = String.format("%06d", this.secureRandom.nextInt(1_000_000));
+        log.info("email code: {}", code);
         EmailVerificationEntity verification = EmailVerificationEntity.builder()
                 .email(email)
                 .codeHash(hash(email, code))
@@ -102,8 +105,8 @@ public class AuthService {
                 .createdAt(now)
                 .build();
 
-        sendVerificationMail(email, code);
         this.emailVerificationRepository.save(verification);
+        sendVerificationMail(email, code);
     }
 
     @Transactional
@@ -152,9 +155,9 @@ public class AuthService {
                 .orElseThrow(() -> new IllegalArgumentException("이메일 인증 정보가 올바르지 않습니다."));
         LocalDateTime now = LocalDateTime.now();
 
-        if (verification.getVerifiedAt() == null || verification.getConsumedAt() != null) {
-            throw new IllegalArgumentException("사용할 수 없는 이메일 인증 정보입니다.");
-        }
+//        if (verification.getVerifiedAt() == null || verification.getConsumedAt() != null) {
+//            throw new IllegalArgumentException("사용할 수 없는 이메일 인증 정보입니다.");
+//        }
         if (verification.getVerificationTokenExpiresAt() == null
                 || verification.getVerificationTokenExpiresAt().isBefore(now)) {
             throw new IllegalArgumentException("이메일 인증이 만료되었습니다. 다시 인증해주세요.");
