@@ -82,8 +82,8 @@ public class SecurityConfig {
                         .requestMatchers("/**/*.ico").permitAll()   // 모든 depth의 html 커버// static 폴더 바로 아래 html들
                         .requestMatchers("/", "/error").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/assets/**", "/images/**").permitAll()
-                        .requestMatchers("/api/hotels").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(x ->
