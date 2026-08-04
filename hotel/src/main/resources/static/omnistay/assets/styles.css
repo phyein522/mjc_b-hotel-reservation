@@ -114,6 +114,12 @@ button, input, select, textarea {
   color: #57708f;
   font-weight: 700;
 }
+.cover-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .cover-img {
   display: block;
   width: 100%;
@@ -207,6 +213,42 @@ button, input, select, textarea {
   border-bottom: 1px solid var(--line);
 }
 .hotel-resource-row:last-child { border-bottom: 0; }
+.hotel-edit-form {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: #f8fafc;
+}
+.hotel-edit-form[hidden] { display: none; }
+.hotel-edit-wide { grid-column: 1 / -1; }
+.hotel-active-option {
+  display: inline-flex;
+  align-items: center;
+  align-self: end;
+  gap: 8px;
+  min-height: 38px;
+}
+.hotel-active-option input { min-height: 0; }
+.hotel-edit-actions { margin-top: 14px; }
+.amenity-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.amenity-tag {
+  min-height: 34px;
+  padding: 7px 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: white;
+  color: var(--muted);
+  font-weight: 700;
+  cursor: pointer;
+}
+.amenity-tag:hover { border-color: var(--brand); color: var(--brand); }
+.amenity-tag.active { border-color: var(--brand); background: var(--brand-soft); color: var(--brand); }
+.amenity-tag:disabled { opacity: .55; cursor: wait; }
 .hotel-image-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
@@ -404,6 +446,8 @@ table { width: 100%; border-collapse: collapse; min-width: 720px; }
 th, td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; font-size: 14px; }
 th { color: var(--muted); background: #f8fafc; font-weight: 800; }
 tr:last-child td { border-bottom: 0; }
+.booking-place { display: flex; align-items: center; gap: 10px; min-width: 210px; }
+.booking-thumb { width: 64px; height: 48px; flex: 0 0 auto; object-fit: cover; border-radius: 6px; }
 
 .admin-shell { display: grid; grid-template-columns: 252px minmax(0, 1fr); min-height: 100vh; }
 .sidebar {

@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UserCouponRepository extends JpaRepository<UserCouponEntity, Long> {
     // 중복 발급 방지
@@ -16,4 +18,6 @@ public interface UserCouponRepository extends JpaRepository<UserCouponEntity, Lo
         """)
     Long countCoupon(@Param("userId") Long userId,
                      @Param("couponId") Long couponId);
+
+    Optional<UserCouponEntity> findByUser_UserIdAndCoupon_CouponId(Long userId, Long couponId);
 }
