@@ -7,12 +7,15 @@ import com.mjc.hotel.user.entity.Status;
 import com.mjc.hotel.user.entity.UserEntity;
 import com.mjc.hotel.user.exception.DuplicateEmailException;
 import com.mjc.hotel.user.repository.UserRepository;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -69,5 +72,15 @@ public class UserService {
         UserDto result = this.findById(userId);
         this.userRepository.deleteById(userId);
         return result;
+    }
+    public UserDto findByEmail(String email) {
+        UserEntity findEntity = this.userRepository.findByEmailIgnoreCase(email).orElseThrow();
+        UserDto result = (UserDto)new UserDto().copyMembers(findEntity, true);
+        return result;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return this.findByEmail(username);
     }
 }
