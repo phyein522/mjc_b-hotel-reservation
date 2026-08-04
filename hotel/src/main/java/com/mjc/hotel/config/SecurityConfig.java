@@ -71,14 +71,19 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors( x -> x.configurationSource(corsConfigurationSource()))
-                .headers( x -> x.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
-                .authorizeHttpRequests( x -> x
-                        .requestMatchers("/").permitAll()
+                .cors(x -> x.configurationSource(corsConfigurationSource()))
+                .headers(x -> x.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                .authorizeHttpRequests(x -> x
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        .requestMatchers("/*.html").permitAll()
+                        .requestMatchers("/**/*.html").permitAll()   // 모든 depth의 html 커버// static 폴더 바로 아래 html들
+                        .requestMatchers("/**/*.css").permitAll()   // 모든 depth의 html 커버// static 폴더 바로 아래 html들
+                        .requestMatchers("/**/*.js").permitAll()   // 모든 depth의 html 커버// static 폴더 바로 아래 html들
+                        .requestMatchers("/**/*.ico").permitAll()   // 모든 depth의 html 커버// static 폴더 바로 아래 html들
+                        .requestMatchers("/", "/error").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        /*.requestMatchers("/signup").permitAll()
-                        .requestMatchers("/signin").permitAll()
-                        .requestMatchers("/api/v1/auth/**").permitAll()*/
+                        .requestMatchers("/assets/**", "/images/**").permitAll()
+                        .requestMatchers("/api/hotels").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(x ->
@@ -88,11 +93,5 @@ public class SecurityConfig {
                 .addFilterBefore(hotelAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
         ;
         return http.build();
-    }
-
-    @Bean
-    public WebSecurityCustomizer staticResourceCustomizer() {
-        return x -> x.ignoring()
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 }

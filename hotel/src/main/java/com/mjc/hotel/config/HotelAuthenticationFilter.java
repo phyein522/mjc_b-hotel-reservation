@@ -21,7 +21,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Slf4j
-@Component
 @RequiredArgsConstructor
 public class HotelAuthenticationFilter extends OncePerRequestFilter {
     private final UserService userService;
