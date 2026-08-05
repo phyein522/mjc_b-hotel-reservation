@@ -109,7 +109,7 @@ public class TestTossPaymentRestController {
     void failTossPayment_shouldReturnOk() throws Exception {
         // given
         TossPaymentFailRequestDto failRequestDto = new TossPaymentFailRequestDto();
-        failRequestDto.setOrderId("ORDER_20260724_001");
+        failRequestDto.setPaymentKey("ORDER_20260724_001");
         failRequestDto.setCode("PAY_PROCESS_FAILED");
         failRequestDto.setMessage("잔액 부족으로 결제에 실패했습니다.");
 
