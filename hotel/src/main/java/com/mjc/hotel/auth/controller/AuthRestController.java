@@ -1,6 +1,7 @@
 package com.mjc.hotel.auth.controller;
 
 import com.mjc.hotel.auth.dto.*;
+import com.mjc.hotel.auth.jwt.JwtUtils;
 import com.mjc.hotel.auth.service.AuthService;
 import com.mjc.hotel.common.ApiResponse;
 import com.mjc.hotel.common.ResponseCode;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthRestController {
     private final AuthService authService;
+    private final JwtUtils jwtUtils;
 
     @GetMapping("/config")
     public ResponseEntity<ApiResponse<AuthConfigResponse>> config() {
@@ -47,29 +49,41 @@ public class AuthRestController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<UserDto>> signup(@Valid @RequestBody VerifiedSignupRequest request) {
+    public ResponseEntity<ApiResponse<AuthenticatedUserDto>> signup(@Valid @RequestBody VerifiedSignupRequest request) {
+        UserDto user = this.authService.signup(request);
         return ResponseEntity.ok(ApiResponse.make(
                 ResponseCode.INSERT_OK,
                 "verified signup success",
-                this.authService.signup(request)
+                createSession(user)
         ));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<UserDto>> emailLogin(@Valid @RequestBody EmailLoginRequest request) {
+    public ResponseEntity<ApiResponse<AuthenticatedUserDto>> emailLogin(@Valid @RequestBody EmailLoginRequest request) {
+        UserDto user = this.authService.loginWithEmail(request);
         return ResponseEntity.ok(ApiResponse.make(
                 ResponseCode.SUCCESS,
                 "email login success",
-                this.authService.loginWithEmail(request)
+                createSession(user)
         ));
     }
 
     @PostMapping("/google")
-    public ResponseEntity<ApiResponse<UserDto>> googleLogin(@Valid @RequestBody GoogleLoginRequest request) {
+    public ResponseEntity<ApiResponse<AuthenticatedUserDto>> googleLogin(@Valid @RequestBody GoogleLoginRequest request) {
+        UserDto user = this.authService.loginWithGoogle(request);
         return ResponseEntity.ok(ApiResponse.make(
                 ResponseCode.SUCCESS,
                 "google login success",
-                this.authService.loginWithGoogle(request)
+                createSession(user)
         ));
+    }
+
+    private AuthenticatedUserDto createSession(UserDto user) {
+        String email = user.getEmail();
+        return new AuthenticatedUserDto(
+                user,
+                this.jwtUtils.generateAccessToken(email),
+                this.jwtUtils.generateRefreshToken(email)
+        );
     }
 }

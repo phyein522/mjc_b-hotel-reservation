@@ -1,11 +1,15 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const testDir = dirname(fileURLToPath(import.meta.url));
 const staticRoot = resolve(testDir, "../../main/resources/static");
-const appSource = readFileSync(resolve(staticRoot, "omnistay/assets/app.js"), "utf8");
+const assetsRoot = resolve(staticRoot, "omnistay/assets");
+const appSource = readdirSync(assetsRoot)
+  .filter((name) => name.endsWith(".js"))
+  .map((name) => readFileSync(resolve(assetsRoot, name), "utf8"))
+  .join("\n");
 
 const forbiddenUiData = [
   "seedPage",

@@ -268,6 +268,28 @@ button, input, select, textarea {
 }
 .hotel-image-item input[type="file"] { min-width: 0; max-width: 100%; }
 
+.room-list-thumb {
+  width: 64px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.backend-dialog {
+  width: min(900px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  border: 0;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, .28);
+}
+
+.backend-dialog::backdrop { background: rgba(15, 23, 42, .52); }
+.backend-dialog-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+
 .pill, .status {
   display: inline-flex;
   align-items: center;

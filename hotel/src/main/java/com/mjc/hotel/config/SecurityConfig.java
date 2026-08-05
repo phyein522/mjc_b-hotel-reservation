@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -59,7 +61,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConf = new CorsConfiguration();
         corsConf.setAllowedOriginPatterns(List.of("*"));
-        corsConf.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PATH", "DELETE", "OPTIONS"));
+        corsConf.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         corsConf.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         corsConf.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -73,6 +75,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(x -> x.configurationSource(corsConfigurationSource()))
                 .headers(x -> x.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                .exceptionHandling(x -> x.authenticationEntryPoint((request, response, exception) ->
+                        response.sendError(HttpStatus.UNAUTHORIZED.value(), "Authentication required")
+                ))
                 .authorizeHttpRequests(x -> x
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/*.html").permitAll()
@@ -82,8 +87,20 @@ public class SecurityConfig {
                         .requestMatchers("/**/*.ico").permitAll()   // 모든 depth의 html 커버// static 폴더 바로 아래 html들
                         .requestMatchers("/", "/error").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/users/signup").permitAll()
                         .requestMatchers("/assets/**", "/images/**").permitAll()
-                        .requestMatchers("/api/hotels").permitAll()
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/hotels/**",
+                                "/api/rates/hotels/*/rooms",
+                                "/api/rates/rooms/*",
+                                "/api/hotelamenities/hotel/**",
+                                "/api/hoteltrans/hotel/**",
+                                "/api/hotelimage/hotel/**",
+                                "/api/hotelimage/image/**",
+                                "/api/roomimage/image/**",
+                                "/api/review/hotel/**",
+                                "/api/review/photos/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(x ->
