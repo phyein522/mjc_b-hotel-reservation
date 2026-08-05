@@ -1,5 +1,5 @@
 import { request, pageItems, qs, escapeHtml } from "./api.js";
-import { getCurrentUser, userShell, adminShell, title, empty, errorMessage, toast, paymentBookingId } from "./core.js";
+import { getCurrentUser, userShell, adminShell, title, empty, errorMessage, toast, eligibleReviewBookings } from "./core.js";
 import { reviewCard } from "./hotels.js";
 
 async function loadReviews(adminMode = false, keyword = "") {
@@ -9,12 +9,17 @@ async function loadReviews(adminMode = false, keyword = "") {
     const currentUser = getCurrentUser();
     const reviews = pageItems(await request(`/api/review?${query.toString()}`));
     const visibleReviews = adminMode ? reviews : reviews.filter((review) => Number(review.userId) === Number(currentUser?.userId));
-    document.querySelector("#reviewList").innerHTML = visibleReviews.length ? `<div class="grid">${visibleReviews.map((review) => reviewCard(review, `<div class="form-row"><button class="btn" data-edit-review="${review.reviewId}">상세/수정</button>${adminMode ? `<button class="btn danger" data-delete-review="${review.reviewId}">삭제</button>` : ""}</div>`)).join("")}</div>` : empty(keyword ? "검색된 리뷰가 없습니다." : "등록된 리뷰가 없습니다.");
+    document.querySelector("#reviewList").innerHTML = visibleReviews.length ? `<div class="grid">${visibleReviews.map((review) => reviewCard(review, `<div class="form-row"><button class="btn" data-edit-review="${review.reviewId}">상세/수정</button><button class="btn danger" data-delete-review="${review.reviewId}">삭제</button></div>`)).join("")}</div>` : empty(keyword ? "검색된 리뷰가 없습니다." : "등록된 리뷰가 없습니다.");
     document.querySelectorAll("[data-edit-review]").forEach((btn) => btn.addEventListener("click", () => openReviewEditor(btn.dataset.editReview, adminMode, keyword)));
     document.querySelectorAll("[data-delete-review]").forEach((btn) => btn.addEventListener("click", async () => {
-      await request(`/api/review/${btn.dataset.deleteReview}`, { method: "DELETE" });
-      toast("삭제되었습니다.");
-      loadReviews(adminMode, keyword);
+      if (!confirm("이 리뷰를 삭제하시겠습니까?")) return;
+      try {
+        await request(`/api/review/${btn.dataset.deleteReview}`, { method: "DELETE" });
+        toast("리뷰가 삭제되었습니다.");
+        await loadReviews(adminMode, keyword);
+      } catch (error) {
+        document.querySelector("#reviewList").innerHTML = errorMessage(error);
+      }
     }));
   } catch (error) {
     document.querySelector("#reviewList").innerHTML = errorMessage(error);
@@ -25,6 +30,7 @@ async function openReviewEditor(reviewId, adminMode, keyword = "") {
   try {
     const review = await request(`/api/review/${reviewId}`);
     const dialog = ensureReviewDialog();
+    const existingPhotos = Array.isArray(review.photos) ? review.photos : [];
     const tagValues = new Set((review.tags || []).map((item) => item.tag));
     const ratingByCategory = new Map((review.ratings || []).map((item) => [item.category, Number(item.score)]));
     dialog.innerHTML = `<form method="dialog" class="backend-dialog-head"><h2>리뷰 상세/수정</h2><button class="btn" value="cancel">닫기</button></form>
@@ -34,29 +40,50 @@ async function openReviewEditor(reviewId, adminMode, keyword = "") {
         <label><span>제목</span><input name="title" value="${escapeHtml(review.title || "")}" maxlength="200" required></label>
         <fieldset class="review-fieldset"><legend>리뷰 태그</legend><div class="tag-picker">${reviewTagOptions.map(([value, label]) => `<label class="tag-option"><input type="checkbox" name="reviewTag" value="${value}" ${tagValues.has(value) ? "checked" : ""}><span>${label}</span></label>`).join("")}</div></fieldset>
         <fieldset class="review-fieldset"><legend>항목별 점수</legend><div class="rating-grid">${reviewRatingOptions.map(([category, label]) => `<label><span>${label}</span><select name="rating_${category}">${ratingOptions(ratingByCategory.get(category) || 5)}</select></label>`).join("")}</div></fieldset>
+        <fieldset class="review-fieldset"><legend>사진 관리</legend>
+          <div class="review-edit-photos" id="reviewExistingPhotos">${existingPhotos.length ? existingPhotos.map((photo, index) => `<label class="review-edit-photo"><img src="${escapeHtml(photo.photoPath)}" alt="기존 리뷰 사진 ${index + 1}" onerror="this.hidden=true"><span><input type="checkbox" name="keepReviewPhoto" value="${index}" checked> 이 사진 유지</span></label>`).join("") : `<div class="small muted">등록된 사진이 없습니다.</div>`}</div>
+          <label><span>새 사진 추가</span><input name="newPhotos" type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple><small class="muted">새 사진을 선택하면 유지한 기존 사진 뒤에 추가됩니다.</small></label>
+          <div class="review-edit-photos" id="reviewNewPhotoPreview"></div>
+        </fieldset>
         <label><span>내용</span><textarea name="content" required>${escapeHtml(review.content || "")}</textarea></label>
         <div class="form-row"><button class="btn primary" type="submit">리뷰 저장</button><span id="reviewEditStatus"></span></div>
       </form>`;
-    dialog.querySelector("#reviewEditForm").addEventListener("submit", async (event) => {
+    const editForm = dialog.querySelector("#reviewEditForm");
+    editForm.elements.newPhotos.addEventListener("change", (event) => {
+      const files = Array.from(event.currentTarget.files || []);
+      dialog.querySelector("#reviewNewPhotoPreview").innerHTML = files.map((file, index) => `<div class="review-edit-photo"><img src="${URL.createObjectURL(file)}" alt="새 리뷰 사진 ${index + 1}"><span>${escapeHtml(file.name)}</span></div>`).join("");
+    });
+    editForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       const form = event.currentTarget;
       const data = qs(form);
-      const updated = {
-        ...review,
-        tripType: data.tripType,
-        overallRating: Number(data.overallRating),
-        title: data.title,
-        content: data.content,
-        tags: Array.from(form.querySelectorAll('input[name="reviewTag"]:checked')).map((input) => ({ tag: input.value })),
-        ratings: reviewRatingOptions.map(([category]) => ({ category, score: Number(data[`rating_${category}`]) }))
-      };
+      const submitButton = form.querySelector('button[type="submit"]');
+      submitButton.disabled = true;
       try {
+        dialog.querySelector("#reviewEditStatus").textContent = "사진을 처리하고 있습니다.";
+        const keptPhotos = Array.from(form.querySelectorAll('input[name="keepReviewPhoto"]:checked'))
+          .map((input) => existingPhotos[Number(input.value)])
+          .filter(Boolean);
+        const uploadedPhotos = await uploadReviewPhotos(form.elements.newPhotos.files);
+        const photos = [...keptPhotos, ...uploadedPhotos]
+          .map((photo, index) => ({ photoPath: photo.photoPath, photoOrder: index + 1 }));
+        const updated = {
+          ...review,
+          tripType: data.tripType,
+          overallRating: Number(data.overallRating),
+          title: data.title,
+          content: data.content,
+          photos,
+          tags: Array.from(form.querySelectorAll('input[name="reviewTag"]:checked')).map((input) => ({ tag: input.value })),
+          ratings: reviewRatingOptions.map(([category]) => ({ category, score: Number(data[`rating_${category}`]) }))
+        };
         await request("/api/review", { method: "PATCH", body: JSON.stringify(updated) });
         toast("리뷰가 수정되었습니다.");
         dialog.close();
         loadReviews(adminMode, keyword);
       } catch (error) {
         dialog.querySelector("#reviewEditStatus").textContent = error.message;
+        submitButton.disabled = false;
       }
     });
     dialog.showModal();
@@ -115,48 +142,6 @@ function ratingStars(name, label, selected = 5) {
     .join("")}</div></fieldset>`;
 }
 
-async function eligibleReviewBookings(userId) {
-  const [bookings, payments, reviews] = await Promise.all([
-    request(`/api/bookings/${userId}`).then(pageItems),
-    request("/api/payment").then(pageItems),
-    request("/api/review?size=200").then(pageItems)
-  ]);
-  const paidBookingIds = new Set(payments
-    .filter((payment) => String(payment.paymentStatus || "").toLowerCase() === "paid")
-    .map((payment) => Number(paymentBookingId(payment))));
-  const reviewedBookingIds = new Set(reviews
-    .filter((review) => Number(review.userId) === Number(userId))
-    .map((review) => Number(review.reservationId)));
-  const candidates = bookings.filter((booking) => (
-    !booking.cancelledAt
-    && paidBookingIds.has(Number(booking.bookingId))
-    && !reviewedBookingIds.has(Number(booking.bookingId))
-  ));
-
-  return Promise.all(candidates.map(async (booking) => {
-    const roomId = Number(booking.roomId || booking.room?.roomId);
-    let room = booking.room || null;
-    if ((!room?.hotelId && !room?.hotel?.hotelId) || !room?.name) {
-      room = await request(`/api/room/${roomId}`).catch(() => room || {});
-    }
-    const hotelId = Number(room?.hotelId || room?.hotel?.hotelId);
-    let hotel = room?.hotel || null;
-    if (!hotel?.name && hotelId) {
-      hotel = await request(`/api/hotels/${hotelId}`).catch(() => hotel || {});
-    }
-    return {
-      reservationId: Number(booking.bookingId),
-      userId: Number(userId),
-      hotelId,
-      roomId,
-      hotelName: hotel?.name || "호텔",
-      roomName: room?.name || (room?.number ? `${room.number}호` : "객실"),
-      checkinDate: booking.checkinDate,
-      checkoutDate: booking.checkoutDate
-    };
-  }));
-}
-
 async function uploadReviewPhotos(files) {
   if (!files?.length) return [];
   const body = new FormData();
@@ -178,10 +163,7 @@ async function reviewsPage(adminMode = false) {
     return;
   }
 
-  userShell("reviews", `${title("리뷰 작성", "결제가 완료된 예약만 리뷰를 작성할 수 있습니다.")}<div class="grid cols-2"><form class="card card-body grid" id="reviewForm"><div id="reviewEligibility">${empty("작성 가능한 예약을 확인하고 있습니다.")}</div><label><span>리뷰를 작성할 숙박</span><select name="reviewBooking" id="reviewBooking" disabled required><option value="">불러오는 중</option></select></label><label><span>여행 유형</span><select name="tripType"><option value="FAMILY">가족 여행</option><option value="COUPLE">커플 여행</option><option value="FRIENDS">친구 여행</option><option value="BUSINESS">출장</option><option value="SOLO">나홀로 여행</option><option value="OTHER">기타</option></select></label>${ratingStars("overallRating", "종합 평점")}<label><span>제목</span><input name="title" required maxlength="200"></label><fieldset class="review-fieldset"><legend>어떤 점이 인상적이었나요?</legend><div class="tag-picker">${reviewTagOptions.map(([value, label]) => `<label class="tag-option"><input type="checkbox" name="reviewTag" value="${value}"><span>${label}</span></label>`).join("")}</div></fieldset><fieldset class="review-fieldset"><legend>항목별 점수</legend><div class="rating-grid">${reviewRatingOptions.map(([category, label]) => ratingStars(`rating_${category}`, label)).join("")}</div></fieldset><label><span>사진 첨부</span><input name="photos" type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple><small class="muted">이미지 파일을 여러 장 선택할 수 있습니다.</small></label><label style="grid-column:1/-1"><span>내용</span><textarea name="content" required></textarea></label><button class="btn primary" id="reviewSubmit" disabled>리뷰 저장</button></form><section id="reviewList">${empty("리뷰를 불러오는 중입니다.")}</section></div>`);
-
-  document.querySelector("#reviewList").insertAdjacentHTML("beforebegin", `<div class="filters"><input id="reviewKeyword" placeholder="내 리뷰 제목 또는 내용 검색"><button class="btn" id="reviewSearch" type="button">검색</button></div>`);
-  document.querySelector("#reviewSearch").addEventListener("click", () => loadReviews(false, document.querySelector("#reviewKeyword").value));
+  userShell("reviews", `${title("리뷰 작성", "결제가 완료된 예약만 리뷰를 작성할 수 있습니다.")}<form class="card card-body grid" id="reviewForm"><div id="reviewEligibility">${empty("작성 가능한 예약을 확인하고 있습니다.")}</div><label><span>리뷰를 작성할 숙박</span><select name="reviewBooking" id="reviewBooking" disabled required><option value="">불러오는 중</option></select></label><label><span>여행 유형</span><select name="tripType"><option value="FAMILY">가족 여행</option><option value="COUPLE">커플 여행</option><option value="FRIENDS">친구 여행</option><option value="BUSINESS">출장</option><option value="SOLO">나홀로 여행</option><option value="OTHER">기타</option></select></label>${ratingStars("overallRating", "종합 평점")}<label><span>제목</span><input name="title" required maxlength="200"></label><fieldset class="review-fieldset"><legend>어떤 점이 인상적이었나요?</legend><div class="tag-picker">${reviewTagOptions.map(([value, label]) => `<label class="tag-option"><input type="checkbox" name="reviewTag" value="${value}"><span>${label}</span></label>`).join("")}</div></fieldset><fieldset class="review-fieldset"><legend>항목별 점수</legend><div class="rating-grid">${reviewRatingOptions.map(([category, label]) => ratingStars(`rating_${category}`, label)).join("")}</div></fieldset><label><span>사진 첨부</span><input name="photos" type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple><small class="muted">이미지 파일을 여러 장 선택할 수 있습니다.</small></label><label style="grid-column:1/-1"><span>내용</span><textarea name="content" required></textarea></label><button class="btn primary" id="reviewSubmit" disabled>리뷰 저장</button></form>`);
   const form = document.querySelector("#reviewForm");
   const bookingSelect = document.querySelector("#reviewBooking");
   const submitButton = document.querySelector("#reviewSubmit");
@@ -189,6 +171,10 @@ async function reviewsPage(adminMode = false) {
 
   try {
     eligibleBookings = await eligibleReviewBookings(currentUser.userId);
+    const requestedHotelId = Number(new URLSearchParams(location.search).get("hotelId"));
+    if (requestedHotelId) {
+      eligibleBookings = eligibleBookings.filter((booking) => Number(booking.hotelId) === requestedHotelId);
+    }
     if (!eligibleBookings.length) {
       document.querySelector("#reviewEligibility").innerHTML = empty("작성 가능한 리뷰가 없습니다.", "결제가 완료되고 아직 리뷰를 작성하지 않은 예약이 필요합니다.");
       bookingSelect.innerHTML = `<option value="">작성 가능한 예약 없음</option>`;
@@ -229,7 +215,6 @@ async function reviewsPage(adminMode = false) {
       };
       await request("/api/review", { method: "POST", body: JSON.stringify(data) });
       toast("리뷰가 저장되었습니다.");
-      await loadReviews(false);
       eligibleBookings = eligibleBookings.filter((booking) => booking.reservationId !== selectedBooking.reservationId);
       bookingSelect.innerHTML = eligibleBookings.length
         ? eligibleBookings.map((booking, index) => `<option value="${index}">${escapeHtml(booking.hotelName)} · ${escapeHtml(booking.roomName)} · ${escapeHtml(booking.checkinDate)} ~ ${escapeHtml(booking.checkoutDate)}</option>`).join("")
@@ -245,7 +230,6 @@ async function reviewsPage(adminMode = false) {
       submitButton.disabled = false;
     }
   });
-  loadReviews(false);
 }
 
 

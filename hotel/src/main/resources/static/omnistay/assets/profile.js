@@ -1,4 +1,5 @@
 import { request, qs, escapeHtml } from "./api.js";
+import { loadReviews } from "./reviews.js";
 import {
   getCurrentUser,
   setCurrentUser,
@@ -26,14 +27,41 @@ function profileForm(user) {
   </form>`;
 }
 
+function profileTabs() {
+  return `<div class="profile-tabs" role="tablist" aria-label="내 정보 메뉴">
+    <button class="profile-tab active" type="button" data-profile-tab="account" role="tab" aria-selected="true">회원 정보</button>
+    <button class="profile-tab" type="button" data-profile-tab="reviews" role="tab" aria-selected="false">리뷰 수정</button>
+  </div>`;
+}
+
 async function profilePage() {
   const sessionUser = getCurrentUser();
   if (!sessionUser?.userId) {
     location.href = `login.html?redirect=${encodeURIComponent("profile.html")}`;
     return;
   }
-  userShell("profile", `${title("내 정보", "백엔드에 저장된 회원 정보를 조회하고 수정합니다.")}<section id="profileArea">${empty("회원 정보를 불러오는 중입니다.")}</section>`);
+  userShell("profile", `${title("내 정보", "회원 정보와 내가 작성한 리뷰를 관리합니다.")}${profileTabs()}<section id="profileAccountTab"><div id="profileArea">${empty("회원 정보를 불러오는 중입니다.")}</div></section><section id="profileReviewTab" hidden><div class="toolbar"><h2>리뷰 수정</h2><span class="muted">내가 작성한 리뷰를 수정하거나 삭제할 수 있습니다.</span></div><div class="filters"><input id="profileReviewKeyword" placeholder="리뷰 제목 또는 내용 검색"><button class="btn" id="profileReviewSearch" type="button">검색</button></div><section id="reviewList">${empty("리뷰를 불러오는 중입니다.")}</section></section>`);
   const area = document.querySelector("#profileArea");
+  const accountTab = document.querySelector("#profileAccountTab");
+  const reviewTab = document.querySelector("#profileReviewTab");
+  let reviewsLoaded = false;
+  document.querySelectorAll("[data-profile-tab]").forEach((tab) => tab.addEventListener("click", async () => {
+    const reviewsActive = tab.dataset.profileTab === "reviews";
+    accountTab.hidden = reviewsActive;
+    reviewTab.hidden = !reviewsActive;
+    document.querySelectorAll("[data-profile-tab]").forEach((item) => {
+      const active = item === tab;
+      item.classList.toggle("active", active);
+      item.setAttribute("aria-selected", String(active));
+    });
+    if (reviewsActive && !reviewsLoaded) {
+      reviewsLoaded = true;
+      await loadReviews(false, "");
+    }
+  }));
+  document.querySelector("#profileReviewSearch").addEventListener("click", () => {
+    loadReviews(false, document.querySelector("#profileReviewKeyword").value);
+  });
   try {
     const user = await request(`/api/users/${sessionUser.userId}`);
     area.innerHTML = profileForm(user);

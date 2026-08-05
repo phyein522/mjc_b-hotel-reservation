@@ -41,6 +41,23 @@ public class UserCouponService {
         List<UserCouponDto> list = this.getListCouponDto(page.getContent());
         return new PageImpl<>(list, pageable, page.getTotalElements());
     }
+
+    @Transactional(readOnly = true)
+    public List<AvailableUserCouponDto> findAvailable(Long userId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("로그인 사용자 정보가 없습니다.");
+        }
+
+        return this.userCouponRepository
+                .findAllByUser_UserIdAndUserCouponStatusOrderByUserCouponIdDesc(
+                        userId,
+                        UserCouponStatusEnum.AVAILABLE
+                )
+                .stream()
+                .filter(this::isAvailableCoupon)
+                .map(AvailableUserCouponDto::from)
+                .toList();
+    }
     // 사용자 쿠폰 ID로 사용자 쿠폰 정보를 조회한다.
     public UserCouponDto findById(Long userCouponId) {
 
@@ -201,5 +218,13 @@ public class UserCouponService {
         if (coupon.getExpirationDate() == null || coupon.getExpirationDate().isBefore(LocalDate.now())) {
             throw new IllegalArgumentException("만료된 쿠폰입니다.");
         }
+    }
+
+    private boolean isAvailableCoupon(UserCouponEntity userCoupon) {
+        CouponEntity coupon = userCoupon.getCoupon();
+        return coupon != null
+                && coupon.getStatus() == CouponStatusEnum.ACTIVE
+                && coupon.getExpirationDate() != null
+                && !coupon.getExpirationDate().isBefore(LocalDate.now());
     }
 }

@@ -116,20 +116,20 @@ public class TossPaymentService {
         }
 
         JsonNode tossResponse = requestTossConfirm(dto);
-        PaymentDto result = (PaymentDto) new PaymentDto().copyMembers(payment, true);
         String approvedAt = text(tossResponse, "approvedAt");
         String receiptUrl = tossResponse.path("receipt").path("url").asText(null);
 
-        result.setPaymentKey(text(tossResponse, "paymentKey"));
-        result.setPgTransactionId(text(tossResponse, "paymentKey"));
-        result.setPaymentMethod(resolvePaymentMethod(text(tossResponse, "method")));
-        result.setPaymentStatus(PaymentStatus.Paid);
-        result.setReceiptUrl(receiptUrl);
-        result.setApprovedAt(parseTossDateTime(approvedAt));
+        payment.setPaymentKey(text(tossResponse, "paymentKey"));
+        payment.setPgTransactionId(text(tossResponse, "paymentKey"));
+        payment.setPaymentMethod(resolvePaymentMethod(text(tossResponse, "method")));
+        payment.setPaymentStatus(PaymentStatus.Paid);
+        payment.setReceiptUrl(receiptUrl);
+        payment.setApprovedAt(parseTossDateTime(approvedAt));
 //        result.setPaidAt(payment.getApprovedAt() != null ? payment.getApprovedAt() : LocalDateTime.now());
 //        result.setPoint((int) Math.floor(amount.doubleValue() * 0.005));
 
-        return result;
+        PaymentEntity saved = paymentRepository.save(payment);
+        return (PaymentDto) new PaymentDto().copyMembers(saved, true);
     }
 
     @Transactional

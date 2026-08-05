@@ -82,6 +82,9 @@ button, input, select, textarea {
   align-items: center;
 }
 .toolbar { justify-content: space-between; margin: 18px 0; }
+.profile-tabs { display: flex; gap: 4px; margin: 0 0 20px; border-bottom: 1px solid var(--line); }
+.profile-tab { padding: 12px 16px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted); cursor: pointer; }
+.profile-tab.active, .profile-tab:hover { border-bottom-color: var(--brand); color: var(--brand); }
 .filters {
   padding: 14px;
   border: 1px solid var(--line);
@@ -126,6 +129,52 @@ button, input, select, textarea {
   height: 180px;
   object-fit: cover;
   border-radius: 8px;
+}
+.review-photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+.review-photos a {
+  display: block;
+  min-width: 0;
+}
+.review-photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  max-height: 280px;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.review-edit-photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin: 10px 0 14px;
+}
+.review-edit-photo {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: white;
+}
+.review-edit-photo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 4px;
+}
+.review-edit-photo span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 12px;
 }
 .section { margin-top: 22px; }
 

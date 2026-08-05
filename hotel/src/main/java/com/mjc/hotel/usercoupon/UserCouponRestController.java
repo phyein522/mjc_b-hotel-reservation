@@ -2,6 +2,7 @@ package com.mjc.hotel.usercoupon;
 
 import com.mjc.hotel.common.ApiResponse;
 import com.mjc.hotel.common.ResponseCode;
+import com.mjc.hotel.user.dto.UserDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,7 +11,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -32,6 +36,20 @@ public class UserCouponRestController {
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.make(ResponseCode.SELECT_OK, "ok", page)
+        );
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<ApiResponse<List<AvailableUserCouponDto>>> available(
+            @AuthenticationPrincipal UserDto currentUser) {
+        if (currentUser == null) {
+            throw new IllegalArgumentException("로그인이 필요합니다.");
+        }
+
+        List<AvailableUserCouponDto> coupons = this.userCouponService
+                .findAvailable(currentUser.getUserId());
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ApiResponse.make(ResponseCode.SELECT_OK, "ok", coupons)
         );
     }
 

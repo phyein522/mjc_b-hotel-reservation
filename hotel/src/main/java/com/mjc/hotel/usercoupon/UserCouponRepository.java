@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -20,4 +21,9 @@ public interface UserCouponRepository extends JpaRepository<UserCouponEntity, Lo
                      @Param("couponId") Long couponId);
 
     Optional<UserCouponEntity> findByUser_UserIdAndCoupon_CouponId(Long userId, Long couponId);
+
+    List<UserCouponEntity> findAllByUser_UserIdAndUserCouponStatusOrderByUserCouponIdDesc(
+            Long userId,
+            UserCouponStatusEnum status
+    );
 }

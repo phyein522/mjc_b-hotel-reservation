@@ -50,6 +50,9 @@ public interface IPayment extends IBase {
     BigDecimal getUsedPoint();
     void setUsedPoint(BigDecimal usedPoint);
 
+    BigDecimal getDiscountAmount();
+    void setDiscountAmount(BigDecimal discountAmount);
+
     String getCardNumber();
     void setCardNumber(String cardNumber);
 
@@ -124,6 +127,9 @@ public interface IPayment extends IBase {
         }
         if (forced || source.getUsedPoint() != null) {
             this.setUsedPoint(source.getUsedPoint());
+        }
+        if (forced || source.getDiscountAmount() != null) {
+            this.setDiscountAmount(source.getDiscountAmount());
         }
         if (forced || source.getCardNumber() != null) {
             this.setCardNumber(source.getCardNumber());

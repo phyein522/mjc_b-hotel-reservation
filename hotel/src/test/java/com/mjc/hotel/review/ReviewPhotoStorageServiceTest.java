@@ -10,11 +10,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 
+import java.io.IOException;
 import java.time.Year;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -60,5 +64,24 @@ class ReviewPhotoStorageServiceTest {
 
         assertThrows(IllegalArgumentException.class,
                 () -> reviewPhotoStorageService.upload(List.of(textFile)));
+    }
+
+    @Test
+    void loadFindsPhotoAfterWorkingDirectoryChanges() throws Exception {
+        Path parent = Path.of("").toAbsolutePath().normalize().getParent();
+        Path uploadRoot = Files.createTempDirectory(parent, "review-photo-test-");
+        Path reviewDirectory = Files.createDirectories(uploadRoot.resolve("reviews/2026"));
+        Path photo = Files.write(reviewDirectory.resolve("photo.jpg"), new byte[]{1, 2, 3});
+        try {
+            when(fileUtil.loadFileAsResource("reviews/2026", "photo.jpg")).thenThrow(new IOException("missing"));
+            when(fileUtil.getUploadPath()).thenReturn(uploadRoot.getFileName().toString());
+
+            assertTrue(reviewPhotoStorageService.load("2026", "photo.jpg").exists());
+        } finally {
+            Files.deleteIfExists(photo);
+            Files.deleteIfExists(reviewDirectory);
+            Files.deleteIfExists(uploadRoot.resolve("reviews"));
+            Files.deleteIfExists(uploadRoot);
+        }
     }
 }

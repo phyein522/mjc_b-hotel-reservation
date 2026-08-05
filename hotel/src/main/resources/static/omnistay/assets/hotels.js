@@ -4,6 +4,9 @@ import {
   title,
   empty,
   errorMessage,
+  getCurrentUser,
+  hasAccessToken,
+  eligibleReviewBookings,
   safeLoadHotels,
   loadHotelCovers,
   hotelCard,
@@ -67,12 +70,16 @@ async function detailPage() {
       document.querySelector("#detail").innerHTML = empty("표시할 호텔이 없습니다.");
       return;
     }
+    let reviewLoadError = null;
     const [hotel, roomsRes, amenRes, transRes, reviewsRes, imageRes] = await Promise.all([
       request(`/api/hotels/${id}`),
       request(`/api/rates/hotels/${id}/rooms?size=100`),
       request(`/api/hotelamenities/hotel/${id}?size=10`).catch(() => null),
       request(`/api/hoteltrans/hotel/${id}?size=20`).catch(() => null),
-      request(`/api/review/hotel/${id}?size=20`).catch(() => null),
+      request(`/api/review/hotel/${id}?size=20`, { cache: "no-store" }).catch((error) => {
+        reviewLoadError = error;
+        return null;
+      }),
       request(`/api/hotelimage/hotel/${id}?size=20`).catch(() => null)
     ]);
     const rooms = pageItems(roomsRes);
@@ -80,6 +87,15 @@ async function detailPage() {
     const trans = pageItems(transRes);
     const reviews = pageItems(reviewsRes);
     const images = pageItems(imageRes);
+    const currentUser = getCurrentUser();
+    const eligibleBooking = currentUser?.userId && hasAccessToken()
+      ? (await eligibleReviewBookings(currentUser.userId).catch(() => []))
+        .find((booking) => Number(booking.hotelId) === Number(id))
+      : null;
+    const reviewHref = eligibleBooking
+      ? `reviews.html?hotelId=${encodeURIComponent(id)}&bookingId=${encodeURIComponent(eligibleBooking.reservationId)}`
+      : "#hotelReviews";
+    const reviewAction = eligibleBooking ? "리뷰 작성" : "리뷰 보기";
     document.querySelector("#detail").innerHTML = `
       <div class="hero"><h1>${escapeHtml(hotel.name)}</h1><p>${escapeHtml(hotel.description || hotel.address || "")}</p></div>
       ${images.length ? `<section class="section grid cols-3">${images.map((image) => `<article class="card"><img class="cover-img" src="${hotelImageUrl(image)}" alt="${escapeHtml(image.fileName || hotel.name)}"></article>`).join("")}</section>` : ""}
@@ -92,7 +108,7 @@ async function detailPage() {
       <section class="section card"><div class="card-body"><h2>위치 / 교통</h2><p class="muted">${escapeHtml(hotel.address || "-")} ${hotel.latitude && hotel.longitude ? `(${hotel.latitude}, ${hotel.longitude})` : ""}</p>${trans.length ? trans.map((item) => `<span class="pill">${escapeHtml(item.name)} ${escapeHtml(item.time || "")} ${escapeHtml(item.depart || "")}</span>`).join(" ") : empty("등록된 교통 정보가 없습니다.")}</div></section>
       <section class="section card"><div class="card-body"><h2>편의시설</h2>${amens.length ? renderAmenities(amens[0]) : empty("등록된 편의시설이 없습니다.")}</div></section>
       <section class="section"><div class="toolbar"><h2>객실</h2></div><div class="table-wrap"><table><thead><tr><th>호실</th><th>층</th><th>타입</th><th>인원</th><th>기본가</th><th>상태</th><th></th></tr></thead><tbody>${rooms.map(roomRow).join("") || `<tr><td colspan="7">등록된 객실이 없습니다.</td></tr>`}</tbody></table></div></section>
-      <section class="section"><div class="toolbar"><h2>객실 리뷰</h2><a class="btn" href="reviews.html?hotelId=${id}">리뷰 작성</a></div>${reviews.length ? `<div class="grid cols-2">${reviews.map(reviewCard).join("")}</div>` : empty("등록된 리뷰가 없습니다.")}</section>
+      <section class="section" id="hotelReviews"><div class="toolbar"><h2>객실 리뷰 <span class="status ok">${reviews.length}건</span></h2><a class="btn" href="${reviewHref}">${reviewAction}</a></div>${reviewLoadError ? errorMessage(reviewLoadError) : reviews.length ? `<div class="grid cols-2">${reviews.map((review) => reviewCard(review)).join("")}</div>` : empty("등록된 리뷰가 없습니다.")}</section>
     `;
   } catch (error) {
     document.querySelector("#detail").innerHTML = errorMessage(error);
@@ -112,12 +128,14 @@ function renderAmenities(amen) {
 }
 
 function reviewCard(review, action = "") {
-  const photos = Array.isArray(review.photos) ? review.photos : [];
+  const photos = Array.isArray(review.photos)
+    ? review.photos.filter((photo) => String(photo.photoPath || "").startsWith("/api/review/photos/"))
+    : [];
   return `<article class="card"><div class="card-body">
     <div class="toolbar" style="margin:0 0 8px"><h3>${escapeHtml(review.title)}</h3><span class="pill">${review.overallRating ?? "-"}점</span></div>
     <p class="muted">${escapeHtml(review.content)}</p>
     <div class="small">${escapeHtml(review.userName || `user ${review.userId}`)} · ${escapeHtml(review.roomName || "")}</div>
-    ${photos.length ? `<div class="form-row">${photos.map((p) => `<span class="pill">첨부 ${escapeHtml(p.photoPath)}</span>`).join("")}</div>` : ""}
+    ${photos.length ? `<div class="review-photos">${photos.map((photo) => `<a href="${escapeHtml(photo.photoPath)}" target="_blank" rel="noreferrer"><img class="review-photo" src="${escapeHtml(photo.photoPath)}" alt="${escapeHtml(review.title || "리뷰")} 첨부 이미지" onerror="this.parentElement.hidden=true"></a>`).join("")}</div>` : ""}
     ${action}
   </div></article>`;
 }

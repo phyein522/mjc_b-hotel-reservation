@@ -14,7 +14,6 @@ const userNav = [
   ["search", "숙소 검색", "search.html"],
   ["bookings", "예약내역", "bookings.html"],
   ["coupons", "쿠폰함", "coupons.html"],
-  ["reviews", "리뷰", "reviews.html"],
   ["profile", "내 정보", "profile.html"]
 ];
 
@@ -192,6 +191,52 @@ async function safeLoadHotels() {
   return hotelsCache;
 }
 
+async function eligibleReviewBookings(userId) {
+  const [bookingResponses, payments, reviews] = await Promise.all([
+    request(`/api/bookings/${userId}`).then(pageItems),
+    request("/api/payment").then(pageItems),
+    request("/api/review?size=200").then(pageItems)
+  ]);
+  const bookings = bookingResponses.map((response) => response.booking || response);
+  const paidBookingIds = new Set(payments
+    .filter((payment) => {
+      const status = String(payment.paymentStatus ?? "").toLowerCase();
+      return status === "paid" || status === "1";
+    })
+    .map((payment) => Number(paymentBookingId(payment))));
+  const reviewedBookingIds = new Set(reviews
+    .filter((review) => Number(review.userId) === Number(userId))
+    .map((review) => Number(review.reservationId)));
+  const candidates = bookings.filter((booking) => (
+    !booking.cancelledAt
+    && paidBookingIds.has(Number(booking.bookingId))
+    && !reviewedBookingIds.has(Number(booking.bookingId))
+  ));
+
+  return Promise.all(candidates.map(async (booking) => {
+    const roomId = Number(booking.roomId || booking.room?.roomId);
+    let room = booking.room || null;
+    if ((!room?.hotelId && !room?.hotel?.hotelId) || !room?.name) {
+      room = await request(`/api/room/${roomId}`).catch(() => room || {});
+    }
+    const hotelId = Number(room?.hotelId || room?.hotel?.hotelId);
+    let hotel = room?.hotel || null;
+    if (!hotel?.name && hotelId) {
+      hotel = await request(`/api/hotels/${hotelId}`).catch(() => hotel || {});
+    }
+    return {
+      reservationId: Number(booking.bookingId),
+      userId: Number(userId),
+      hotelId,
+      roomId,
+      hotelName: hotel?.name || "호텔",
+      roomName: room?.name || (room?.number ? `${room.number}호` : "객실"),
+      checkinDate: booking.checkinDate,
+      checkoutDate: booking.checkoutDate
+    };
+  }));
+}
+
 function hotelImageUrl(image) {
   if (!image?.hotelImageId) return "";
   return `/api/hotelimage/image/${encodeURIComponent(image.hotelImageId)}`;
@@ -286,6 +331,7 @@ export {
   toast,
   getHotelScope,
   safeLoadHotels,
+  eligibleReviewBookings,
   hotelImageUrl,
   loadHotelCover,
   loadHotelCovers,

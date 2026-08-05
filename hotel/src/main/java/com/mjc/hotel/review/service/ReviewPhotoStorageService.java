@@ -4,10 +4,13 @@ import com.mjc.hotel.common.FileUtil;
 import com.mjc.hotel.review.dto.ReviewPhotoDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +54,38 @@ public class ReviewPhotoStorageService {
         if (!year.matches("\\d{4}") || fileName.contains("..") || fileName.contains("/") || fileName.contains("\\")) {
             throw new IllegalArgumentException("잘못된 리뷰 사진 경로입니다.");
         }
-        return fileUtil.loadFileAsResource("reviews/" + year, fileName);
+        try {
+            return fileUtil.loadFileAsResource("reviews/" + year, fileName);
+        } catch (IOException primaryError) {
+            Resource fallback = loadFromAlternateWorkingDirectory(year, fileName);
+            if (fallback != null) {
+                return fallback;
+            }
+            throw primaryError;
+        }
+    }
+
+    private Resource loadFromAlternateWorkingDirectory(String year, String fileName) throws IOException {
+        Path configured = Path.of(fileUtil.getUploadPath());
+        if (configured.isAbsolute()) {
+            return null;
+        }
+
+        Path workingDirectory = Path.of("").toAbsolutePath().normalize();
+        List<Path> alternateRoots = new ArrayList<>();
+        if (workingDirectory.getParent() != null) {
+            alternateRoots.add(workingDirectory.getParent().resolve(configured).normalize());
+        }
+        alternateRoots.add(workingDirectory.resolve("hotel").resolve(configured).normalize());
+
+        for (Path root : alternateRoots) {
+            Path file = root.resolve("reviews").resolve(year).resolve(fileName).normalize();
+            if (!file.startsWith(root) || !Files.isRegularFile(file) || !Files.isReadable(file)) {
+                continue;
+            }
+            return new UrlResource(file.toUri());
+        }
+        return null;
     }
 
     private void validateImage(MultipartFile file) {
