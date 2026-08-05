@@ -3,6 +3,7 @@ package com.mjc.hotel.promotionsale;
 import com.mjc.hotel.common.dto.BaseDto;
 import com.mjc.hotel.promotion.IPromotion;
 import com.mjc.hotel.promotion.PromotionDto;
+import com.mjc.hotel.user.entity.Membership;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -17,6 +18,7 @@ public class PromotionSaleDto extends BaseDto implements IPromotionSale {
     private String saleDes;
 
     private Long proId;
+    private Membership membership;
     private PromotionDto promotion;
     private Long userId;
 

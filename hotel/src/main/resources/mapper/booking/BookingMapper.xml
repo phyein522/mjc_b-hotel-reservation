@@ -146,13 +146,6 @@
             check_out AS checkOut,
             star_rate AS starRate,
             is_active AS isActive,
-            latitude AS latitude,
-            longitude AS longitude,
-            CASE type
-                WHEN 0 THEN 'HOTEL'
-                WHEN 1 THEN 'RESORT'
-                WHEN 2 THEN 'PENSION_GUESTHOUSE'
-            END AS type,
             created_at AS createdAt,
             modified_at AS modifiedAt
         FROM hotels
@@ -173,13 +166,6 @@
             hotels.check_out AS checkOut,
             hotels.star_rate AS starRate,
             hotels.is_active AS isActive,
-            hotels.latitude AS latitude,
-            hotels.longitude AS longitude,
-            CASE hotels.type
-                WHEN 0 THEN 'HOTEL'
-                WHEN 1 THEN 'RESORT'
-                WHEN 2 THEN 'PENSION_GUESTHOUSE'
-            END AS type,
             hotels.created_at AS createdAt,
             hotels.modified_at AS modifiedAt
         FROM hotels

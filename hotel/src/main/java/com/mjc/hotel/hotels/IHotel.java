@@ -4,7 +4,6 @@ import com.mjc.hotel.common.dto.IBase;
 import com.mjc.hotel.user.dto.IUser;
 import org.hibernate.LazyInitializationException;
 
-import java.math.BigDecimal;
 import java.time.LocalTime;
 
 @tools.jackson.databind.annotation.JsonDeserialize(as = HotelDto.class)
@@ -44,15 +43,6 @@ public interface IHotel extends IBase {
 
     Boolean getIsActive();
     void setIsActive(Boolean isActive);
-
-    BigDecimal getLatitude();
-    void setLatitude(BigDecimal latitude);
-
-    BigDecimal getLongitude();
-    void setLongitude(BigDecimal longitude);
-
-    HotelTypeEnum getType();
-    void setType(HotelTypeEnum type);
 
     Long getUserId();
     void setUserId(Long userId);
@@ -100,15 +90,6 @@ public interface IHotel extends IBase {
         }
         if ( forced || source.getIsActive() != null ) {
             this.setIsActive(source.getIsActive());
-        }
-        if ( forced || source.getLatitude() != null ) {
-            this.setLatitude(source.getLatitude());
-        }
-        if ( forced || source.getLongitude() != null ) {
-            this.setLongitude(source.getLongitude());
-        }
-        if ( forced || source.getType() != null ) {
-            this.setType(source.getType());
         }
         if (forced || source.getUserId() != null) {
             this.setUserId(source.getUserId());

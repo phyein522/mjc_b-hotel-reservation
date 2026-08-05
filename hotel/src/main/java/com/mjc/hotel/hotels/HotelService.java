@@ -76,6 +76,14 @@ public class HotelService {
         return new PageImpl<>(list, pageable, page.getTotalElements());
     }
 
+    // 로그인한 호텔 관리자가 담당하는 호텔만 조회한다.
+    @Transactional(readOnly = true)
+    public Page<HotelDto> findAllByManagerId(Long userId, Pageable pageable) {
+        Page<HotelEntity> page = hotelRepository.findAllByUser_UserId(userId, pageable);
+        List<HotelDto> list = getListHotelDto(page.getContent());
+        return new PageImpl<>(list, pageable, page.getTotalElements());
+    }
+
     // 호텔 ID로 호텔 기본 정보를 조회한다.
     public HotelDto findById(Long hotelId) {
         HotelEntity findEntity = this.hotelRepository.findById(hotelId).orElseThrow();

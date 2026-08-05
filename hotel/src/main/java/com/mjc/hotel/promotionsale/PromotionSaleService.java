@@ -47,6 +47,7 @@ public class PromotionSaleService {
         PromotionSaleEntity entity =
                 (PromotionSaleEntity) new PromotionSaleEntity().copyMembers(requestDto, true);
 
+        validateMembership(entity.getMembership());
         this.promotionService.validatePromotionManagerByPromotionId(entity.getUserId(), entity.getProId());
         entity.setProSaleId(null);
 
@@ -66,6 +67,7 @@ public class PromotionSaleService {
         PromotionSaleEntity updateEntity =
                 (PromotionSaleEntity) new PromotionSaleEntity().copyMembers(findDto, true);
 
+        validateMembership(updateEntity.getMembership());
         this.promotionService.validatePromotionManagerByPromotionId(requestDto.getUserId(), updateEntity.getProId());
         PromotionSaleEntity updated =
                 promotionSaleRepository.save(updateEntity);
@@ -94,5 +96,11 @@ public class PromotionSaleService {
         Page<PromotionSaleEntity> page = this.promotionSaleRepository.findAllByPromotionEquals(promotion, pageable);
         List<PromotionSaleDto> list = this.getListPromotionSaleDto(page.getContent());
         return new PageImpl<>(list, pageable, page.getTotalElements());
+    }
+
+    private void validateMembership(com.mjc.hotel.user.entity.Membership membership) {
+        if (membership == null) {
+            throw new IllegalArgumentException("프로모션을 적용할 회원 등급이 필요합니다.");
+        }
     }
 }

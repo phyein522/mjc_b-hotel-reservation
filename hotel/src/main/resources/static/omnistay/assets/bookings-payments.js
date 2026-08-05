@@ -137,13 +137,12 @@ async function paymentPage() {
   const customerName = currentUser?.name || currentUser?.email || "비회원";
   const customerEmail = currentUser?.email || "";
   const customerPhone = (currentUser?.phone || "").replaceAll("-", "");
-  const couponNote = currentUser ? "" : `<div class="toss-note">로그인하지 않아도 결제할 수 있습니다. 쿠폰은 로그인 회원에게만 표시됩니다.</div>`;
-  userShell("bookings", `<section class="toss-page"><div class="toss-wrapper"><form class="toss-box" id="paymentForm"><h1>일반 결제</h1><input name="bookingId" type="hidden" value="${escapeHtml(bookingId)}"><input name="bookingNo" type="hidden" value="${escapeHtml(bookingNo)}"><input name="totalAmount" type="hidden" value="${escapeHtml(totalAmount)}"><input name="orderName" type="hidden" value="${escapeHtml(orderName)}"><input name="customerName" type="hidden" value="${escapeHtml(customerName)}"><input name="customerEmail" type="hidden" value="${escapeHtml(customerEmail)}"><input name="customerMobilePhone" type="hidden" value="${escapeHtml(customerPhone)}"><div class="toss-summary"><div class="toss-row"><span>결제자</span><strong>${escapeHtml(customerName)}</strong></div><div class="toss-row"><span>예약 금액</span><strong>${totalAmount ? money(totalAmount) : "예약 금액 없음"}</strong></div><div class="toss-row"><span>쿠폰 할인</span><strong id="paymentDiscount">${money(0)}</strong></div><div class="toss-row total"><span>최종 결제금액</span><strong id="paymentFinalAmount">${totalAmount ? money(totalAmount) : "-"}</strong></div></div><div class="toss-field"><label for="paymentCouponSelect">쿠폰 선택</label><div class="coupon-apply-row"><select name="userCouponId" id="paymentCouponSelect"><option value="">사용 안 함</option></select><button class="btn primary" id="applyPaymentCoupon" type="button">쿠폰 적용</button></div><div class="coupon-apply-status" id="couponApplyStatus">사용할 쿠폰을 선택한 뒤 적용하세요.</div></div>${couponNote}<div class="toss-methods" id="payment-method"><button class="toss-method active" type="button" data-payment-method="CARD">카드</button><button class="toss-method" type="button" data-payment-method="TRANSFER">계좌이체</button><button class="toss-method" type="button" data-payment-method="VIRTUAL_ACCOUNT">가상계좌</button><button class="toss-method" type="button" data-payment-method="MOBILE_PHONE">휴대폰</button><button class="toss-method" type="button" data-payment-method="CULTURE_GIFT_CERTIFICATE">문화상품권</button></div><button class="toss-button" id="openTossPayment" type="submit">결제하기</button><div class="toss-note" id="tossPaymentStatus">토스페이먼츠 결제창을 사용합니다. 결제 금액은 예약 정보에서 자동으로 들어갑니다.</div></form></div></section>`);
+  userShell("bookings", `<section class="toss-page"><div class="toss-wrapper"><form class="toss-box" id="paymentForm"><h1>일반 결제</h1><input name="bookingId" type="hidden" value="${escapeHtml(bookingId)}"><input name="bookingNo" type="hidden" value="${escapeHtml(bookingNo)}"><input name="totalAmount" type="hidden" value="${escapeHtml(totalAmount)}"><input name="orderName" type="hidden" value="${escapeHtml(orderName)}"><input name="customerName" type="hidden" value="${escapeHtml(customerName)}"><input name="customerEmail" type="hidden" value="${escapeHtml(customerEmail)}"><input name="customerMobilePhone" type="hidden" value="${escapeHtml(customerPhone)}"><div class="toss-summary"><div class="toss-row"><span>결제자</span><strong>${escapeHtml(customerName)}</strong></div><div class="toss-row"><span>예약 금액</span><strong>${totalAmount ? money(totalAmount) : "예약 금액 없음"}</strong></div><div class="toss-row"><span>쿠폰 할인</span><strong id="paymentDiscount">${money(0)}</strong></div><div class="toss-row total"><span>최종 결제금액</span><strong id="paymentFinalAmount">${totalAmount ? money(totalAmount) : "-"}</strong></div></div><div class="toss-field"><label for="paymentCouponSelect">쿠폰 선택</label><div class="coupon-apply-row"><select name="couponId" id="paymentCouponSelect"><option value="">사용 안 함</option></select><button class="btn primary" id="applyPaymentCoupon" type="button">쿠폰 적용</button></div><div class="coupon-apply-status" id="couponApplyStatus">주문 조건에 맞는 쿠폰을 선택한 뒤 적용하세요.</div></div><div class="toss-methods" id="payment-method"><button class="toss-method active" type="button" data-payment-method="CARD">카드</button><button class="toss-method" type="button" data-payment-method="TRANSFER">계좌이체</button><button class="toss-method" type="button" data-payment-method="VIRTUAL_ACCOUNT">가상계좌</button><button class="toss-method" type="button" data-payment-method="MOBILE_PHONE">휴대폰</button><button class="toss-method" type="button" data-payment-method="CULTURE_GIFT_CERTIFICATE">문화상품권</button></div><button class="toss-button" id="openTossPayment" type="submit">결제하기</button><div class="toss-note" id="tossPaymentStatus">토스페이먼츠 결제창을 사용합니다. 결제 금액은 예약 정보에서 자동으로 들어갑니다.</div></form></div></section>`);
   if (currentUser?.userId) {
     await loadPaymentCoupons(totalAmount);
   }
   let selectedPaymentMethod = "CARD";
-  let appliedUserCouponId = "";
+  let appliedCouponId = "";
   let appliedDiscount = 0;
   const couponSelect = document.querySelector("#paymentCouponSelect");
   const couponApplyStatus = document.querySelector("#couponApplyStatus");
@@ -169,7 +168,7 @@ async function paymentPage() {
     return { discount: appliedDiscount, finalAmount };
   };
   couponSelect.addEventListener("change", () => {
-    appliedUserCouponId = "";
+    appliedCouponId = "";
     appliedDiscount = 0;
     couponApplyStatus.textContent = couponSelect.value ? "쿠폰 적용 버튼을 눌러주세요." : "쿠폰을 사용하지 않습니다.";
     updateAmount();
@@ -177,7 +176,7 @@ async function paymentPage() {
   document.querySelector("#applyPaymentCoupon").addEventListener("click", () => {
     const option = couponSelect.selectedOptions?.[0];
     if (!option?.value) {
-      appliedUserCouponId = "";
+      appliedCouponId = "";
       appliedDiscount = 0;
       couponApplyStatus.textContent = "쿠폰을 사용하지 않습니다.";
       updateAmount();
@@ -185,13 +184,13 @@ async function paymentPage() {
     }
     const discount = calculateSelectedDiscount();
     if (discount <= 0) {
-      appliedUserCouponId = "";
+      appliedCouponId = "";
       appliedDiscount = 0;
       couponApplyStatus.textContent = `최소 결제금액 ${money(option.dataset.minOrder || 0)}을 충족하지 못했습니다.`;
       updateAmount();
       return;
     }
-    appliedUserCouponId = option.value;
+    appliedCouponId = option.value;
     appliedDiscount = discount;
     couponApplyStatus.textContent = `${option.textContent}이 적용되었습니다.`;
     updateAmount();
@@ -208,7 +207,7 @@ async function paymentPage() {
     event.preventDefault();
     const data = qs(event.currentTarget);
     const { discount, finalAmount } = updateAmount();
-    if (data.userCouponId && data.userCouponId !== appliedUserCouponId) {
+    if (data.couponId && data.couponId !== appliedCouponId) {
       statusEl.className = "message error toss-note";
       statusEl.textContent = "선택한 쿠폰을 먼저 적용해주세요.";
       return;
@@ -273,7 +272,6 @@ async function paymentPage() {
       const query = new URLSearchParams({
         bookingId: data.bookingId,
         paymentId: String(draftPayment.paymentId || ""),
-        userCouponId: appliedUserCouponId,
         couponId: String(couponId || ""),
         discountAmount: String(discount)
       });
@@ -310,21 +308,21 @@ async function paymentPage() {
   });
 }
 
-async function loadAvailableUserCoupons() {
-  return pageItems(await request("/api/usercoupons/available"));
+async function loadAvailableCoupons(orderAmount) {
+  const query = orderAmount ? `?orderAmount=${encodeURIComponent(orderAmount)}` : "";
+  return pageItems(await request(`/api/coupons/available${query}`));
 }
 
 async function loadPaymentCoupons(totalAmount) {
   try {
-    const availableCoupons = await loadAvailableUserCoupons();
-    const userCoupons = availableCoupons.filter((item) => Number(item.minOrder || 0) <= totalAmount);
-    const options = userCoupons.map((coupon) => {
+    const availableCoupons = await loadAvailableCoupons(totalAmount);
+    const options = availableCoupons.map((coupon) => {
       const minOrder = Number(coupon.minOrder || 0);
       const discountLabel = coupon.discountType === "RATE" ? `${coupon.discountValue}% 할인` : `${money(coupon.discountValue)} 할인`;
-      return `<option value="${coupon.userCouponId}" data-coupon-id="${escapeHtml(coupon.couponId)}" data-discount-type="${escapeHtml(coupon.discountType)}" data-discount-value="${escapeHtml(coupon.discountValue)}" data-min-order="${escapeHtml(minOrder)}" data-max-discount="${escapeHtml(coupon.maxDiscount || 0)}">${escapeHtml(coupon.name)} · ${escapeHtml(discountLabel)}</option>`;
+      return `<option value="${coupon.couponId}" data-coupon-id="${escapeHtml(coupon.couponId)}" data-discount-type="${escapeHtml(coupon.discountType)}" data-discount-value="${escapeHtml(coupon.discountValue)}" data-min-order="${escapeHtml(minOrder)}" data-max-discount="${escapeHtml(coupon.maxDiscount || 0)}">${escapeHtml(coupon.name)} · ${escapeHtml(discountLabel)}</option>`;
     });
     document.querySelector("#paymentCouponSelect").innerHTML = `<option value="">사용 안 함</option>${options.join("")}`;
-    document.querySelector("#couponApplyStatus").textContent = userCoupons.length ? "사용할 쿠폰을 선택한 뒤 적용하세요." : "사용 가능한 쿠폰이 없습니다.";
+    document.querySelector("#couponApplyStatus").textContent = availableCoupons.length ? "사용할 쿠폰을 선택한 뒤 적용하세요." : "현재 주문에 사용할 수 있는 쿠폰이 없습니다.";
   } catch (error) {
     document.querySelector("#paymentCouponSelect").innerHTML = `<option value="">쿠폰 불러오기 실패</option>`;
     document.querySelector("#couponApplyStatus").textContent = error.message;
@@ -484,13 +482,13 @@ async function couponsPage() {
     location.href = `login.html?reason=coupons&redirect=${redirect}`;
     return;
   }
-  userShell("coupons", `${title("쿠폰함", "현재 결제에 사용할 수 있는 내 쿠폰만 조회합니다.")}<section class="card card-body"><div class="toolbar" style="margin:0 0 10px"><h2>사용 가능한 내 쿠폰</h2><span class="status ok">API 연결</span></div><div id="myCoupons">${empty("쿠폰을 불러오는 중입니다.")}</div></section>`);
+  userShell("coupons", `${title("쿠폰함", "생성된 쿠폰 중 현재 사용할 수 있는 쿠폰을 조회합니다.")}<section class="card card-body"><div class="toolbar" style="margin:0 0 10px"><h2>사용 가능한 쿠폰</h2><span class="status ok">API 연결</span></div><div id="myCoupons">${empty("쿠폰을 불러오는 중입니다.")}</div></section>`);
   await loadCoupons();
 }
 
 async function loadCoupons() {
   try {
-    const mine = await loadAvailableUserCoupons();
+    const mine = await loadAvailableCoupons();
     document.querySelector("#myCoupons").innerHTML = mine.length ? `<div class="table-wrap"><table><thead><tr><th>쿠폰</th><th>할인</th><th>최소 결제금액</th><th>만료일</th></tr></thead><tbody>${mine.map((coupon) => {
       const discount = coupon.discountType === "RATE" ? `${coupon.discountValue}%` : money(coupon.discountValue);
       return `<tr><td><strong>${escapeHtml(coupon.name)}</strong><div class="small muted">${escapeHtml(coupon.description || coupon.code || "")}</div></td><td>${escapeHtml(discount)}</td><td>${money(coupon.minOrder)}</td><td>${escapeHtml(coupon.expirationDate || "-")}</td></tr>`;

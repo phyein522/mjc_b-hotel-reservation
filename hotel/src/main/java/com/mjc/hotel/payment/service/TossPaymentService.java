@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mjc.hotel.bookings.BookingDto;
 import com.mjc.hotel.bookings.BookingEntity;
 import com.mjc.hotel.bookings.BookingRepository;
+import com.mjc.hotel.coupon.CouponService;
 import com.mjc.hotel.payment.dto.*;
 import com.mjc.hotel.payment.repository.PaymentRepository;
-import com.mjc.hotel.usercoupon.UserCouponService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,7 +35,7 @@ public class TossPaymentService {
 
     private final PaymentRepository paymentRepository;
     private final BookingRepository bookingRepository;
-    private final UserCouponService userCouponService;
+    private final CouponService couponService;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
@@ -56,9 +56,7 @@ public class TossPaymentService {
     public PaymentDto insertPayment(PaymentDto dto) {
         BookingEntity booking = bookingRepository.findById(dto.getBookingId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 예약입니다. bookingId=" + dto.getBookingId()));
-        if (dto.getCouponId() != null && dto.getCouponId() > 0) {
-            userCouponService.validateAvailableForPayment(booking.getUserId(), dto.getCouponId());
-        }
+        validateCoupon(dto);
         PaymentEntity entity = (PaymentEntity) new PaymentEntity().copyMembers(dto, true);
         entity.setBooking(booking);
         PaymentEntity result = paymentRepository.save(entity);
@@ -189,13 +187,30 @@ public class TossPaymentService {
             find.setBooking(getBooking(dto.getBookingId()));
         }
         find.copyMembers(dto, false);
+        validateCoupon(find);
         PaymentEntity update = (PaymentEntity) new PaymentEntity().copyMembers(find, true);
         PaymentEntity result = this.paymentRepository.save(update);
-        if (result.getPaymentStatus() == PaymentStatus.Paid
-                && result.getCouponId() != null && result.getCouponId() > 0) {
-            userCouponService.useForPayment(result.getBooking().getUserId(), result.getCouponId(), result.getPaymentId());
-        }
         return (PaymentDto) new PaymentDto().copyMembers(result, true);
+    }
+
+    private void validateCoupon(PaymentDto dto) {
+        if (dto.getCouponId() == null || dto.getCouponId() <= 0) {
+            return;
+        }
+        BigDecimal finalAmount = requireNonNegativeAmount(dto.getTotalAmount());
+        BigDecimal discountAmount = requireNonNegativeAmount(dto.getDiscountAmount());
+        BigDecimal orderAmount = finalAmount.add(discountAmount);
+        BigDecimal expectedDiscount = couponService.calculateDiscount(dto.getCouponId(), orderAmount);
+        if (expectedDiscount.compareTo(discountAmount) != 0) {
+            throw new IllegalArgumentException("쿠폰 할인금액이 쿠폰 조건과 일치하지 않습니다.");
+        }
+    }
+
+    private BigDecimal requireNonNegativeAmount(BigDecimal amount) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("결제 금액이 올바르지 않습니다.");
+        }
+        return amount;
     }
 
     public PaymentDto deletePayment(Long paymentId) {

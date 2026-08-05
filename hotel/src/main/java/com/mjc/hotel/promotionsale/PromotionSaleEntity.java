@@ -3,6 +3,7 @@ package com.mjc.hotel.promotionsale;
 import com.mjc.hotel.common.dto.BaseEntity;
 import com.mjc.hotel.promotion.PromotionEntity;
 import com.mjc.hotel.promotion.IPromotion;
+import com.mjc.hotel.user.entity.Membership;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,6 +26,11 @@ public class PromotionSaleEntity extends BaseEntity implements IPromotionSale {
 
     @Transient
     private Long proId;
+
+    @Enumerated(EnumType.ORDINAL)
+    @Column(comment = "프로모션 적용 회원 등급")
+    private Membership membership;
+
     @Transient
     private Long userId;
 

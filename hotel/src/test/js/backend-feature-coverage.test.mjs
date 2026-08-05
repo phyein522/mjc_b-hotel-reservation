@@ -51,6 +51,12 @@ assert.match(adminSource, /data-delete-room-image/, "Room image deletion must be
 assert.match(adminSource, /amenities:/, "Room create and update must send backend room amenities.");
 assert.match(bookingsSource, /\/api\/payment\/\$\{paymentId\}/, "Payment detail lookup must use the backend single-payment endpoint.");
 assert.match(adminSource, /method: "PATCH"/, "Backend update operations must remain connected.");
+assert.match(adminSource, /\/api\/coupons\?userId=\$\{encodeURIComponent\(data\.userId\)\}[\s\S]*method: "POST"/, "Coupon creation must send the manager userId query parameter required by the backend.");
+assert.match(adminSource, /\/api\/coupons\?userId=\$\{encodeURIComponent\(userId\)\}[\s\S]*method: "PATCH"/, "Coupon updates must send the manager userId query parameter required by the backend.");
+assert.match(adminSource, /data\.startDate[\s\S]*data\.endDate[\s\S]*data\.roomId[\s\S]*data\.userId/, "Promotion creation must validate backend-required fields before submission.");
+assert.match(adminSource, /name="membership"[\s\S]*NEW_MEMBER[\s\S]*VVIP/, "Promotion-sale creation must target a membership grade.");
+assert.match(adminSource, /membership, saleDes, userId: Number\(managerUserId\)/, "Promotion-sale updates must preserve the membership target and manager authorization.");
+assert.doesNotMatch(adminSource, /<label><span>사용자 ID<\/span><input name="userId"/, "Promotion-sale target must not be presented as an individual user.");
 assert.match(adminSource, /data-edit-promo=/, "Promotion update must be exposed in the admin screen.");
 assert.match(adminSource, /data-edit-promo-sale=/, "Promotion-sale update must be exposed in the admin screen.");
 assert.match(reviewsSource, /query\.set\("keyword"/, "Review search must send the backend keyword parameter.");
@@ -63,7 +69,8 @@ assert.match(reviewsSource, /name="newPhotos"/, "Review editing must allow new p
 assert.match(reviewsSource, /uploadReviewPhotos\(form\.elements\.newPhotos\.files\)/, "Review editing must upload newly selected photos before saving.");
 assert.match(reviewEligibilitySource, /response\.booking \|\| response/, "Review eligibility must unwrap booking-list response items.");
 assert.match(reviewEligibilitySource, /status === "paid" \|\| status === "1"/, "Review eligibility must recognize persisted paid payment status.");
-assert.match(bookingsSource, /\/api\/usercoupons\/available/, "Coupon screens and payment must request only the logged-in user's usable coupons.");
+assert.match(bookingsSource, /\/api\/coupons\/available/, "Coupon screens and payment must request globally generated coupons that meet the order conditions.");
+assert.doesNotMatch(bookingsSource, /\/api\/usercoupons/, "Coupon screens and payment must not issue or load personal user coupons.");
 assert.match(bookingsSource, /discountAmount/, "Coupon discounts must be carried through the payment flow.");
 assert.match(bookingsSource, /paymentsByBookingId/, "Booking history must join payment data instead of hardcoding booking completion status.");
 assert.match(bookingsSource, /reviews\.html\?bookingId=/, "Paid bookings must expose the review-writing flow.");

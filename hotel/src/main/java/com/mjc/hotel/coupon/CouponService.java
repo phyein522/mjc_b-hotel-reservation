@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -30,6 +32,52 @@ public class CouponService {
         Page<CouponEntity> page = this.couponRepository.findAll(pageable);
         List<CouponDto> list = this.getListCouponDto(page.getContent());
         return new PageImpl<>(list, pageable, page.getTotalElements());
+    }
+
+    public List<CouponDto> findAvailable(BigDecimal orderAmount) {
+        return this.couponRepository
+                .findAllByStatusAndExpirationDateGreaterThanEqual(CouponStatusEnum.ACTIVE, LocalDate.now())
+                .stream()
+                .filter(coupon -> isEligible(coupon, orderAmount))
+                .map(x -> (CouponDto) new CouponDto().copyMembers(x, true))
+                .toList();
+    }
+
+    public BigDecimal calculateDiscount(Long couponId, BigDecimal orderAmount) {
+        if (couponId == null || couponId <= 0) {
+            return BigDecimal.ZERO;
+        }
+        if (orderAmount == null || orderAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("쿠폰 적용 주문금액이 올바르지 않습니다.");
+        }
+
+        CouponEntity coupon = this.couponRepository.findById(couponId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 쿠폰입니다."));
+        if (!isEligible(coupon, orderAmount)) {
+            throw new IllegalArgumentException("현재 주문 조건에 사용할 수 없는 쿠폰입니다.");
+        }
+
+        BigDecimal discount = coupon.getDiscountType() == CouponDiscountTypeEnum.RATE
+                ? orderAmount.multiply(coupon.getDiscountValue())
+                    .divide(BigDecimal.valueOf(100), 0, RoundingMode.DOWN)
+                : coupon.getDiscountValue();
+        if (coupon.getMaxDiscount() != null && coupon.getMaxDiscount().signum() > 0) {
+            discount = discount.min(coupon.getMaxDiscount());
+        }
+        return discount.max(BigDecimal.ZERO).min(orderAmount);
+    }
+
+    private boolean isEligible(CouponEntity coupon, BigDecimal orderAmount) {
+        if (coupon == null
+                || coupon.getStatus() != CouponStatusEnum.ACTIVE
+                || coupon.getExpirationDate() == null
+                || coupon.getExpirationDate().isBefore(LocalDate.now())) {
+            return false;
+        }
+        return orderAmount == null
+                || orderAmount.compareTo(BigDecimal.ZERO) <= 0
+                || coupon.getMinOrder() == null
+                || coupon.getMinOrder().compareTo(orderAmount) <= 0;
     }
 
     // 쿠폰 ID로 쿠폰 정보를 조회한다.

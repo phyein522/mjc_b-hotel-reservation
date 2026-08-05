@@ -65,19 +65,6 @@ public class UserCouponRestController {
         );
     }
 
-    // 관리자 권한을 확인한 뒤 사용자에게 쿠폰을 발급한다.
-    @PostMapping
-    public ResponseEntity<ApiResponse<UserCouponDto>> insert(
-            @RequestBody UserCouponDto requestDto,
-            @RequestParam Long userId) {
-
-        UserCouponDto resultDto = this.userCouponService.insert(requestDto, userId);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                ApiResponse.make(ResponseCode.INSERT_OK, "ok", resultDto)
-        );
-    }
-
     // 관리자 권한을 확인한 뒤 기존 사용자 쿠폰 정보를 수정한다.
     @PatchMapping
     public ResponseEntity<ApiResponse<UserCouponDto>> update(

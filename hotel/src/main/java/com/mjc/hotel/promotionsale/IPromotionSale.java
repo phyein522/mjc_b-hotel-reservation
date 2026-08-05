@@ -2,6 +2,7 @@ package com.mjc.hotel.promotionsale;
 
 import com.mjc.hotel.common.dto.IBase;
 import com.mjc.hotel.promotion.IPromotion;
+import com.mjc.hotel.user.entity.Membership;
 import org.hibernate.LazyInitializationException;
 
 @tools.jackson.databind.annotation.JsonDeserialize(as = PromotionSaleDto.class)
@@ -14,6 +15,9 @@ public interface IPromotionSale extends IBase {
 
     Long getProId();
     void setProId(Long proId);
+
+    Membership getMembership();
+    void setMembership(Membership membership);
 
     IPromotion getPromotion();
     void setPromotion(IPromotion promotion);
@@ -45,6 +49,9 @@ public interface IPromotionSale extends IBase {
             } catch (LazyInitializationException e) {
                 System.err.println(e.getMessage());
             }
+        }
+        if (forced || source.getMembership() != null) {
+            this.setMembership(source.getMembership());
         }
         if (forced || source.getUserId() != null) {
             this.setUserId(source.getUserId());

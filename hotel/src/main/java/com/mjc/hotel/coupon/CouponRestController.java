@@ -12,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 @RestController
 @Slf4j
 @RequestMapping("/api/coupons")
@@ -32,6 +35,15 @@ public class CouponRestController {
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.make(ResponseCode.SELECT_OK, "ok", page)
+        );
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<ApiResponse<List<CouponDto>>> available(
+            @RequestParam(required = false) BigDecimal orderAmount) {
+        List<CouponDto> coupons = this.couponService.findAvailable(orderAmount);
+        return ResponseEntity.ok(
+                ApiResponse.make(ResponseCode.SELECT_OK, "available coupons select ok", coupons)
         );
     }
 

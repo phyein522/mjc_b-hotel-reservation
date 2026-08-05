@@ -127,7 +127,13 @@ function userShell(active, body) {
 }
 
 async function adminShell(active, body) {
-  const hotels = await safeLoadHotels();
+  let hotels = [];
+  let hotelLoadError = null;
+  try {
+    hotels = await safeLoadHotels();
+  } catch (error) {
+    hotelLoadError = error;
+  }
   const selected = getHotelScope();
   const groups = [];
   let currentGroup = "";
@@ -146,6 +152,7 @@ async function adminShell(active, body) {
           <option value="">전체 호텔</option>
           ${hotels.map((hotel) => `<option value="${hotel.hotelId}" ${String(selected) === String(hotel.hotelId) ? "selected" : ""}>${escapeHtml(hotel.name)}</option>`).join("")}
         </select>
+        ${hotelLoadError ? `<div class="sidebar-error">호텔 조회 실패: ${escapeHtml(hotelLoadError.message)}</div>` : ""}
         ${groups.join("")}
       </aside>
       <main class="admin-main">${body}</main>
@@ -183,10 +190,15 @@ function getHotelScope() {
 
 async function safeLoadHotels() {
   if (hotelsCache.length) return hotelsCache;
+  const currentUser = getCurrentUser();
+  const endpoint = currentUser?.role === "HOTEL_MANAGER" && currentUser.userId
+    ? `/api/admin/hotels/managed?size=100`
+    : "/api/hotels?size=100";
   try {
-    hotelsCache = pageItems(await request("/api/hotels?size=100"));
-  } catch {
+    hotelsCache = pageItems(await request(endpoint));
+  } catch (error) {
     hotelsCache = [];
+    throw error;
   }
   return hotelsCache;
 }
@@ -261,7 +273,7 @@ function hotelCard(hotel) {
     <article class="card">
       <div class="cover">${coverUrl
         ? `<img class="cover-image" src="${coverUrl}" alt="${escapeHtml(hotel.coverImage.fileName || hotel.name)}">`
-        : escapeHtml(hotel.city || hotel.type || "HOTEL")}</div>
+        : escapeHtml(hotel.city || "호텔")}</div>
       <div class="card-body">
         <div class="toolbar" style="margin:0 0 8px">
           <h3>${escapeHtml(hotel.name)}</h3>

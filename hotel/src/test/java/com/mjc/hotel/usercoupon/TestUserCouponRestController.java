@@ -88,26 +88,6 @@ public class TestUserCouponRestController {
     }
 
     @Test
-    @DisplayName("POST /api/usercoupons - 사용자 쿠폰 등록")
-    void insertUserCoupon_shouldReturnCreated() throws Exception {
-
-        when(userCouponService.insert(any(UserCouponDto.class), eq(2L)))
-                .thenReturn(sampleUserCouponDto);
-
-        mockMvc.perform(post("/api/usercoupons")
-                        .param("userId", "2")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(sampleUserCouponDto)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.responseData.userCouponId").value(1))
-                .andExpect(jsonPath("$.responseData.userId").value(2))
-                .andExpect(jsonPath("$.responseData.couponId").value(3));
-
-        verify(userCouponService, times(1))
-                .insert(any(UserCouponDto.class), eq(2L));
-    }
-
-    @Test
     @DisplayName("PATCH /api/usercoupons - 사용자 쿠폰 수정")
     void updateUserCoupon_shouldReturnOk() throws Exception {
 
