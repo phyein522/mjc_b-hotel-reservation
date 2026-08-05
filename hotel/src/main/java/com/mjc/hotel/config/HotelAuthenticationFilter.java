@@ -34,6 +34,7 @@ public class HotelAuthenticationFilter extends OncePerRequestFilter {
         try {
             String jwtAccessToken = this.jwtUtils.resolveJwtTokenFromBearerToken(authHeader);
             if ( jwtAccessToken != null ) {
+                this.jwtUtils.validateAccessToken(jwtAccessToken);
                 String email = this.jwtUtils.getEmail(jwtAccessToken);
                 UserDto find = this.userService.findByEmail(email);
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(

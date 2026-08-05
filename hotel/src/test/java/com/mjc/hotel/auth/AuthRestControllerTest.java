@@ -5,6 +5,8 @@ import com.mjc.hotel.auth.dto.*;
 import com.mjc.hotel.auth.jwt.JwtUtils;
 import com.mjc.hotel.auth.service.AuthService;
 import com.mjc.hotel.user.dto.UserDto;
+import com.mjc.hotel.user.entity.Status;
+import com.mjc.hotel.user.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -26,6 +28,7 @@ class AuthRestControllerTest {
     @Autowired ObjectMapper objectMapper;
     @MockitoBean AuthService authService;
     @MockitoBean JwtUtils jwtUtils;
+    @MockitoBean UserService userService;
 
     @Test
     void configReturnsFrontendAuthenticationSettings() throws Exception {
@@ -121,5 +124,27 @@ class AuthRestControllerTest {
                 .andExpect(jsonPath("$.responseData.user.userId").value(7))
                 .andExpect(jsonPath("$.responseData.accessToken").value("google-access-token"))
                 .andExpect(jsonPath("$.responseData.refreshToken").value("google-refresh-token"));
+    }
+
+    @Test
+    void refreshRotatesTokensForActiveUser() throws Exception {
+        UserDto user = UserDto.builder()
+                .userId(4L)
+                .email("user@example.com")
+                .status(Status.ACTIVE)
+                .build();
+        when(this.jwtUtils.getEmail("old-refresh-token")).thenReturn("user@example.com");
+        when(this.userService.findByEmail("user@example.com")).thenReturn(user);
+        when(this.jwtUtils.generateAccessToken("user@example.com")).thenReturn("new-access-token");
+        when(this.jwtUtils.generateRefreshToken("user@example.com")).thenReturn("new-refresh-token");
+
+        this.mockMvc.perform(post("/api/auth/refresh")
+                        .contentType("application/json")
+                        .content("{\"refreshToken\":\"old-refresh-token\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.responseData.accessToken").value("new-access-token"))
+                .andExpect(jsonPath("$.responseData.refreshToken").value("new-refresh-token"));
+
+        verify(this.jwtUtils).validateRefreshToken("old-refresh-token");
     }
 }

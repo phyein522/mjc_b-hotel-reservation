@@ -6,8 +6,11 @@ import com.mjc.hotel.auth.service.AuthService;
 import com.mjc.hotel.common.ApiResponse;
 import com.mjc.hotel.common.ResponseCode;
 import com.mjc.hotel.user.dto.UserDto;
+import com.mjc.hotel.user.entity.Status;
+import com.mjc.hotel.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthRestController {
     private final AuthService authService;
     private final JwtUtils jwtUtils;
+    private final UserService userService;
 
     @GetMapping("/config")
     public ResponseEntity<ApiResponse<AuthConfigResponse>> config() {
@@ -76,6 +80,34 @@ public class AuthRestController {
                 "google login success",
                 createSession(user)
         ));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<AuthTokenDto>> refresh(@Valid @RequestBody RefreshTokenRequest request) {
+        try {
+            this.jwtUtils.validateRefreshToken(request.refreshToken());
+            String email = this.jwtUtils.getEmail(request.refreshToken());
+            UserDto user = this.userService.findByEmail(email);
+            if (user.getStatus() != Status.ACTIVE) {
+                throw new IllegalStateException("User is not active");
+            }
+
+            AuthTokenDto tokens = new AuthTokenDto(
+                    this.jwtUtils.generateAccessToken(email),
+                    this.jwtUtils.generateRefreshToken(email)
+            );
+            return ResponseEntity.ok(ApiResponse.make(
+                    ResponseCode.SUCCESS,
+                    "token refresh success",
+                    tokens
+            ));
+        } catch (RuntimeException exception) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.make(
+                    ResponseCode.AUTHENTICATION_ERROR,
+                    "refresh token is invalid or expired",
+                    null
+            ));
+        }
     }
 
     private AuthenticatedUserDto createSession(UserDto user) {

@@ -10,15 +10,17 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 public class JwtUtils {
-    //	@Value("${myapp.jwt.secret:thisismyjwtsecretkey!123456abcdef}")
-    private String secret = "thisismyjwtsecretkey!123456abcdef";
-    //	@Value("${myapp.jwt.expireAccessToken}")
-    private Long expireAccessToken = 1800000L; // 30분
-    private Long expireRefreshToken = 604800000L; // 7일
+    private static final String TOKEN_TYPE_CLAIM = "tokenType";
+    private static final String ACCESS_TOKEN_TYPE = "access";
+    private static final String REFRESH_TOKEN_TYPE = "refresh";
 
+    private final String secret = "thisismyjwtsecretkey!123456abcdef";
+    private final Long expireAccessToken = 1800000L;
+    private final Long expireRefreshToken = 604800000L;
     private final SecretKey secretKey;
 
     public JwtUtils() {
@@ -26,62 +28,64 @@ public class JwtUtils {
     }
 
     public String generateAccessToken(String value) {
-        return this.generateToken(value, this.expireAccessToken);
+        return this.generateToken(value, this.expireAccessToken, ACCESS_TOKEN_TYPE);
     }
 
     public String generateRefreshToken(String value) {
-        return this.generateToken(value, this.expireRefreshToken);
+        return this.generateToken(value, this.expireRefreshToken, REFRESH_TOKEN_TYPE);
     }
 
     public String generateToken(String value, Long milliSeconds) {
-        String str = Jwts.builder()
+        return this.generateToken(value, milliSeconds, ACCESS_TOKEN_TYPE);
+    }
+
+    private String generateToken(String value, Long milliSeconds, String tokenType) {
+        return Jwts.builder()
                 .subject(value)
+                .id(UUID.randomUUID().toString())
+                .claim(TOKEN_TYPE_CLAIM, tokenType)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + milliSeconds))
                 .signWith(this.secretKey)
                 .compact();
-        return str;
     }
 
     public String generateToken(IUser user, Long milliSeconds) {
-        String str = Jwts.builder()
+        return Jwts.builder()
                 .subject(user.getEmail())
-                .claim("role", user.getRole())    // subject 외에 부가정보는 claim 에 추가할수 있다.
+                .id(UUID.randomUUID().toString())
+                .claim("role", user.getRole())
+                .claim(TOKEN_TYPE_CLAIM, ACCESS_TOKEN_TYPE)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + milliSeconds))
                 .signWith(this.secretKey)
                 .compact();
-        return str;
     }
 
     public Claims parseToken(String token) {
         try {
-            Claims cl = Jwts.parser()
+            return Jwts.parser()
                     .verifyWith(this.secretKey)
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
-            return cl;
-        } catch (ExpiredJwtException | IllegalArgumentException e ) {
-            throw e;
-        } catch (JwtException e ) {
-            throw e;
+        } catch (ExpiredJwtException | IllegalArgumentException exception) {
+            throw exception;
+        } catch (JwtException exception) {
+            throw exception;
         }
     }
 
     public String getRole(String token) throws JwtExpireException {
-        Claims cl = this.parseToken(token);
-        return cl.get("role", String.class);
+        return this.parseToken(token).get("role", String.class);
     }
 
     public String getValueFromClaims(String token, String key) throws JwtExpireException {
-        Claims cl = this.parseToken(token);
-        return cl.get(key, String.class);
+        return this.parseToken(token).get(key, String.class);
     }
 
     public String getEmail(String token) throws JwtExpireException {
-        Claims cl = this.parseToken(token);
-        return cl.getSubject();
+        return this.parseToken(token).getSubject();
     }
 
     public Boolean validateToken(String token) throws JwtExpireException {
@@ -89,8 +93,24 @@ public class JwtUtils {
         return true;
     }
 
+    public Boolean validateAccessToken(String token) throws JwtExpireException {
+        return this.validateTokenType(token, ACCESS_TOKEN_TYPE);
+    }
+
+    public Boolean validateRefreshToken(String token) throws JwtExpireException {
+        return this.validateTokenType(token, REFRESH_TOKEN_TYPE);
+    }
+
+    private Boolean validateTokenType(String token, String expectedType) throws JwtExpireException {
+        String actualType = this.parseToken(token).get(TOKEN_TYPE_CLAIM, String.class);
+        if (!expectedType.equals(actualType)) {
+            throw new JwtIllegalException("Invalid JWT token type");
+        }
+        return true;
+    }
+
     public String resolveJwtTokenFromBearerToken(String bearerToken) {
-        if ( bearerToken != null && bearerToken.startsWith("Bearer ")) {
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
         return null;

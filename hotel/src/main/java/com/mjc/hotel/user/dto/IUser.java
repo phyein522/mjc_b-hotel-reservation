@@ -1,5 +1,6 @@
 package com.mjc.hotel.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mjc.hotel.common.dto.IBase;
 import com.mjc.hotel.user.entity.Membership;
 import com.mjc.hotel.user.entity.Role;
@@ -82,6 +83,7 @@ public interface IUser extends IBase, UserDetails {
         return this;
     }
     @Override
+    @JsonIgnore
     default Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> list = new ArrayList<>();
         list.add(new SimpleGrantedAuthority(this.getRole().toString()));
